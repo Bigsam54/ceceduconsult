@@ -44,7 +44,7 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
   const levelOptions = ['All', 'Preschool (EYFS)', 'Nursery', 'Kindergarten', 'Lower Primary', 'Special Needs (SEN)'];
   const qualificationOptions = ['All', 'B.Ed Early Childhood', 'EYFS Certified', 'Montessori Diploma', 'PGDE', 'Early Years Specialist'];
   const availabilityOptions = ['All', 'Immediate', '2 Weeks Notice', 'Next Academic Term'];
-  const locationOptions = ['All', 'Lagos', 'Abuja', 'Accra', 'Port Harcourt'];
+  const locationOptions = ['All', 'East Legon', 'Airport Residential', 'Cantonments', 'Tema', 'Kumasi', 'Takoradi'];
 
   // Filter Logic
   const filteredTeachers = useMemo(() => {

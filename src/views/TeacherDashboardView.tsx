@@ -13,7 +13,6 @@ import {
   Trash2,
   CheckCircle2,
   Sparkles,
-  Link,
   Save,
   GraduationCap,
   MapPin,
@@ -41,16 +40,14 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
   const [activeTab, setActiveTab] = useState<'overview' | 'opportunities' | 'settings'>('overview');
   const [availability, setAvailability] = useState<'Immediate' | '2 Weeks Notice' | 'Not Available'>('Immediate');
   
-  // Teacher profile state with image upload support
-  const [profileImage, setProfileImage] = useState<string>('');
-  const [imageUrlInput, setImageUrlInput] = useState<string>('');
-  const [showUrlModal, setShowUrlModal] = useState<boolean>(false);
-  const [fullName, setFullName] = useState<string>('Amina Bello');
+  // Teacher profile state with direct image upload support
+  const [profileImage, setProfileImage] = useState<string>('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80');
+  const [fullName, setFullName] = useState<string>('Akosua Mensah');
   const [headline, setHeadline] = useState<string>('Lead EYFS & Montessori Educator');
-  const [location, setLocation] = useState<string>('Lagos, Nigeria (Lekki / Victoria Island)');
+  const [location, setLocation] = useState<string>('Accra, Ghana (East Legon / Cantonments)');
   const [qualification, setQualification] = useState<string>('B.Ed Early Childhood + Montessori Diploma');
-  const [salaryExpectation, setSalaryExpectation] = useState<string>('$1,200 - $1,500 / month');
-  const [bio, setBio] = useState<string>('Dedicated early childhood specialist with 6+ years of classroom experience. Certified in EYFS curriculum delivery, Jolly Phonics multi-sensory reading, and Montessori math sensorial methods.');
+  const [salaryExpectation, setSalaryExpectation] = useState<string>('GH₵ 8,000 - 12,000 / month');
+  const [bio, setBio] = useState<string>('Dedicated early childhood specialist with 6+ years of classroom experience. Certified in EYFS curriculum delivery, Jolly Phonics multi-sensory reading, and Montessori math sensorial methods in Accra.');
   const [selectedSkills, setSelectedSkills] = useState<string[]>([
     'Jolly Phonics', 'EYFS Framework', 'Montessori Pedagogy', 'Sensory Play', 'Early Literacy', 'Classroom Management'
   ]);
@@ -63,14 +60,14 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        alert('File size exceeds 5MB limit. Please choose a smaller image.');
+        showSaveNotification('File size exceeds 5MB limit. Please choose a smaller image.');
         return;
       }
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
           setProfileImage(event.target.result as string);
-          showSaveNotification('Profile image uploaded successfully!');
+          showSaveNotification('Profile picture updated successfully!');
         }
       };
       reader.readAsDataURL(file);
@@ -81,23 +78,18 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith('image/')) {
+      if (file.size > 5 * 1024 * 1024) {
+        showSaveNotification('File size exceeds 5MB limit. Please choose a smaller image.');
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
           setProfileImage(event.target.result as string);
-          showSaveNotification('Profile image uploaded successfully!');
+          showSaveNotification('Profile picture uploaded successfully!');
         }
       };
       reader.readAsDataURL(file);
-    }
-  };
-
-  const handleUrlSubmit = () => {
-    if (imageUrlInput.trim()) {
-      setProfileImage(imageUrlInput.trim());
-      setImageUrlInput('');
-      setShowUrlModal(false);
-      showSaveNotification('Profile image updated via URL!');
     }
   };
 
@@ -351,9 +343,9 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
               </div>
               
               {[
-                { school: 'Meadow Hall International School', role: 'Head Nursery Educator', location: 'Lekki Phase 1, Lagos', salary: '$1,400 - $1,700 / mo', requirements: 'EYFS + 4+ Years Experience' },
-                { school: 'Corona Early Years Academy', role: 'EYFS Phonics Specialist', location: 'Ikoyi, Lagos', salary: '$1,300 - $1,600 / mo', requirements: 'Jolly Phonics Certified' },
-                { school: 'Children International School', role: 'Senior Preschool Lead', location: 'Victoria Island, Lagos', salary: '$1,500 - $1,800 / mo', requirements: 'Montessori Diploma' }
+                { school: 'Morning Star Early Years Academy', role: 'Head Nursery Educator', location: 'East Legon, Accra', salary: 'GH₵ 9,000 - 12,000 / mo', requirements: 'EYFS + 4+ Years Experience' },
+                { school: 'Lincoln Community Early Childhood', role: 'EYFS Phonics Specialist', location: 'Airport Residential, Accra', salary: 'GH₵ 10,000 - 13,500 / mo', requirements: 'Jolly Phonics Certified' },
+                { school: 'Al-Rayan International Preschool', role: 'Senior Kindergarten Lead', location: 'Cantonments, Accra', salary: 'GH₵ 8,500 - 11,000 / mo', requirements: 'Montessori Diploma' }
               ].map((job, i) => (
                 <div key={i} className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="space-y-1">
@@ -461,37 +453,28 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                       className="hidden"
                     />
 
-                    {/* Secondary: URL option */}
-                    <div className="flex items-center gap-2 pt-1">
+                    {/* Action buttons */}
+                    <div className="flex items-center gap-3 pt-1">
                       <button
                         type="button"
-                        onClick={() => setShowUrlModal(!showUrlModal)}
-                        className="text-xs font-bold text-[#126373] hover:text-[#0b2228] flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="text-xs font-bold text-slate-900 hover:text-[#126373] flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer"
                       >
-                        <Link className="w-3.5 h-3.5" />
-                        <span>Or Paste Image Web URL</span>
+                        <Camera className="w-3.5 h-3.5" />
+                        <span>{profileImage ? 'Change Photo' : 'Select Photo File'}</span>
                       </button>
-                    </div>
-
-                    {showUrlModal && (
-                      <div className="p-3 bg-slate-100 rounded-2xl flex items-center gap-2 animate-in fade-in duration-150">
-                        <input
-                          type="url"
-                          placeholder="https://example.com/my-photo.jpg"
-                          value={imageUrlInput}
-                          onChange={(e) => setImageUrlInput(e.target.value)}
-                          className="flex-1 px-3 py-1.5 bg-white text-slate-800 text-xs rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                        />
+                      
+                      {profileImage && (
                         <button
                           type="button"
-                          onClick={handleUrlSubmit}
-                          className="px-3 py-1.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl cursor-pointer"
+                          onClick={handleRemovePhoto}
+                          className="text-xs font-bold text-rose-600 hover:text-rose-700 flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-rose-50 border border-rose-200 transition-colors cursor-pointer"
                         >
-                          Apply
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Remove</span>
                         </button>
-                      </div>
-                    )}
-
+                      )}
+                    </div>
                   </div>
 
                 </div>

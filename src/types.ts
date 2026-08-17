@@ -15,6 +15,20 @@ export type ViewMode =
   | 'teacher-dashboard'
   | 'admin-dashboard';
 
+export type AvailabilityStatus = 
+  | 'Immediate' 
+  | '2 Weeks Notice' 
+  | 'Next Academic Term' 
+  | 'Placed / Employed'
+  | 'On Leave';
+
+export type VerificationStatus = 
+  | 'Verified' 
+  | 'Pending Review' 
+  | 'Under Audit' 
+  | 'Rejected' 
+  | 'Incomplete';
+
 export interface VideoTestimonial {
   id: string;
   author: string;
@@ -38,6 +52,16 @@ export interface TimelineItem {
   type: 'experience' | 'education';
 }
 
+export interface TeacherReferenceCheck {
+  refereeName: string;
+  refereeRole: string;
+  school: string;
+  phone: string;
+  relationship: string;
+  verifiedByAdmin: boolean;
+  notes: string;
+}
+
 export interface Teacher {
   id: string;
   name: string;
@@ -47,9 +71,10 @@ export interface Teacher {
   location: string;
   experienceYears: number;
   salaryExpectation: string;
-  availability: 'Immediate' | '2 Weeks Notice' | 'Next Academic Term';
+  availability: AvailabilityStatus;
   qualification: 'B.Ed Early Childhood' | 'EYFS Certified' | 'Montessori Diploma' | 'PGDE' | 'Early Years Specialist';
   isVerified: boolean;
+  verificationStatus?: VerificationStatus;
   rating: number;
   reviewsCount: number;
   bio: string;
@@ -64,6 +89,16 @@ export interface Teacher {
   timeline: TimelineItem[];
   contactWhatsappNumber: string;
   email: string;
+  // Extended fields for Admin Deep-Dive & Backend entities
+  phoneNumber?: string;
+  videoDemoUrl?: string;
+  cvUrl?: string;
+  policeClearanceVerified?: boolean;
+  credentialsAuditedBy?: string;
+  currentPlacedSchool?: string;
+  placementDate?: string;
+  references?: TeacherReferenceCheck[];
+  adminNotes?: string;
 }
 
 export interface ConsultationService {
@@ -126,6 +161,12 @@ export interface PendingTeacherApproval {
   level: string;
   status: 'Pending Review' | 'Interview Scheduled' | 'Approved' | 'Rejected';
   avatar: string;
+  experienceYears?: number;
+  location?: string;
+  specialization?: string;
+  idCardVerified?: boolean;
+  certificateVerified?: boolean;
+  microTeachingScore?: number;
 }
 
 export interface ConsultationBooking {
@@ -136,6 +177,9 @@ export interface ConsultationBooking {
   requestedDate: string;
   status: 'New Inquiry' | 'Confirmed' | 'Completed';
   phone: string;
+  email?: string;
+  notes?: string;
+  meetingFormat?: 'Google Meet' | 'In-Person' | 'School Site Visit';
 }
 
 export interface TeacherFilterState {
@@ -147,4 +191,24 @@ export interface TeacherFilterState {
   experienceMinYears: number;
   onlyVerified: boolean;
   location: string;
+}
+
+export interface AvailabilityMovementLog {
+  id: string;
+  teacherId: string;
+  teacherName: string;
+  avatar?: string;
+  previousStatus: AvailabilityStatus;
+  newStatus: AvailabilityStatus;
+  changedBy: 'Teacher Self-Update' | 'Miss Nancy (Admin)' | 'Placement Match System';
+  reason: string;
+  schoolInvolved?: string;
+  timestamp: string;
+}
+
+export interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
+  category?: string;
 }

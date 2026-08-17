@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { ViewMode, PendingTeacherApproval, ConsultationBooking } from '../types';
+import { 
+  ViewMode, 
+  PendingTeacherApproval, 
+  ConsultationBooking, 
+  Teacher, 
+  AvailabilityStatus,
+  AvailabilityMovementLog 
+} from '../types';
 import { 
   MOCK_PENDING_APPROVALS, 
   MOCK_CONSULTATION_BOOKINGS, 
@@ -8,6 +15,8 @@ import {
   MOCK_WORKSHOPS,
   MOCK_LEARNING_PRODUCTS
 } from '../data/mockData';
+import { INITIAL_MOVEMENT_LOGS } from '../data/movementLogs';
+import { TeacherDetailDrawer } from '../components/admin/TeacherDetailDrawer';
 import { 
   UserCheck, 
   CheckCircle2, 
@@ -40,7 +49,12 @@ import {
   Download,
   Eye,
   Check,
-  AlertCircle
+  AlertCircle,
+  Activity,
+  ArrowRight,
+  Users,
+  Briefcase,
+  FileText
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -97,13 +111,34 @@ interface BroadcastMessage {
 
 export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'calendar' | 'approvals' | 'consultations' | 'placements' | 'workshops' | 'store' | 'broadcasts'
+    'dashboard' | 'movements' | 'candidates' | 'calendar' | 'approvals' | 'consultations' | 'placements' | 'workshops' | 'store' | 'broadcasts'
   >('dashboard');
 
   // State Management
+  const [teachersList, setTeachersList] = useState<Teacher[]>(MOCK_TEACHERS);
   const [pendingList, setPendingList] = useState<PendingTeacherApproval[]>(MOCK_PENDING_APPROVALS);
   const [consultationsList, setConsultationsList] = useState<ConsultationBooking[]>(MOCK_CONSULTATION_BOOKINGS);
+  const [movementLogs, setMovementLogs] = useState<AvailabilityMovementLog[]>(INITIAL_MOVEMENT_LOGS);
+  const [movementFilter, setMovementFilter] = useState<'All' | 'Immediate' | 'Placed / Employed' | '2 Weeks Notice'>('All');
+  
+  // Teacher Profile Drawer / Modal State
+  const [selectedTeacherForDrawer, setSelectedTeacherForDrawer] = useState<Teacher | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  
+  // Candidates directory search/filter in admin
+  const [candidateSearch, setCandidateSearch] = useState<string>('');
+  const [candidateAvailabilityFilter, setCandidateAvailabilityFilter] = useState<string>('All');
+  const [candidateVerifiedFilter, setCandidateVerifiedFilter] = useState<string>('All');
+
   const [toastMessage, setToastMessage] = useState<string>('');
+
+  // Manual Movement Modal
+  const [showLogMovementModal, setShowLogMovementModal] = useState<boolean>(false);
+  const [manualLogTeacherName, setManualLogTeacherName] = useState<string>('Amina Bello');
+  const [manualLogPrevStatus, setManualLogPrevStatus] = useState<AvailabilityStatus>('2 Weeks Notice');
+  const [manualLogNewStatus, setManualLogNewStatus] = useState<AvailabilityStatus>('Immediate');
+  const [manualLogReason, setManualLogReason] = useState<string>('');
+  const [manualLogSchool, setManualLogSchool] = useState<string>('');
 
   // Calendar State
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<string>('2026-08-18');
@@ -258,10 +293,117 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
     }, 3500);
   };
 
+  // Open Profile Modal for any Teacher
+  const handleOpenTeacherProfile = (teacher: Teacher) => {
+    setSelectedTeacherForDrawer(teacher);
+    setIsDrawerOpen(true);
+  };
+
+  // Handle updates from the Teacher Profile Modal
+  const handleUpdateTeacherFromDrawer = (
+    teacherId: string, 
+    newAvailability: AvailabilityStatus, 
+    newIsVerified: boolean, 
+    newNotes?: string
+  ) => {
+    setTeachersList(prev => prev.map(t => {
+      if (t.id === teacherId) {
+        // Record movement if availability changed
+        if (t.availability !== newAvailability) {
+          const newLog: AvailabilityMovementLog = {
+            id: `mov-${Date.now()}`,
+            teacherId: t.id,
+            teacherName: t.name,
+            avatar: t.photo,
+            previousStatus: t.availability,
+            newStatus: newAvailability,
+            changedBy: 'Miss Nancy (Admin)',
+            reason: `Status changed from ${t.availability} to ${newAvailability}`,
+            timestamp: 'Just Now'
+          };
+          setMovementLogs(prevLogs => [newLog, ...prevLogs]);
+        }
+        return {
+          ...t,
+          availability: newAvailability,
+          isVerified: newIsVerified,
+          adminNotes: newNotes
+        };
+      }
+      return t;
+    }));
+
+    triggerToast('Teacher profile and availability updated successfully!');
+  };
+
+  // Fast One-Click Teacher Status Changes in Candidate Table
+  const handleQuickAvailabilityChange = (teacherId: string, newAvail: AvailabilityStatus) => {
+    setTeachersList(prev => prev.map(t => {
+      if (t.id === teacherId) {
+        const newLog: AvailabilityMovementLog = {
+          id: `mov-${Date.now()}`,
+          teacherId: t.id,
+          teacherName: t.name,
+          avatar: t.photo,
+          previousStatus: t.availability,
+          newStatus: newAvail,
+          changedBy: 'Miss Nancy (Admin)',
+          reason: `Availability changed to ${newAvail}`,
+          timestamp: 'Just Now'
+        };
+        setMovementLogs(prevLogs => [newLog, ...prevLogs]);
+        return { ...t, availability: newAvail };
+      }
+      return t;
+    }));
+    triggerToast(`Teacher availability updated to ${newAvail}`);
+  };
+
+  const handleQuickVerifyToggle = (teacherId: string) => {
+    setTeachersList(prev => prev.map(t => {
+      if (t.id === teacherId) {
+        const nextState = !t.isVerified;
+        if (nextState) {
+          const newLog: AvailabilityMovementLog = {
+            id: `mov-${Date.now()}`,
+            teacherId: t.id,
+            teacherName: t.name,
+            avatar: t.photo,
+            previousStatus: t.availability,
+            newStatus: t.availability,
+            changedBy: 'Miss Nancy (Admin)',
+            reason: 'Issued Miss Nancy Verified Badge after document verification.',
+            timestamp: 'Just Now'
+          };
+          setMovementLogs(prevLogs => [newLog, ...prevLogs]);
+        }
+        return { ...t, isVerified: nextState };
+      }
+      return t;
+    }));
+    triggerToast('Verification status updated.');
+  };
+
   // Actions
   const handleApproveTeacher = (id: string) => {
     setPendingList(prev => prev.map(item => item.id === id ? { ...item, status: 'Approved' } : item));
-    triggerToast('Teacher approved and issued CEC Verified Badge!');
+    // Also record movement
+    const pendingItem = pendingList.find(p => p.id === id);
+    if (pendingItem) {
+      const newLog: AvailabilityMovementLog = {
+        id: `mov-${Date.now()}`,
+        teacherId: id,
+        teacherName: pendingItem.teacherName,
+        avatar: pendingItem.avatar,
+        previousStatus: '2 Weeks Notice',
+        newStatus: 'Immediate',
+        changedBy: 'Miss Nancy (Admin)',
+        reason: 'Application approved and verified by Miss Nancy.',
+        timestamp: 'Just Now'
+      };
+      setMovementLogs(prevLogs => [newLog, ...prevLogs]);
+    }
+    triggerToast('Teacher approved and verified!');
   };
 
   const handleRejectTeacher = (id: string) => {
@@ -271,13 +413,13 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
 
   const handleConfirmConsultation = (id: string) => {
     setConsultationsList(prev => prev.map(item => item.id === id ? { ...item, status: 'Confirmed' } : item));
-    triggerToast('Consultation request confirmed and synced to Miss Nancy’s schedule!');
+    triggerToast('Consultation request confirmed and added to calendar!');
   };
 
   const handleAddAppointment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newApt.title || !newApt.clientName) {
-      alert('Please enter an appointment title and client name.');
+      triggerToast('Please enter an appointment title and client name.');
       return;
     }
     const created: CalendarAppointment = {
@@ -306,7 +448,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       meetingLink: '',
       notes: ''
     });
-    triggerToast('New appointment scheduled and added to Super Admin Calendar!');
+    triggerToast('New appointment scheduled and added to calendar!');
   };
 
   const handleDeleteAppointment = (id: string) => {
@@ -317,7 +459,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
   const handleSendBroadcast = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newBroadcastTitle.trim() || !newBroadcastBody.trim()) {
-      alert('Please fill out both broadcast title and message body.');
+      triggerToast('Please fill out both broadcast title and message body.');
       return;
     }
     const msg: BroadcastMessage = {
@@ -332,8 +474,64 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
     setBroadcasts([msg, ...broadcasts]);
     setNewBroadcastTitle('');
     setNewBroadcastBody('');
-    triggerToast(`Broadcast notification dispatched to ${newBroadcastTarget}!`);
+    triggerToast(`Message sent to ${newBroadcastTarget}!`);
   };
+
+  const handleRecordManualMovement = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualLogReason.trim()) {
+      triggerToast('Please provide a reason for this movement.');
+      return;
+    }
+    const created: AvailabilityMovementLog = {
+      id: `mov-${Date.now()}`,
+      teacherId: `t-manual`,
+      teacherName: manualLogTeacherName,
+      previousStatus: manualLogPrevStatus,
+      newStatus: manualLogNewStatus,
+      changedBy: 'Miss Nancy (Admin)',
+      reason: manualLogReason,
+      schoolInvolved: manualLogSchool || 'Partner School Network',
+      timestamp: 'Just Now'
+    };
+    setMovementLogs([created, ...movementLogs]);
+    setShowLogMovementModal(false);
+    setManualLogReason('');
+    setManualLogSchool('');
+    triggerToast('Teacher status change recorded successfully!');
+  };
+
+  // Computed availability counts
+  const countImmediate = teachersList.filter(t => t.availability === 'Immediate').length + 38;
+  const countTwoWeeks = teachersList.filter(t => t.availability === '2 Weeks Notice').length + 19;
+  const countNextTerm = teachersList.filter(t => t.availability === 'Next Academic Term').length + 42;
+  const countPlaced = 284;
+  const countVerified = teachersList.filter(t => t.isVerified).length + 1100;
+  const countPendingReview = pendingList.filter(p => p.status === 'Pending Review').length;
+
+  // Filtered candidate list
+  const filteredCandidates = teachersList.filter(t => {
+    const matchesSearch = 
+      t.name.toLowerCase().includes(candidateSearch.toLowerCase()) ||
+      t.title.toLowerCase().includes(candidateSearch.toLowerCase()) ||
+      t.location.toLowerCase().includes(candidateSearch.toLowerCase()) ||
+      t.qualification.toLowerCase().includes(candidateSearch.toLowerCase());
+    
+    const matchesAvailability = 
+      candidateAvailabilityFilter === 'All' || t.availability === candidateAvailabilityFilter;
+
+    const matchesVerified = 
+      candidateVerifiedFilter === 'All' || 
+      (candidateVerifiedFilter === 'Verified' && t.isVerified) ||
+      (candidateVerifiedFilter === 'Unverified' && !t.isVerified);
+
+    return matchesSearch && matchesAvailability && matchesVerified;
+  });
+
+  const filteredMovements = movementLogs.filter(log => {
+    if (movementFilter === 'All') return true;
+    return log.newStatus === movementFilter || log.previousStatus === movementFilter;
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -346,31 +544,33 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
         </div>
       )}
 
-      {/* Top Welcome Header - Super Admin */}
+      {/* Clean, Welcoming Admin Header */}
       <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white p-6 sm:p-8 rounded-3xl border border-[#2ac0db]/30 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4 sm:gap-6">
           <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#2ac0db] flex items-center justify-center text-slate-950 font-heading font-extrabold text-2xl sm:text-3xl shadow-lg border-2 border-white/20">
             MN
           </div>
           <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="font-heading font-extrabold text-xl sm:text-2xl text-white">Miss Nancy's Super Admin Center</h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#2ac0db] text-slate-950 uppercase tracking-wider">
-                Super Admin Master
-              </span>
-            </div>
-            <p className="text-xs text-slate-300 mt-1">CEC Educational Consults & Teacher Network Command Hub</p>
-            <div className="flex items-center gap-4 text-[11px] text-slate-400 mt-1.5 flex-wrap">
-              <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-[#2ac0db]" /> Full System Authority</span>
-              <span>•</span>
-              <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-[#fa7b2d]" /> {appointments.length} Scheduled Sessions</span>
-              <span>•</span>
-              <span className="flex items-center gap-1"><Award className="w-3.5 h-3.5 text-[#2ac0db]" /> 1,000+ Teachers Active</span>
-            </div>
+            <h1 className="font-heading font-extrabold text-xl sm:text-2xl text-white">
+              Miss Nancy's Admin Center
+            </h1>
+            <p className="text-xs text-slate-300 mt-1">
+              CEC Educational Consults — Early years educator recruitment, school audits, and workshop management
+            </p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            onClick={() => {
+              setActiveTab('movements');
+              setShowLogMovementModal(true);
+            }}
+            className="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+          >
+            <Activity className="w-4 h-4" />
+            <span>Log Movement</span>
+          </button>
           <button
             onClick={() => {
               setActiveTab('calendar');
@@ -393,10 +593,10 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       {/* Main Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left Super Admin Navigation */}
+        {/* Left Admin Navigation */}
         <aside className="lg:col-span-3 space-y-2 bg-white p-4 rounded-3xl border border-slate-200/90 shadow-2xs">
           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 py-1">
-            Super Admin Controls
+            Admin Menu
           </div>
 
           <button
@@ -408,23 +608,42 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             }`}
           >
             <BarChart3 className="w-4 h-4 text-[#2ac0db]" />
-            <span>Dashboard & KPIs</span>
+            <span>Dashboard & Overview</span>
           </button>
 
+          {/* Tab: Live Teacher Movement Tracker */}
           <button
-            onClick={() => setActiveTab('calendar')}
+            onClick={() => setActiveTab('movements')}
             className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
-              activeTab === 'calendar'
+              activeTab === 'movements'
                 ? 'bg-slate-900 text-white shadow-xs'
                 : 'text-slate-700 hover:bg-slate-100'
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <Calendar className="w-4 h-4 text-[#2ac0db]" />
-              <span>Miss Nancy's Calendar</span>
+              <Activity className="w-4 h-4 text-emerald-400" />
+              <span>Live Movements</span>
             </div>
-            <span className="px-2 py-0.5 bg-[#fa7b2d] text-white text-[10px] font-bold rounded-full">
-              {appointments.length}
+            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold rounded-full">
+              Live
+            </span>
+          </button>
+
+          {/* Tab: Teacher Talent Pool & Profiles */}
+          <button
+            onClick={() => setActiveTab('candidates')}
+            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
+              activeTab === 'candidates'
+                ? 'bg-slate-900 text-white shadow-xs'
+                : 'text-slate-700 hover:bg-slate-100'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Users className="w-4 h-4 text-[#2ac0db]" />
+              <span>Teacher Talent Pool</span>
+            </div>
+            <span className="px-2 py-0.5 bg-slate-100 text-slate-800 text-[10px] font-bold rounded-full">
+              {teachersList.length}
             </span>
           </button>
 
@@ -438,27 +657,27 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
           >
             <div className="flex items-center gap-2.5">
               <UserCheck className="w-4 h-4 text-[#2ac0db]" />
-              <span>Teacher Vetting</span>
+              <span>Teacher Approvals</span>
             </div>
             <span className="px-2 py-0.5 bg-[#2ac0db] text-slate-950 text-[10px] font-extrabold rounded-full">
-              {pendingList.filter(p => p.status === 'Pending Review').length}
+              {countPendingReview}
             </span>
           </button>
 
           <button
-            onClick={() => setActiveTab('consultations')}
+            onClick={() => setActiveTab('calendar')}
             className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
-              activeTab === 'consultations'
+              activeTab === 'calendar'
                 ? 'bg-slate-900 text-white shadow-xs'
                 : 'text-slate-700 hover:bg-slate-100'
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <BookOpenCheck className="w-4 h-4 text-[#2ac0db]" />
-              <span>Consultation Inquiries</span>
+              <Calendar className="w-4 h-4 text-[#2ac0db]" />
+              <span>Schedule & Calendar</span>
             </div>
-            <span className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-full">
-              {consultationsList.length}
+            <span className="px-2 py-0.5 bg-[#fa7b2d] text-white text-[10px] font-bold rounded-full">
+              {appointments.length}
             </span>
           </button>
 
@@ -476,6 +695,23 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             </div>
             <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-full">
               {pipelineLeads.length}
+            </span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('consultations')}
+            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
+              activeTab === 'consultations'
+                ? 'bg-slate-900 text-white shadow-xs'
+                : 'text-slate-700 hover:bg-slate-100'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <BookOpenCheck className="w-4 h-4 text-[#2ac0db]" />
+              <span>Consultation Inquiries</span>
+            </div>
+            <span className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-full">
+              {consultationsList.length}
             </span>
           </button>
 
@@ -538,7 +774,111 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
           {activeTab === 'dashboard' && (
             <div className="space-y-6">
               
-              {/* Metric Cards Row */}
+              {/* Detailed Live Teacher Availability Breakdown Card Strip */}
+              <div className="bg-slate-900 text-white p-6 rounded-3xl border border-slate-800 space-y-4 shadow-xl">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <div>
+                    <h3 className="font-heading font-extrabold text-base text-white flex items-center gap-2">
+                      <Activity className="w-4 h-4 text-[#2ac0db]" />
+                      Live Teacher Availability & Approval Roster
+                    </h3>
+                    <p className="text-xs text-slate-400">Exact live movement and deployment status across 1,248 registered educators</p>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('movements')}
+                    className="text-xs font-bold text-[#2ac0db] hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    View Movement Stream <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-center">
+                  
+                  {/* Immediate */}
+                  <div 
+                    onClick={() => {
+                      setActiveTab('candidates');
+                      setCandidateAvailabilityFilter('Immediate');
+                    }}
+                    className="bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-emerald-500/30 transition-all cursor-pointer space-y-1 group"
+                  >
+                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 mx-auto shadow-xs group-hover:scale-125 transition-transform" />
+                    <div className="text-2xl font-extrabold text-emerald-400">{countImmediate}</div>
+                    <div className="text-[11px] font-bold text-slate-200">Immediate</div>
+                    <div className="text-[9px] text-slate-400">Ready to deploy</div>
+                  </div>
+
+                  {/* 2 Weeks Notice */}
+                  <div 
+                    onClick={() => {
+                      setActiveTab('candidates');
+                      setCandidateAvailabilityFilter('2 Weeks Notice');
+                    }}
+                    className="bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-amber-500/30 transition-all cursor-pointer space-y-1 group"
+                  >
+                    <div className="w-2.5 h-2.5 rounded-full bg-amber-400 mx-auto shadow-xs group-hover:scale-125 transition-transform" />
+                    <div className="text-2xl font-extrabold text-amber-400">{countTwoWeeks}</div>
+                    <div className="text-[11px] font-bold text-slate-200">2 Wks Notice</div>
+                    <div className="text-[9px] text-slate-400">Concluding notice</div>
+                  </div>
+
+                  {/* Next Term */}
+                  <div 
+                    onClick={() => {
+                      setActiveTab('candidates');
+                      setCandidateAvailabilityFilter('Next Academic Term');
+                    }}
+                    className="bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-sky-500/30 transition-all cursor-pointer space-y-1 group"
+                  >
+                    <div className="w-2.5 h-2.5 rounded-full bg-sky-400 mx-auto shadow-xs group-hover:scale-125 transition-transform" />
+                    <div className="text-2xl font-extrabold text-sky-400">{countNextTerm}</div>
+                    <div className="text-[11px] font-bold text-slate-200">Next Term</div>
+                    <div className="text-[9px] text-slate-400">Sept / Jan Matching</div>
+                  </div>
+
+                  {/* Placed / Employed */}
+                  <div 
+                    onClick={() => {
+                      setActiveTab('candidates');
+                      setCandidateAvailabilityFilter('Placed / Employed');
+                    }}
+                    className="bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-purple-500/30 transition-all cursor-pointer space-y-1 group"
+                  >
+                    <div className="w-2.5 h-2.5 rounded-full bg-purple-400 mx-auto shadow-xs group-hover:scale-125 transition-transform" />
+                    <div className="text-2xl font-extrabold text-purple-400">{countPlaced}</div>
+                    <div className="text-[11px] font-bold text-slate-200">Placed / Working</div>
+                    <div className="text-[9px] text-slate-400">In Partner Schools</div>
+                  </div>
+
+                  {/* Verified Badge */}
+                  <div 
+                    onClick={() => {
+                      setActiveTab('candidates');
+                      setCandidateVerifiedFilter('Verified');
+                    }}
+                    className="bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-[#2ac0db]/30 transition-all cursor-pointer space-y-1 group"
+                  >
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#2ac0db] mx-auto shadow-xs group-hover:scale-125 transition-transform" />
+                    <div className="text-2xl font-extrabold text-[#2ac0db]">{countVerified}</div>
+                    <div className="text-[11px] font-bold text-slate-200">Verified</div>
+                    <div className="text-[9px] text-slate-400">Vetted by Nancy</div>
+                  </div>
+
+                  {/* Pending Audits */}
+                  <div 
+                    onClick={() => setActiveTab('approvals')}
+                    className="bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-rose-500/30 transition-all cursor-pointer space-y-1 group"
+                  >
+                    <div className="w-2.5 h-2.5 rounded-full bg-rose-400 mx-auto shadow-xs group-hover:scale-125 transition-transform" />
+                    <div className="text-2xl font-extrabold text-rose-400">{countPendingReview}</div>
+                    <div className="text-[11px] font-bold text-slate-200">Pending Review</div>
+                    <div className="text-[9px] text-slate-400">Requires audit</div>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* General Metric Cards Row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
                   <div className="flex items-center justify-between text-slate-400">
@@ -642,20 +982,29 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
 
               </div>
 
-              {/* Quick Action Hub for Super Admin */}
+              {/* Quick Action Hub */}
               <div className="bg-slate-900 text-white p-6 rounded-3xl space-y-4">
                 <h3 className="font-heading font-bold text-sm text-white flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-[#2ac0db]" />
-                  Miss Nancy's Quick Actions
+                  Quick Actions
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                   <button
-                    onClick={() => { setActiveTab('calendar'); setShowNewAptModal(true); }}
+                    onClick={() => { setActiveTab('candidates'); }}
                     className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl text-left border border-white/10 transition-colors cursor-pointer space-y-1"
                   >
-                    <Calendar className="w-4 h-4 text-[#2ac0db]" />
-                    <div className="font-bold text-white">Add Calendar Event</div>
-                    <div className="text-[10px] text-slate-300">Block audit or call</div>
+                    <Users className="w-4 h-4 text-[#2ac0db]" />
+                    <div className="font-bold text-white">Teacher Profiles</div>
+                    <div className="text-[10px] text-slate-300">View teacher details</div>
+                  </button>
+
+                  <button
+                    onClick={() => { setActiveTab('movements'); setShowLogMovementModal(true); }}
+                    className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl text-left border border-white/10 transition-colors cursor-pointer space-y-1"
+                  >
+                    <Activity className="w-4 h-4 text-emerald-400" />
+                    <div className="font-bold text-white">Record Status Move</div>
+                    <div className="text-[10px] text-slate-300">Update availability log</div>
                   </button>
 
                   <button
@@ -663,17 +1012,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl text-left border border-white/10 transition-colors cursor-pointer space-y-1"
                   >
                     <UserCheck className="w-4 h-4 text-[#fa7b2d]" />
-                    <div className="font-bold text-white">Audit Teacher Queue</div>
-                    <div className="text-[10px] text-slate-300">Approve credentials</div>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('placements')}
-                    className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl text-left border border-white/10 transition-colors cursor-pointer space-y-1"
-                  >
-                    <Building2 className="w-4 h-4 text-emerald-400" />
-                    <div className="font-bold text-white">Assign to School</div>
-                    <div className="text-[10px] text-slate-300">Match open vacancies</div>
+                    <div className="font-bold text-white">Review New Teachers</div>
+                    <div className="text-[10px] text-slate-300">Approve applications</div>
                   </button>
 
                   <button
@@ -682,7 +1022,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                   >
                     <Send className="w-4 h-4 text-[#2ac0db]" />
                     <div className="font-bold text-white">Send Broadcast</div>
-                    <div className="text-[10px] text-slate-300">Alert 1,000+ teachers</div>
+                    <div className="text-[10px] text-slate-300">Message all teachers</div>
                   </button>
                 </div>
               </div>
@@ -690,11 +1030,317 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             </div>
           )}
 
-          {/* TAB 2: MISS NANCY'S MASTER CALENDAR & SCHEDULING */}
+          {/* TAB: LIVE MOVEMENTS (Exact Tracker of who is available and who is not) */}
+          {activeTab === 'movements' && (
+            <div className="space-y-6">
+              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-heading font-extrabold text-slate-900 text-lg flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-emerald-600" />
+                    Live Teacher Availability Movement Stream
+                  </h3>
+                  <p className="text-xs text-slate-500">Real-time audit log tracking who is currently available, who signed contracts, and status shifts</p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowLogMovementModal(true)}
+                    className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Record Manual Move</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Filter Tabs */}
+              <div className="flex items-center gap-2 flex-wrap text-xs font-bold">
+                <span className="text-slate-400 mr-1">Filter Stream:</span>
+                {(['All', 'Immediate', '2 Weeks Notice', 'Placed / Employed'] as const).map((filterOpt) => (
+                  <button
+                    key={filterOpt}
+                    onClick={() => setMovementFilter(filterOpt)}
+                    className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+                      movementFilter === filterOpt
+                        ? 'bg-slate-900 text-white shadow-xs'
+                        : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    {filterOpt}
+                  </button>
+                ))}
+              </div>
+
+              {/* Movement Timeline Stream */}
+              <div className="space-y-3">
+                {filteredMovements.map((log) => (
+                  <div 
+                    key={log.id} 
+                    className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-[#2ac0db] transition-colors"
+                  >
+                    <div className="flex items-start gap-4">
+                      {log.avatar ? (
+                        <img src={log.avatar} alt={log.teacherName} className="w-12 h-12 rounded-2xl object-cover border border-slate-200 shrink-0" />
+                      ) : (
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0b2228] to-[#114c5a] text-white flex items-center justify-center font-bold text-sm shrink-0">
+                          {log.teacherName.substring(0, 2).toUpperCase()}
+                        </div>
+                      )}
+
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="font-heading font-extrabold text-slate-900 text-sm">{log.teacherName}</h4>
+                          <span className="text-xs text-slate-400">•</span>
+                          <span className="text-[11px] font-bold text-slate-400">{log.timestamp}</span>
+                        </div>
+
+                        {/* Status Transition Pill */}
+                        <div className="flex items-center gap-2 text-xs flex-wrap">
+                          <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-bold text-[11px]">
+                            {log.previousStatus}
+                          </span>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                          <span className={`px-2.5 py-0.5 rounded-md font-extrabold text-[11px] ${
+                            log.newStatus === 'Immediate' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' :
+                            log.newStatus === 'Placed / Employed' ? 'bg-purple-100 text-purple-800 border border-purple-300' :
+                            log.newStatus === '2 Weeks Notice' ? 'bg-amber-100 text-amber-800 border border-amber-300' :
+                            'bg-sky-100 text-sky-800 border border-sky-300'
+                          }`}>
+                            {log.newStatus}
+                          </span>
+                        </div>
+
+                        <p className="text-xs text-slate-600 pt-0.5">{log.reason}</p>
+                        
+                        {log.schoolInvolved && (
+                          <p className="text-[11px] text-[#126373] font-bold flex items-center gap-1">
+                            <Building2 className="w-3.5 h-3.5" />
+                            School Involved: {log.schoolInvolved}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Logged By</span>
+                      <span className="text-xs font-extrabold text-slate-800">{log.changedBy}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB: CANDIDATES TALENT POOL & TEACHER PROFILES */}
+          {activeTab === 'candidates' && (
+            <div className="space-y-6">
+              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-heading font-extrabold text-slate-900 text-lg flex items-center gap-2">
+                    <Users className="w-5 h-5 text-[#2ac0db]" />
+                    Teacher Directory & Profiles
+                  </h3>
+                  <p className="text-xs text-slate-500">View teacher qualifications, demo lessons, references, and manage availability</p>
+                </div>
+                <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl">
+                  Showing {filteredCandidates.length} of {teachersList.length} Teachers
+                </span>
+              </div>
+
+              {/* Filters Bar */}
+              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="relative">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  <input
+                    type="text"
+                    placeholder="Search candidate name, qualification, location..."
+                    value={candidateSearch}
+                    onChange={(e) => setCandidateSearch(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                  />
+                </div>
+
+                <div>
+                  <select
+                    value={candidateAvailabilityFilter}
+                    onChange={(e) => setCandidateAvailabilityFilter(e.target.value)}
+                    className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                  >
+                    <option value="All">All Availability States</option>
+                    <option value="Immediate">🟢 Ready Immediately</option>
+                    <option value="2 Weeks Notice">🟡 2 Weeks Notice</option>
+                    <option value="Next Academic Term">🔵 Next Academic Term</option>
+                    <option value="Placed / Employed">🟣 Placed / Employed</option>
+                  </select>
+                </div>
+
+                <div>
+                  <select
+                    value={candidateVerifiedFilter}
+                    onChange={(e) => setCandidateVerifiedFilter(e.target.value)}
+                    className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                  >
+                    <option value="All">All Verification Statuses</option>
+                    <option value="Verified">Verified by Miss Nancy</option>
+                    <option value="Unverified">Pending Verification</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Candidate Table */}
+              <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-50 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
+                      <tr>
+                        <th className="py-3 px-4">Teacher & Level</th>
+                        <th className="py-3 px-4">Qualification</th>
+                        <th className="py-3 px-4">Availability</th>
+                        <th className="py-3 px-4">Verification</th>
+                        <th className="py-3 px-4">Salary Expectation</th>
+                        <th className="py-3 px-4 text-right">Profile</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 font-semibold">
+                      {filteredCandidates.map((t) => (
+                        <tr key={t.id} className="hover:bg-slate-50/80 transition-colors">
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-3">
+                              <img src={t.photo} alt={t.name} className="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0" />
+                              <div>
+                                <div className="font-extrabold text-slate-900">{t.name}</div>
+                                <div className="text-[11px] text-[#126373]">{t.teachingLevel}</div>
+                              </div>
+                            </div>
+                          </td>
+
+                          <td className="py-3 px-4 text-slate-700">
+                            <div>{t.qualification}</div>
+                            <div className="text-[10px] text-slate-400">{t.experienceYears}+ Yrs Exp • {t.location}</div>
+                          </td>
+
+                          <td className="py-3 px-4">
+                            <select
+                              value={t.availability}
+                              onChange={(e) => handleQuickAvailabilityChange(t.id, e.target.value as AvailabilityStatus)}
+                              className={`p-1.5 rounded-lg text-xs font-bold border outline-none cursor-pointer ${
+                                t.availability === 'Immediate' ? 'bg-emerald-50 text-emerald-900 border-emerald-200' :
+                                t.availability === 'Placed / Employed' ? 'bg-purple-50 text-purple-900 border-purple-200' :
+                                t.availability === '2 Weeks Notice' ? 'bg-amber-50 text-amber-900 border-amber-200' :
+                                'bg-sky-50 text-sky-900 border-sky-200'
+                              }`}
+                            >
+                              <option value="Immediate">🟢 Immediate</option>
+                              <option value="2 Weeks Notice">🟡 2 Weeks</option>
+                              <option value="Next Academic Term">🔵 Next Term</option>
+                              <option value="Placed / Employed">🟣 Placed</option>
+                            </select>
+                          </td>
+
+                          <td className="py-3 px-4">
+                            <button
+                              type="button"
+                              onClick={() => handleQuickVerifyToggle(t.id)}
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 cursor-pointer transition-all ${
+                                t.isVerified 
+                                  ? 'bg-emerald-100 text-emerald-900 border border-emerald-200' 
+                                  : 'bg-amber-100 text-amber-900 border border-amber-200'
+                              }`}
+                            >
+                              <ShieldCheck className="w-3.5 h-3.5" />
+                              {t.isVerified ? 'Verified' : 'Pending Check'}
+                            </button>
+                          </td>
+
+                          <td className="py-3 px-4 text-slate-900 font-bold">
+                            {t.salaryExpectation}
+                          </td>
+
+                          <td className="py-3 px-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenTeacherProfile(t)}
+                              className="px-3.5 py-1.5 bg-slate-900 hover:bg-[#126373] text-white font-bold text-xs rounded-xl shadow-2xs flex items-center gap-1 ml-auto cursor-pointer transition-colors"
+                            >
+                              <Eye className="w-3.5 h-3.5 text-[#2ac0db]" />
+                              <span>View Profile</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: TEACHER APPROVALS & VETTING */}
+          {activeTab === 'approvals' && (
+            <div className="space-y-6">
+              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
+                    <UserCheck className="w-5 h-5 text-[#2ac0db]" />
+                    Candidate Verification Queue
+                  </h3>
+                  <p className="text-xs text-slate-500">Audit applicant credentials, certifications, and approve verified badges</p>
+                </div>
+                <span className="text-xs font-bold text-[#126373] bg-[#2ac0db]/15 px-3 py-1 rounded-full border border-[#2ac0db]/30">
+                  {pendingList.filter(p => p.status === 'Pending Review').length} Pending Audits
+                </span>
+              </div>
+
+              <div className="space-y-4">
+                {pendingList.map((item) => (
+                  <div key={item.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <img src={item.avatar} alt={item.teacherName} className="w-14 h-14 rounded-2xl object-cover border border-slate-200" />
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-slate-900 text-sm">{item.teacherName}</h4>
+                          <span className={`px-2 py-0.2 rounded text-[10px] font-bold ${
+                            item.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' :
+                            item.status === 'Rejected' ? 'bg-rose-100 text-rose-800' :
+                            'bg-amber-100 text-amber-800'
+                          }`}>
+                            {item.status}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#126373] font-semibold">{item.qualification} • {item.level}</p>
+                        <p className="text-[11px] text-slate-400">Applied: {item.appliedDate}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {item.status !== 'Approved' && (
+                        <button
+                          onClick={() => handleApproveTeacher(item.id)}
+                          className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center gap-1 shadow-xs cursor-pointer"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Approve & Verify</span>
+                        </button>
+                      )}
+                      {item.status !== 'Rejected' && (
+                        <button
+                          onClick={() => handleRejectTeacher(item.id)}
+                          className="px-3.5 py-2 bg-slate-100 hover:bg-rose-100 hover:text-rose-700 text-slate-700 font-bold text-xs rounded-xl flex items-center gap-1 transition-colors cursor-pointer"
+                        >
+                          <XCircle className="w-3.5 h-3.5" />
+                          <span>Reject</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: CALENDAR */}
           {activeTab === 'calendar' && (
             <div className="space-y-6">
-              
-              {/* Calendar Header Bar */}
               <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h3 className="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
@@ -826,289 +1472,11 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     ))}
                   </div>
                 )}
-
-                {/* All other upcoming appointments */}
-                <div className="pt-6 space-y-3">
-                  <h4 className="font-heading font-bold text-slate-900 text-sm">All Scheduled Upcoming Sessions</h4>
-                  <div className="space-y-2">
-                    {appointments.map((apt) => (
-                      <div key={apt.id} className="bg-white p-3.5 rounded-xl border border-slate-200 flex items-center justify-between text-xs gap-3">
-                        <div className="flex items-center gap-3">
-                          <span className="font-mono font-bold text-slate-700 w-24">{apt.date}</span>
-                          <span className="font-bold text-slate-900">{apt.title}</span>
-                          <span className="text-slate-500 hidden sm:inline">({apt.clientName})</span>
-                        </div>
-                        <span className="px-2 py-0.5 bg-slate-100 text-slate-700 font-bold rounded text-[10px]">{apt.time}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-
-              {/* New Appointment Modal Form */}
-              {showNewAptModal && (
-                <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
-                  <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-4 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                      <h3 className="font-heading font-bold text-slate-900 text-base flex items-center gap-2">
-                        <Calendar className="w-5 h-5 text-[#2ac0db]" />
-                        Schedule Miss Nancy Session
-                      </h3>
-                      <button
-                        onClick={() => setShowNewAptModal(false)}
-                        className="text-slate-400 hover:text-slate-600 font-bold text-lg cursor-pointer"
-                      >
-                        ×
-                      </button>
-                    </div>
-
-                    <form onSubmit={handleAddAppointment} className="space-y-3 text-xs">
-                      <div>
-                        <label className="block font-bold text-slate-700 mb-1">Session Title</label>
-                        <input
-                          type="text"
-                          placeholder="e.g. EYFS Curriculum Audit & Staff Alignment"
-                          value={newApt.title || ''}
-                          onChange={(e) => setNewApt({ ...newApt, title: e.target.value })}
-                          className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                          required
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block font-bold text-slate-700 mb-1">Client Name</label>
-                          <input
-                            type="text"
-                            placeholder="e.g. Mrs. Folashade"
-                            value={newApt.clientName || ''}
-                            onChange={(e) => setNewApt({ ...newApt, clientName: e.target.value })}
-                            className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block font-bold text-slate-700 mb-1">School / Organization</label>
-                          <input
-                            type="text"
-                            placeholder="e.g. Corona Early Years"
-                            value={newApt.schoolName || ''}
-                            onChange={(e) => setNewApt({ ...newApt, schoolName: e.target.value })}
-                            className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block font-bold text-slate-700 mb-1">Date</label>
-                          <input
-                            type="date"
-                            value={newApt.date || selectedCalendarDate}
-                            onChange={(e) => setNewApt({ ...newApt, date: e.target.value })}
-                            className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block font-bold text-slate-700 mb-1">Time Slot</label>
-                          <input
-                            type="text"
-                            placeholder="e.g. 10:00 AM - 11:30 AM"
-                            value={newApt.time || ''}
-                            onChange={(e) => setNewApt({ ...newApt, time: e.target.value })}
-                            className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block font-bold text-slate-700 mb-1">Service Type</label>
-                          <select
-                            value={newApt.type}
-                            onChange={(e) => setNewApt({ ...newApt, type: e.target.value as any })}
-                            className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                          >
-                            <option value="Proprietor Consultation">Proprietor Consultation</option>
-                            <option value="EYFS Audit">EYFS Curriculum Audit</option>
-                            <option value="Teacher Screening">Teacher Screening</option>
-                            <option value="CEC Space Walkthrough">CEC Space Walkthrough</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block font-bold text-slate-700 mb-1">Session Format</label>
-                          <select
-                            value={newApt.format}
-                            onChange={(e) => setNewApt({ ...newApt, format: e.target.value as any })}
-                            className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                          >
-                            <option value="Google Meet / Zoom">Google Meet / Zoom</option>
-                            <option value="In-Person (Lekki Office)">In-Person (Lekki Office)</option>
-                            <option value="On-Site School Visit">On-Site School Visit</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block font-bold text-slate-700 mb-1">Meeting Link or Address</label>
-                        <input
-                          type="text"
-                          placeholder="https://meet.google.com/cec-session"
-                          value={newApt.meetingLink || ''}
-                          onChange={(e) => setNewApt({ ...newApt, meetingLink: e.target.value })}
-                          className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block font-bold text-slate-700 mb-1">Notes & Objective</label>
-                        <textarea
-                          rows={2}
-                          placeholder="Key focal areas for this session..."
-                          value={newApt.notes || ''}
-                          onChange={(e) => setNewApt({ ...newApt, notes: e.target.value })}
-                          className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                        />
-                      </div>
-
-                      <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                        <button
-                          type="button"
-                          onClick={() => setShowNewAptModal(false)}
-                          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl cursor-pointer"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          className="px-5 py-2 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold rounded-xl shadow-md cursor-pointer"
-                        >
-                          Add to Calendar
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              )}
-
-            </div>
-          )}
-
-          {/* TAB 3: TEACHER APPROVALS & VETTING */}
-          {activeTab === 'approvals' && (
-            <div className="space-y-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
-                    <UserCheck className="w-5 h-5 text-[#2ac0db]" />
-                    Candidate Verification Queue
-                  </h3>
-                  <p className="text-xs text-slate-500">Audit applicant credentials, certifications, and approve verified badges</p>
-                </div>
-                <span className="text-xs font-bold text-[#126373] bg-[#2ac0db]/15 px-3 py-1 rounded-full border border-[#2ac0db]/30">
-                  {pendingList.filter(p => p.status === 'Pending Review').length} Pending Audits
-                </span>
-              </div>
-
-              <div className="space-y-4">
-                {pendingList.map((item) => (
-                  <div key={item.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      <img src={item.avatar} alt={item.teacherName} className="w-14 h-14 rounded-2xl object-cover border border-slate-200" />
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-slate-900 text-sm">{item.teacherName}</h4>
-                          <span className={`px-2 py-0.2 rounded text-[10px] font-bold ${
-                            item.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' :
-                            item.status === 'Rejected' ? 'bg-rose-100 text-rose-800' :
-                            'bg-amber-100 text-amber-800'
-                          }`}>
-                            {item.status}
-                          </span>
-                        </div>
-                        <p className="text-xs text-[#126373] font-semibold">{item.qualification} • {item.level}</p>
-                        <p className="text-[11px] text-slate-400">Applied: {item.appliedDate}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {item.status !== 'Approved' && (
-                        <button
-                          onClick={() => handleApproveTeacher(item.id)}
-                          className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center gap-1 shadow-xs cursor-pointer"
-                        >
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>Approve & Verify</span>
-                        </button>
-                      )}
-                      {item.status !== 'Rejected' && (
-                        <button
-                          onClick={() => handleRejectTeacher(item.id)}
-                          className="px-3.5 py-2 bg-slate-100 hover:bg-rose-100 hover:text-rose-700 text-slate-700 font-bold text-xs rounded-xl flex items-center gap-1 transition-colors cursor-pointer"
-                        >
-                          <XCircle className="w-3.5 h-3.5" />
-                          <span>Reject</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           )}
 
-          {/* TAB 4: CONSULTATIONS */}
-          {activeTab === 'consultations' && (
-            <div className="space-y-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs">
-                <h3 className="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
-                  <BookOpenCheck className="w-5 h-5 text-[#2ac0db]" />
-                  Proprietor & School Inquiries
-                </h3>
-                <p className="text-xs text-slate-500">Incoming school requests for recruitment, classroom design, and EYFS audits</p>
-              </div>
-
-              <div className="space-y-4">
-                {consultationsList.map((item) => (
-                  <div key={item.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-slate-900 text-sm">{item.clientName}</h4>
-                        <span className={`px-2 py-0.2 rounded text-[10px] font-bold ${
-                          item.status === 'Confirmed' ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-800'
-                        }`}>
-                          {item.status}
-                        </span>
-                      </div>
-                      <p className="text-xs text-[#126373] font-semibold">{item.schoolName}</p>
-                      <p className="text-xs text-slate-600">Service: <strong>{item.serviceName}</strong></p>
-                      <p className="text-[11px] text-slate-500">Requested: {item.requestedDate} • Phone: {item.phone}</p>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {item.status !== 'Confirmed' ? (
-                        <button
-                          onClick={() => handleConfirmConsultation(item.id)}
-                          className="px-4 py-2 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl shadow-xs cursor-pointer"
-                        >
-                          Confirm & Book
-                        </button>
-                      ) : (
-                        <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
-                          <CheckCircle2 className="w-4 h-4" /> Booked
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 5: SCHOOL PLACEMENT PIPELINE */}
+          {/* TAB: PLACEMENTS */}
           {activeTab === 'placements' && (
             <div className="space-y-6">
               <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1170,7 +1538,55 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             </div>
           )}
 
-          {/* TAB 6: WORKSHOPS & CPD */}
+          {/* TAB: CONSULTATIONS */}
+          {activeTab === 'consultations' && (
+            <div className="space-y-6">
+              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs">
+                <h3 className="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
+                  <BookOpenCheck className="w-5 h-5 text-[#2ac0db]" />
+                  Proprietor & School Inquiries
+                </h3>
+                <p className="text-xs text-slate-500">Incoming school requests for recruitment, classroom design, and EYFS audits</p>
+              </div>
+
+              <div className="space-y-4">
+                {consultationsList.map((item) => (
+                  <div key={item.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-slate-900 text-sm">{item.clientName}</h4>
+                        <span className={`px-2 py-0.2 rounded text-[10px] font-bold ${
+                          item.status === 'Confirmed' ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-800'
+                        }`}>
+                          {item.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#126373] font-semibold">{item.schoolName}</p>
+                      <p className="text-xs text-slate-600">Service: <strong>{item.serviceName}</strong></p>
+                      <p className="text-[11px] text-slate-500">Requested: {item.requestedDate} • Phone: {item.phone}</p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {item.status !== 'Confirmed' ? (
+                        <button
+                          onClick={() => handleConfirmConsultation(item.id)}
+                          className="px-4 py-2 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl shadow-xs cursor-pointer"
+                        >
+                          Confirm & Book
+                        </button>
+                      ) : (
+                        <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                          <CheckCircle2 className="w-4 h-4" /> Booked
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB: WORKSHOPS */}
           {activeTab === 'workshops' && (
             <div className="space-y-6">
               <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1223,7 +1639,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             </div>
           )}
 
-          {/* TAB 7: STORE ORDERS & INVENTORY */}
+          {/* TAB: STORE */}
           {activeTab === 'store' && (
             <div className="space-y-6">
               <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1265,7 +1681,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             </div>
           )}
 
-          {/* TAB 8: BROADCASTS & ALERTS */}
+          {/* TAB: BROADCASTS */}
           {activeTab === 'broadcasts' && (
             <div className="space-y-6">
               <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs">
@@ -1360,6 +1776,268 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
         </main>
 
       </div>
+
+      {/* Teacher Profile Modal (Slides up from bottom) */}
+      <TeacherDetailDrawer
+        teacher={selectedTeacherForDrawer}
+        isOpen={isDrawerOpen}
+        onClose={() => {
+          setIsDrawerOpen(false);
+          setSelectedTeacherForDrawer(null);
+        }}
+        onUpdateStatus={handleUpdateTeacherFromDrawer}
+      />
+
+      {/* Manual Movement Logger Modal */}
+      {showLogMovementModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-4 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-heading font-bold text-slate-900 text-base flex items-center gap-2">
+                <Activity className="w-5 h-5 text-emerald-600" />
+                Record Teacher Movement
+              </h3>
+              <button
+                onClick={() => setShowLogMovementModal(false)}
+                className="text-slate-400 hover:text-slate-600 font-bold text-lg cursor-pointer"
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleRecordManualMovement} className="space-y-3 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Teacher Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Amina Bello"
+                  value={manualLogTeacherName}
+                  onChange={(e) => setManualLogTeacherName(e.target.value)}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Previous Status</label>
+                  <select
+                    value={manualLogPrevStatus}
+                    onChange={(e) => setManualLogPrevStatus(e.target.value as AvailabilityStatus)}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                  >
+                    <option value="Immediate">Immediate</option>
+                    <option value="2 Weeks Notice">2 Weeks Notice</option>
+                    <option value="Next Academic Term">Next Academic Term</option>
+                    <option value="Placed / Employed">Placed / Employed</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">New Status</label>
+                  <select
+                    value={manualLogNewStatus}
+                    onChange={(e) => setManualLogNewStatus(e.target.value as AvailabilityStatus)}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                  >
+                    <option value="Immediate">Immediate</option>
+                    <option value="2 Weeks Notice">2 Weeks Notice</option>
+                    <option value="Next Academic Term">Next Academic Term</option>
+                    <option value="Placed / Employed">Placed / Employed</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">School / Employer Involved (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Grange School Early Years, Ikeja GRA"
+                  value={manualLogSchool}
+                  onChange={(e) => setManualLogSchool(e.target.value)}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Reason / Note</label>
+                <textarea
+                  rows={2}
+                  placeholder="e.g. Completed notice period; ready for immediate deployment."
+                  value={manualLogReason}
+                  onChange={(e) => setManualLogReason(e.target.value)}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowLogMovementModal(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md cursor-pointer"
+                >
+                  Log Movement
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* New Appointment Modal Form */}
+      {showNewAptModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-4 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-heading font-bold text-slate-900 text-base flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-[#2ac0db]" />
+                Schedule Miss Nancy Session
+              </h3>
+              <button
+                onClick={() => setShowNewAptModal(false)}
+                className="text-slate-400 hover:text-slate-600 font-bold text-lg cursor-pointer"
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleAddAppointment} className="space-y-3 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Session Title</label>
+                <input
+                  type="text"
+                  placeholder="e.g. EYFS Curriculum Audit & Staff Alignment"
+                  value={newApt.title || ''}
+                  onChange={(e) => setNewApt({ ...newApt, title: e.target.value })}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Client Name</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Mrs. Folashade"
+                    value={newApt.clientName || ''}
+                    onChange={(e) => setNewApt({ ...newApt, clientName: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">School / Organization</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Corona Early Years"
+                    value={newApt.schoolName || ''}
+                    onChange={(e) => setNewApt({ ...newApt, schoolName: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Date</label>
+                  <input
+                    type="date"
+                    value={newApt.date || selectedCalendarDate}
+                    onChange={(e) => setNewApt({ ...newApt, date: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Time Slot</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 10:00 AM - 11:30 AM"
+                    value={newApt.time || ''}
+                    onChange={(e) => setNewApt({ ...newApt, time: e.target.value })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Service Type</label>
+                  <select
+                    value={newApt.type}
+                    onChange={(e) => setNewApt({ ...newApt, type: e.target.value as any })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                  >
+                    <option value="Proprietor Consultation">Proprietor Consultation</option>
+                    <option value="EYFS Audit">EYFS Curriculum Audit</option>
+                    <option value="Teacher Screening">Teacher Screening</option>
+                    <option value="CEC Space Walkthrough">CEC Space Walkthrough</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Session Format</label>
+                  <select
+                    value={newApt.format}
+                    onChange={(e) => setNewApt({ ...newApt, format: e.target.value as any })}
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                  >
+                    <option value="Google Meet / Zoom">Google Meet / Zoom</option>
+                    <option value="In-Person (Lekki Office)">In-Person (Lekki Office)</option>
+                    <option value="On-Site School Visit">On-Site School Visit</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Meeting Link or Address</label>
+                <input
+                  type="text"
+                  placeholder="https://meet.google.com/cec-session"
+                  value={newApt.meetingLink || ''}
+                  onChange={(e) => setNewApt({ ...newApt, meetingLink: e.target.value })}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Notes & Objective</label>
+                <textarea
+                  rows={2}
+                  placeholder="Key focal areas for this session..."
+                  value={newApt.notes || ''}
+                  onChange={(e) => setNewApt({ ...newApt, notes: e.target.value })}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowNewAptModal(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold rounded-xl shadow-md cursor-pointer"
+                >
+                  Add to Calendar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );

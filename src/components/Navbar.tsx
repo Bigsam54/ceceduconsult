@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ViewMode } from '../types';
+import { safeScrollToTop } from '../utils/safeWindow';
 import { 
   GraduationCap, 
   Menu, 
@@ -58,7 +59,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
     setServicesDropdownOpen(false);
     setAboutDropdownOpen(false);
     setPortalDropdownOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    safeScrollToTop();
   };
 
   const isServicesActive = ['consultancy', 'reading-club', 'cec-spaces', 'workshops', 'learning-essentials'].includes(currentView);
@@ -314,7 +315,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
             </div>
 
             <button
-              onClick={onOpenLogin}
+              onClick={() => onOpenLogin()}
               className="px-3 py-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 transition-colors cursor-pointer"
             >
               Login

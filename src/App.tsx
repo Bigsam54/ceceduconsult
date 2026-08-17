@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { ViewMode, Teacher, ConsultationService, Workshop, LearningProduct } from './types';
+import { safeScrollToTop } from './utils/safeWindow';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { ContactTeacherModal } from './components/ContactTeacherModal';
@@ -48,38 +49,52 @@ export default function App() {
 
   // Navigation Handler
   const handleNavigate = (view: ViewMode) => {
-    setCurrentView(view);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof view === 'string') {
+      setCurrentView(view);
+    }
+    safeScrollToTop();
   };
 
   // Teacher Handlers
   const handleSelectTeacher = (teacher: Teacher) => {
-    setSelectedTeacher(teacher);
-    setCurrentView('teacher-profile');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (teacher && typeof teacher === 'object' && 'id' in teacher) {
+      setSelectedTeacher(teacher);
+      setCurrentView('teacher-profile');
+      safeScrollToTop();
+    }
   };
 
   const handleContactTeacher = (teacher: Teacher) => {
-    setContactTeacher(teacher);
-    setIsContactModalOpen(true);
+    if (teacher && typeof teacher === 'object' && 'id' in teacher) {
+      setContactTeacher(teacher);
+      setIsContactModalOpen(true);
+    }
   };
 
   // Consultation Handler
-  const handleOpenConsultationModal = (service?: ConsultationService) => {
-    setConsultationService(service || null);
+  const handleOpenConsultationModal = (service?: unknown) => {
+    if (service && typeof service === 'object' && 'id' in (service as object) && 'title' in (service as object)) {
+      setConsultationService(service as ConsultationService);
+    } else {
+      setConsultationService(null);
+    }
     setIsConsultationModalOpen(true);
   };
 
   // Workshop Handler
   const handleRegisterWorkshop = (workshop: Workshop) => {
-    setWorkshopToRegister(workshop);
-    setIsWorkshopModalOpen(true);
+    if (workshop && typeof workshop === 'object' && 'id' in workshop) {
+      setWorkshopToRegister(workshop);
+      setIsWorkshopModalOpen(true);
+    }
   };
 
   // Product Quick View
   const handleQuickViewProduct = (product: LearningProduct) => {
-    setProductToView(product);
-    setIsProductModalOpen(true);
+    if (product && typeof product === 'object' && 'id' in product) {
+      setProductToView(product);
+      setIsProductModalOpen(true);
+    }
   };
 
   // Login Success Handler
@@ -89,7 +104,7 @@ export default function App() {
     } else {
       setCurrentView('admin-dashboard');
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    safeScrollToTop();
   };
 
   return (

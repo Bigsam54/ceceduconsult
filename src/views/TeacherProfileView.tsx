@@ -43,7 +43,7 @@ export const TeacherProfileView: React.FC<TeacherProfileViewProps> = ({
       {/* Top Back Navigation Bar */}
       <div className="flex items-center justify-between">
         <button
-          onClick={onBack}
+          onClick={() => onBack()}
           className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-2xs transition-colors cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />

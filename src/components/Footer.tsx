@@ -55,7 +55,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               <span>Join Reading Club</span>
             </button>
             <button
-              onClick={onOpenConsultationModal}
+              onClick={() => onOpenConsultationModal()}
               className="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl border border-slate-700 transition-all text-xs text-center flex items-center justify-center gap-2 cursor-pointer"
             >
               <MessageCircle className="w-3.5 h-3.5 text-[#2ac0db]" />
@@ -178,11 +178,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
             <ul className="space-y-2 text-xs text-slate-400">
               <li className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-[#2ac0db] shrink-0 mt-0.5" />
-                <span>CEC HQ, Lekki Phase 1, Lagos, Nigeria</span>
+                <span>CEC HQ, East Legon, Accra, Ghana</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-[#2ac0db] shrink-0" />
-                <span>+234 801 234 5678 / +234 809 876 5432</span>
+                <span>+233 54 039 0029 / +233 20 685 5347</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-[#2ac0db] shrink-0" />

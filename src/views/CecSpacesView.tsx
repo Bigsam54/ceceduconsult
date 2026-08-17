@@ -43,7 +43,7 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
           We design ergonomic, Montessori-aligned, safety-audited preschool environments that ignite children's natural curiosity.
         </p>
         <button
-          onClick={onOpenConsultationModal}
+          onClick={() => onOpenConsultationModal()}
           className="w-full sm:w-auto px-5 sm:px-6 py-3 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold rounded-xl shadow-xl transition-all text-xs sm:text-sm inline-flex items-center justify-center gap-2 cursor-pointer"
         >
           <MessageCircle className="w-4 h-4" />
@@ -137,7 +137,7 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
             </div>
 
             <button
-              onClick={onOpenConsultationModal}
+              onClick={() => onOpenConsultationModal()}
               className="w-full py-3 bg-[#fa7b2d] hover:bg-[#e66b1d] text-white font-bold text-xs rounded-xl shadow-xs transition-all mt-3 cursor-pointer"
             >
               Transform Your Classroom Space

@@ -68,7 +68,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
             </p>
             <div className="pt-2 flex flex-wrap gap-2.5">
               <button
-                onClick={onOpenConsultationModal}
+                onClick={() => onOpenConsultationModal()}
                 className="w-full sm:w-auto px-5 py-2.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <CalendarCheck className="w-3.5 h-3.5" />
