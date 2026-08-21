@@ -36,7 +36,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onNavigate, onLoginSuccess
             >
               <img
                 src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786929268/cece_png.png"
-                alt="CEC Consults"
+                alt="CEC Consult"
                 className="h-18 sm:h-22 w-auto max-w-[260px] object-contain"
                 referrerPolicy="no-referrer"
               />
@@ -47,7 +47,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onNavigate, onLoginSuccess
             </span>
 
             <h2 className="text-2xl sm:text-3xl font-heading font-bold text-white leading-tight">
-              Welcome Back to CEC Educational Consults
+              Welcome Back to CEC Educational Consult
             </h2>
 
             <p className="text-slate-300 text-xs leading-relaxed">
@@ -88,7 +88,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onNavigate, onLoginSuccess
               type="button"
               onClick={() => {
                 setAccountType('admin');
-                setEmail('miss.nancy@ceceduconsults.org');
+                setEmail('miss.nancy@ceceduconsult.org');
               }}
               className={`py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                 accountType === 'admin'

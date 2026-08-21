@@ -77,7 +77,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
           >
             <img
               src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786929268/cece_png.png"
-              alt="CEC Educational Consults"
+              alt="CEC Educational Consult"
               className="h-16 sm:h-20 lg:h-24 w-auto max-w-[220px] sm:max-w-[280px] object-contain transition-transform group-hover:scale-105"
               referrerPolicy="no-referrer"
             />
@@ -334,7 +334,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
               className="px-4 py-2 text-xs font-bold text-slate-950 bg-[#2ac0db] hover:bg-[#22a8c0] rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <Search className="w-3.5 h-3.5" />
-              <span>Teachers Directory</span>
+              <span>Find a Teacher</span>
             </button>
           </div>
 

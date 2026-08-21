@@ -12,6 +12,7 @@ import { ContactTeacherModal } from './components/ContactTeacherModal';
 import { BookConsultationModal } from './components/BookConsultationModal';
 import { WorkshopRegisterModal } from './components/WorkshopRegisterModal';
 import { ProductQuickViewModal } from './components/ProductQuickViewModal';
+import { SplashScreen } from './components/SplashScreen';
 
 // Views
 import { HomeView } from './views/HomeView';
@@ -110,6 +111,9 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans">
       
+      {/* Animated Brand Splash Loading Preview */}
+      <SplashScreen minDuration={1400} />
+
       {/* Top Sticky Navigation */}
       <Navbar
         currentView={currentView}

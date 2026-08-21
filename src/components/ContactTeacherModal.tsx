@@ -51,7 +51,7 @@ export const ContactTeacherModal: React.FC<ContactTeacherModalProps> = ({ teache
 
   const initials = teacher.name.split(' ').map(n => n[0]).join('').slice(0, 2);
 
-  const defaultMessage = `Hello Miss Nancie (CEC Consults, Ghana),\n\nI am ${contactPerson || '[Your Name]'} representing ${schoolName || '[School Name]'}.\n\nWe viewed the verified profile for ${teacher.name} (${teacher.title}, ${teacher.teachingLevel}) on the CEC Teacher Network.\n\nWe would like to request candidate details and schedule an interview on ${requestedDate || '[Target Date]'}.\n\nPlease reach us back at ${phone || '[Phone]'}.\n\nThank you!`;
+  const defaultMessage = `Hello Miss Nancie (CEC Consult, Ghana),\n\nI am ${contactPerson || '[Your Name]'} representing ${schoolName || '[School Name]'}.\n\nWe viewed the verified profile for ${teacher.name} (${teacher.title}, ${teacher.teachingLevel}) on the CEC Teacher Network.\n\nWe would like to request candidate details and schedule an interview on ${requestedDate || '[Target Date]'}.\n\nPlease reach us back at ${phone || '[Phone]'}.\n\nThank you!`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(defaultMessage);

@@ -555,7 +555,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
               Miss Nancie's Admin Center
             </h1>
             <p className="text-xs text-slate-300 mt-1">
-              CEC Educational Consults — Early years educator recruitment, school audits, and workshop management
+              CEC Educational Consult — Early years educator recruitment, school audits, and workshop management
             </p>
           </div>
         </div>

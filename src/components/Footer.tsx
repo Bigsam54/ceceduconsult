@@ -74,7 +74,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
             >
               <img
                 src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786929268/cece_png.png"
-                alt="CEC Educational Consults"
+                alt="CEC Educational Consult"
                 className="h-18 sm:h-22 w-auto max-w-[260px] object-contain transition-transform group-hover:scale-105"
                 referrerPolicy="no-referrer"
               />
@@ -181,7 +181,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-[#2ac0db] shrink-0" />
-                <span>contact@ceceduconsults.org</span>
+                <span>contact@ceceduconsult.org</span>
               </li>
             </ul>
           </div>
@@ -190,7 +190,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
 
         {/* Bottom Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} CEC Educational Consults. Designed for Preschool Excellence.</p>
+          <p>© {new Date().getFullYear()} CEC Educational Consult. Designed for Preschool Excellence.</p>
           <div className="flex items-center gap-4">
             <span className="hover:text-slate-300 cursor-pointer">Privacy Policy</span>
             <span className="hover:text-slate-300 cursor-pointer">Terms of Service</span>

@@ -47,7 +47,7 @@ export const TeacherProfileView: React.FC<TeacherProfileViewProps> = ({
           className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-2xs transition-colors cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
-          <span>Back to Teacher Directory</span>
+          <span>Back to Find a Teacher</span>
         </button>
 
         <span className="text-xs text-slate-500 font-semibold">
@@ -279,7 +279,7 @@ export const TeacherProfileView: React.FC<TeacherProfileViewProps> = ({
               </button>
               
               <p className="text-[10px] text-slate-400 text-center">
-                Candidate contact details managed exclusively by CEC Consults for candidate privacy & safety.
+                Candidate contact details managed exclusively by CEC Consult for candidate privacy & safety.
               </p>
             </div>
 

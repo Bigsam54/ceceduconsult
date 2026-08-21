@@ -1,5 +1,5 @@
 /**
- * CEC Educational Consults - Universal API Client
+ * CEC Educational Consult - Universal API Client
  * 
  * Designed for immediate backend handover.
  * Configured with environment variable fallback, token authorization header interceptor,

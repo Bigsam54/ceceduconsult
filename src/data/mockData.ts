@@ -416,7 +416,7 @@ export const MOCK_WORKSHOPS: Workshop[] = [
     price: 'GH₵ 450 ($35)',
     availableSeats: 8,
     totalSeats: 40,
-    facilitator: 'Miss Nancie (Founder, CEC Consults Ghana)',
+    facilitator: 'Miss Nancie (Founder, CEC Consult Ghana)',
     description: 'Learn proven non-punitive strategies to manage toddler tantrums, promote self-regulation, and create a calm, cooperative preschool environment in Ghana.',
     image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=800&auto=format&fit=crop'
   },
@@ -638,7 +638,7 @@ export const MOCK_ADMIN_ANALYTICS = {
 
 export const MOCK_TESTIMONIALS = [
   {
-    quote: "CEC Educational Consults transformed our preschool recruitment process in Accra. Before CEC, finding EYFS-certified teachers who understood Montessori principles took months. With CEC's Teacher Network, we hired two stellar educators within 10 days!",
+    quote: "CEC Educational Consult transformed our preschool recruitment process in Accra. Before CEC, finding EYFS-certified teachers who understood Montessori principles took months. With CEC's Teacher Network, we hired two stellar educators within 10 days!",
     author: "Mrs. Nana Yaa Appiah",
     role: "Proprietress",
     school: "Morning Star Early Years Academy, East Legon",

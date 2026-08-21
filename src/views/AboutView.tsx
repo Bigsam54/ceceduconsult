@@ -124,13 +124,6 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover object-top absolute inset-0 group-hover:scale-103 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
-            <div className="relative z-10 p-5">
-              <div className="bg-slate-950/75 backdrop-blur-xs px-3.5 py-2 rounded-xl border border-white/15 text-white text-xs inline-flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-[#2ac0db]" />
-                <span className="font-bold">12+ Years Early Childhood Pedagogy</span>
-              </div>
-            </div>
           </div>
 
           {/* Profile Bio & Leadership Information */}

@@ -72,7 +72,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
             {/* Shortened Subtitle Text */}
             <p className="text-sm sm:text-base md:text-lg text-slate-200 leading-relaxed max-w-2xl font-medium">
-              Connecting Ghanaian preschools and primary schools with vetted, EYFS-trained teachers and early literacy reading clubs.
+              Connecting Ghanaian preschools and primary schools with vetted teachers and early childhood solutions.
             </p>
 
             {/* Action Buttons */}
@@ -82,16 +82,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 className="px-5 sm:px-6 py-3 sm:py-3.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold rounded-xl shadow-lg transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
               >
                 <Search className="w-4 h-4" />
-                <span>Teachers Directory</span>
+                <span>Find a Teacher</span>
                 <ArrowRight className="w-4 h-4" />
-              </button>
-
-              <button
-                onClick={() => onNavigate('reading-club')}
-                className="px-5 sm:px-6 py-3 sm:py-3.5 bg-[#fa7b2d] hover:bg-[#e66b1d] text-white font-extrabold rounded-xl shadow-lg transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
-              >
-                <BookOpen className="w-4 h-4" />
-                <span>Reading Club</span>
               </button>
 
               <button
@@ -145,11 +137,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
           {/* Service 2: Reading Club */}
           <div 
             onClick={() => onNavigate('reading-club')}
-            className="bg-white p-4 sm:p-5 rounded-2xl border-2 border-[#2ac0db] shadow-xs hover:border-[#fa7b2d] transition-all cursor-pointer group space-y-3 flex flex-col justify-between relative overflow-hidden"
+            className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-3 flex flex-col justify-between"
           >
-            <div className="absolute top-2 right-2 px-2 py-0.5 bg-[#fa7b2d] text-white text-[9px] font-bold rounded-md">
-              Featured
-            </div>
             <div className="space-y-2">
               <div className="h-10 flex items-center">
                 <img
@@ -159,14 +148,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
                   className="h-8 w-auto object-contain"
                 />
               </div>
-              <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#fa7b2d]">
+              <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#126373]">
                 The Reading Lounge
               </h3>
               <p className="text-slate-600 text-xs leading-relaxed">
                 Inspiring lifelong love for reading in children ages 4 to 11 years through hands-on activities, Synthetic Phonics, guided storytelling, tactile reading games and monthly curated book collections.
               </p>
             </div>
-            <span className="text-xs font-bold text-[#fa7b2d] flex items-center gap-1 pt-2">
+            <span className="text-xs font-bold text-[#126373] flex items-center gap-1 pt-2">
               Explore Club <ArrowRight className="w-3 h-3" />
             </span>
           </div>
@@ -324,7 +313,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </h2>
 
           <p className="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
-            Miss Nancie founded CEC Educational Consults to solve the challenge school owners face in finding vetted early years teachers, and to provide educators with mentorship and dignified compensation.
+            Miss Nancie founded CEC Educational Consult to solve the challenge school owners face in finding vetted early years teachers, and to provide educators with mentorship and dignified compensation.
           </p>
 
           <div className="pt-2">

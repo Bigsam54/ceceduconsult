@@ -33,7 +33,7 @@ export const ContactView: React.FC = () => {
   };
 
   const launchWhatsApp = () => {
-    const text = `Hello Miss Nancie / CEC Consults!\n\nI am ${formData.name || 'a visitor'} from ${formData.schoolName || 'our school'}.\n\nMessage: ${formData.message || 'I would like to inquire about your teacher recruitment, reading club, and consultancy services.'}`;
+    const text = `Hello Miss Nancie / CEC Consult!\n\nI am ${formData.name || 'a visitor'} from ${formData.schoolName || 'our school'}.\n\nMessage: ${formData.message || 'I would like to inquire about your teacher recruitment, reading club, and consultancy services.'}`;
     safeOpenUrl(`https://wa.me/233540390029?text=${encodeURIComponent(text)}`);
   };
 
@@ -43,7 +43,7 @@ export const ContactView: React.FC = () => {
       {/* Banner */}
       <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-3 sm:space-y-4">
         <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
-          Contact CEC Educational Consults
+          Contact CEC Educational Consult
         </h1>
         <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
           Have questions about teacher recruitment, school setup, reading clubs, or consulting with Miss Nancie? We are here to assist you.
@@ -63,7 +63,7 @@ export const ContactView: React.FC = () => {
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-slate-900">Message Received!</h3>
               <p className="text-slate-600 text-xs">
-                Thank you for contacting CEC Consults. Miss Nancie's team will respond to your inquiry within 24 business hours.
+                Thank you for contacting CEC Consult. Miss Nancie's team will respond to your inquiry within 24 business hours.
               </p>
               <button
                 type="button"
@@ -131,7 +131,7 @@ export const ContactView: React.FC = () => {
                 <textarea
                   rows={4}
                   required
-                  placeholder="How can Miss Nancie & CEC Consults assist your school, teaching career, or child literacy?"
+                  placeholder="How can Miss Nancie & CEC Consult assist your school, teaching career, or child literacy?"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="w-full p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
@@ -188,7 +188,7 @@ export const ContactView: React.FC = () => {
                 <Mail className="w-4 h-4 text-[#2ac0db] shrink-0 mt-0.5" />
                 <div>
                   <strong className="block text-slate-200">Email</strong>
-                  <span className="text-slate-400">contact@ceceduconsults.org</span>
+                  <span className="text-slate-400">contact@ceceduconsult.org</span>
                 </div>
               </div>
 
