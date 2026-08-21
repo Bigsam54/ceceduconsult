@@ -5,7 +5,8 @@ import {
   CECSpaceProject, 
   LearningProduct,
   PendingTeacherApproval,
-  ConsultationBooking
+  ConsultationBooking,
+  VideoTestimonial
 } from '../types';
 
 export const MOCK_TEACHERS: Teacher[] = [
@@ -287,7 +288,7 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
     id: 'srv-2',
     title: 'Preschool Curriculum Design & Audit',
     shortDesc: 'Custom EYFS, Montessori, and blended curriculum frameworks designed for maximum child engagement.',
-    fullDesc: 'Miss Nancy and our curriculum experts review your existing scheme of work or design a bespoke child-centric curriculum aligned with global early childhood standards.',
+    fullDesc: 'Miss Nancie and our curriculum experts review your existing scheme of work or design a bespoke child-centric curriculum aligned with global early childhood standards.',
     iconName: 'BookOpenCheck',
     features: [
       'Scope & sequence development for ages 1 - 6',
@@ -345,56 +346,60 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   }
 ];
 
-export const MOCK_VIDEO_TESTIMONIALS = [
+export const MOCK_VIDEO_TESTIMONIALS: VideoTestimonial[] = [
   {
     id: 'vid-1',
-    author: 'Mrs. Nana Yaa Appiah',
-    role: 'Proprietress & Founder',
-    school: 'Morning Star Early Years Academy',
-    location: 'East Legon, Accra',
-    duration: '1:45',
-    coverImage: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=800&auto=format&fit=crop',
-    headline: '“Hiring vetted EYFS teachers took days instead of months.”',
-    quote: 'Before partnering with CEC, finding teachers in Accra who genuinely understand early childhood pedagogy was exhausting. With Miss Nancy’s team, we placed two outstanding educators who transformed our classrooms immediately.',
-    videoTopic: 'Preschool Teacher Recruitment & 90-Day Guarantee',
+    author: 'Partner School Educator',
+    role: 'Early Childhood Educator',
+    school: 'Partner School',
+    location: 'Ghana',
+    duration: 'Video Review',
+    coverImage: 'https://res.cloudinary.com/qg0w6ewi/image/upload/f_auto,q_auto/v1787294779/IMG_4128.jpg',
+    headline: 'Teacher Placement & Early Childhood Experience',
+    videoUrl: 'https://res.cloudinary.com/qg0w6ewi/video/upload/vc_h264,q_auto,w_720/v1787301607/455D148D-7D3E-4CF2-B954-03014580E217.mp4',
+    embedFallbackUrl: 'https://drive.google.com/file/d/1B57veOzRgbcauhScWPiLPuy6werhqP6W/preview?autoplay=1',
+    videoTopic: 'CEC Placement & Consultation Feedback',
     verifiedSchool: true
   },
   {
     id: 'vid-2',
     author: 'Akosua Mensah',
     role: 'Lead EYFS Teacher',
-    school: 'Lincoln Early Years Community',
-    location: 'Airport Residential, Accra',
-    duration: '2:12',
+    school: 'Partner School',
+    location: 'Ghana',
+    duration: 'Video Review',
     coverImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop',
-    headline: '“CEC mentorship gave me the confidence and career growth I needed.”',
-    quote: 'Joining the CEC Teacher Network elevated my career. Miss Nancy’s Jolly Phonics and Montessori workshops gave me practical strategies that I use with my learners every single day.',
+    headline: 'Teacher Mentorship & Career Growth Feedback',
+    videoUrl: 'https://res.cloudinary.com/qg0w6ewi/video/upload/vc_h264,q_auto,w_720/v1787301607/455D148D-7D3E-4CF2-B954-03014580E217.mp4',
+    embedFallbackUrl: 'https://drive.google.com/file/d/1B57veOzRgbcauhScWPiLPuy6werhqP6W/preview?autoplay=1',
     videoTopic: 'Teacher Mentorship & Career Placement',
     verifiedSchool: true
   },
   {
     id: 'vid-3',
-    author: 'Mr. Kofi Boateng',
+    author: 'Crown Heritage School',
     role: 'Head of School',
-    school: 'Crown Heritage International School',
-    location: 'Kumasi, Ghana',
-    duration: '1:30',
+    school: 'Crown Heritage International',
+    location: 'Ghana',
+    duration: 'Video Review',
     coverImage: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop',
-    headline: '“The CEC Spaces transformation impressed all our parents on Open Day.”',
-    quote: 'CEC redesigned our toddler learning spaces with wooden Montessori shelving and a dedicated sensory reading nook. Enrollment in our preschool wing jumped by 40% this academic session.',
+    headline: 'CEC Spaces Classroom Setup & Renovation',
+    videoUrl: 'https://res.cloudinary.com/qg0w6ewi/video/upload/vc_h264,q_auto,w_720/v1787301607/455D148D-7D3E-4CF2-B954-03014580E217.mp4',
+    embedFallbackUrl: 'https://drive.google.com/file/d/1B57veOzRgbcauhScWPiLPuy6werhqP6W/preview?autoplay=1',
     videoTopic: 'CEC Spaces Classroom Renovation & Setup',
     verifiedSchool: true
   },
   {
     id: 'vid-4',
-    author: 'Dr. Elizabeth Asare',
+    author: 'Oakwood Ridge International',
     role: 'Early Years Director',
-    school: 'Oakwood Ridge International',
-    location: 'Cantonments, Accra',
-    duration: '1:58',
+    school: 'Oakwood Ridge',
+    location: 'Ghana',
+    duration: 'Video Review',
     coverImage: 'https://images.unsplash.com/photo-1580894732413-b88d44747683?q=80&w=800&auto=format&fit=crop',
-    headline: '“The CEC Reading Club made our 4-year-olds enthusiastic readers.”',
-    quote: 'Integrating the CEC Reading Club into our curriculum turned hesitant readers into confident storytellers. The children look forward to every reading circle and book box.',
+    headline: 'Reading Lounge & Phonics Club Experience',
+    videoUrl: 'https://res.cloudinary.com/qg0w6ewi/video/upload/vc_h264,q_auto,w_720/v1787301607/455D148D-7D3E-4CF2-B954-03014580E217.mp4',
+    embedFallbackUrl: 'https://drive.google.com/file/d/1B57veOzRgbcauhScWPiLPuy6werhqP6W/preview?autoplay=1',
     videoTopic: 'CEC Reading Club & Phonics Integration',
     verifiedSchool: true
   }
@@ -411,7 +416,7 @@ export const MOCK_WORKSHOPS: Workshop[] = [
     price: 'GH₵ 450 ($35)',
     availableSeats: 8,
     totalSeats: 40,
-    facilitator: 'Miss Nancy (Founder, CEC Consults Ghana)',
+    facilitator: 'Miss Nancie (Founder, CEC Consults Ghana)',
     description: 'Learn proven non-punitive strategies to manage toddler tantrums, promote self-regulation, and create a calm, cooperative preschool environment in Ghana.',
     image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=800&auto=format&fit=crop'
   },
@@ -453,7 +458,7 @@ export const MOCK_WORKSHOPS: Workshop[] = [
     price: 'GH₵ 1,100 ($80)',
     availableSeats: 6,
     totalSeats: 25,
-    facilitator: 'Miss Nancy & Guest School Directors',
+    facilitator: 'Miss Nancie & Guest School Directors',
     description: 'Strategic roadmap for preschool owners in Ghana: fee pricing, parent satisfaction, teacher retention, and brand positioning in competitive areas.',
     image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=800&auto=format&fit=crop'
   }
@@ -466,8 +471,8 @@ export const MOCK_CEC_SPACES: CECSpaceProject[] = [
     schoolName: 'The Haven International Academy',
     location: 'East Legon, Accra, Ghana',
     type: 'Montessori Classroom',
-    beforeImage: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=800&auto=format&fit=crop',
-    afterImage: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=800&auto=format&fit=crop',
+    beforeImage: 'https://images.unsplash.com/photo-1588072432836-e10032774350?q=80&w=1200&auto=format&fit=crop',
+    afterImage: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=85&w=1400&auto=format&fit=crop',
     description: 'Converted a standard classroom into an open, warm, natural-wood Montessori learning laboratory with accessible low shelves and cozy reading corners.',
     keyUpgrades: [
       'Child-height solid oak wooden shelving',
@@ -640,7 +645,7 @@ export const MOCK_TESTIMONIALS = [
     image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=300&auto=format&fit=crop"
   },
   {
-    quote: "Joining the CEC Teacher Network was the best career move I ever made in Ghana. Miss Nancy's mentorship and training elevated my teaching skills, and CEC matched me with a school that genuinely values early years educators.",
+    quote: "Joining the CEC Teacher Network was the best career move I ever made in Ghana. Miss Nancie's mentorship and training elevated my teaching skills, and CEC matched me with a school that genuinely values early years educators.",
     author: "Akosua Mensah",
     role: "Lead EYFS Teacher",
     school: "Lincoln Early Years Community",

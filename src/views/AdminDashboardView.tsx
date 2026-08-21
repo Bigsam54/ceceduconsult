@@ -273,7 +273,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
     {
       id: 'bc-2',
       target: 'School Owners',
-      title: 'Pre-Term EYFS Classroom Audits with Miss Nancy',
+      title: 'Pre-Term EYFS Classroom Audits with Miss Nancie',
       body: 'Schedule your pre-resumption curriculum and teacher readiness review before classes resume. Limited slots available this month.',
       date: 'Aug 12, 2026',
       status: 'Sent',
@@ -317,7 +317,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             avatar: t.photo,
             previousStatus: t.availability,
             newStatus: newAvailability,
-            changedBy: 'Miss Nancy (Admin)',
+            changedBy: 'Miss Nancie (Admin)',
             reason: `Status changed from ${t.availability} to ${newAvailability}`,
             timestamp: 'Just Now'
           };
@@ -347,7 +347,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
           avatar: t.photo,
           previousStatus: t.availability,
           newStatus: newAvail,
-          changedBy: 'Miss Nancy (Admin)',
+          changedBy: 'Miss Nancie (Admin)',
           reason: `Availability changed to ${newAvail}`,
           timestamp: 'Just Now'
         };
@@ -371,8 +371,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             avatar: t.photo,
             previousStatus: t.availability,
             newStatus: t.availability,
-            changedBy: 'Miss Nancy (Admin)',
-            reason: 'Issued Miss Nancy Verified Badge after document verification.',
+            changedBy: 'Miss Nancie (Admin)',
+            reason: 'Issued Miss Nancie Verified Badge after document verification.',
             timestamp: 'Just Now'
           };
           setMovementLogs(prevLogs => [newLog, ...prevLogs]);
@@ -397,8 +397,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
         avatar: pendingItem.avatar,
         previousStatus: '2 Weeks Notice',
         newStatus: 'Immediate',
-        changedBy: 'Miss Nancy (Admin)',
-        reason: 'Application approved and verified by Miss Nancy.',
+        changedBy: 'Miss Nancie (Admin)',
+        reason: 'Application approved and verified by Miss Nancie.',
         timestamp: 'Just Now'
       };
       setMovementLogs(prevLogs => [newLog, ...prevLogs]);
@@ -489,7 +489,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       teacherName: manualLogTeacherName,
       previousStatus: manualLogPrevStatus,
       newStatus: manualLogNewStatus,
-      changedBy: 'Miss Nancy (Admin)',
+      changedBy: 'Miss Nancie (Admin)',
       reason: manualLogReason,
       schoolInvolved: manualLogSchool || 'Partner School Network',
       timestamp: 'Just Now'
@@ -552,7 +552,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
           </div>
           <div>
             <h1 className="font-heading font-extrabold text-xl sm:text-2xl text-white">
-              Miss Nancy's Admin Center
+              Miss Nancie's Admin Center
             </h1>
             <p className="text-xs text-slate-300 mt-1">
               CEC Educational Consults — Early years educator recruitment, school audits, and workshop management
@@ -861,7 +861,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     <div className="w-2.5 h-2.5 rounded-full bg-[#2ac0db] mx-auto shadow-xs group-hover:scale-125 transition-transform" />
                     <div className="text-2xl font-extrabold text-[#2ac0db]">{countVerified}</div>
                     <div className="text-[11px] font-bold text-slate-200">Verified</div>
-                    <div className="text-[9px] text-slate-400">Vetted by Nancy</div>
+                    <div className="text-[9px] text-slate-400">Vetted by Nancie</div>
                   </div>
 
                   {/* Pending Audits */}
@@ -1181,7 +1181,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
                   >
                     <option value="All">All Verification Statuses</option>
-                    <option value="Verified">Verified by Miss Nancy</option>
+                    <option value="Verified">Verified by Miss Nancie</option>
                     <option value="Unverified">Pending Verification</option>
                   </select>
                 </div>
@@ -1345,7 +1345,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                 <div>
                   <h3 className="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
                     <Calendar className="w-5 h-5 text-[#2ac0db]" />
-                    Miss Nancy's Master Calendar & Appointments
+                    Miss Nancie's Master Calendar & Appointments
                   </h3>
                   <p className="text-xs text-slate-500">Manage client consultations, EYFS school audits, and candidate screening interviews</p>
                 </div>
@@ -1898,7 +1898,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-heading font-bold text-slate-900 text-base flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-[#2ac0db]" />
-                Schedule Miss Nancy Session
+                Schedule Miss Nancie Session
               </h3>
               <button
                 onClick={() => setShowNewAptModal(false)}

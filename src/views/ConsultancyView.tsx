@@ -36,7 +36,7 @@ export const ConsultancyView: React.FC<ConsultancyViewProps> = ({ onOpenConsulta
       {/* Banner */}
       <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-3 sm:space-y-4">
         <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white leading-tight">
-          Educational Consultancy with <span className="text-[#2ac0db]">Miss Nancy</span>
+          Educational Consultancy with <span className="text-[#2ac0db]">Miss Nancie</span>
         </h1>
 
         <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
@@ -127,7 +127,7 @@ export const ConsultancyView: React.FC<ConsultancyViewProps> = ({ onOpenConsulta
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { step: '01', title: 'Initial Needs Audit', desc: 'Miss Nancy conducts a comprehensive review of your school goals, staffing, and floor plan.' },
+              { step: '01', title: 'Initial Needs Audit', desc: 'Miss Nancie conducts a comprehensive review of your school goals, staffing, and floor plan.' },
               { step: '02', title: 'Custom Action Plan', desc: 'You receive a clear roadmap covering teacher placement, spatial zoning, and curriculum milestones.' },
               { step: '03', title: 'Hands-On Execution', desc: 'We deliver staff workshops, setup learning areas, and oversee classroom transitions.' },
               { step: '04', title: 'Review & Mentorship', desc: 'Ongoing quality assurance visits and mentor check-ins ensure sustained excellence.' }

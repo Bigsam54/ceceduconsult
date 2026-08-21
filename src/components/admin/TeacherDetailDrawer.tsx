@@ -19,6 +19,7 @@ import {
   AlertCircle,
   Sparkles
 } from 'lucide-react';
+import { WhatsAppIcon } from '../icons/WhatsAppIcon';
 
 interface TeacherDetailDrawerProps {
   teacher: Teacher | null;
@@ -139,7 +140,7 @@ export const TeacherDetailDrawer: React.FC<TeacherDetailDrawerProps> = ({
                 <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
                   isVerified ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-amber-100 text-amber-900 border border-amber-200'
                 }`}>
-                  {isVerified ? 'Verified by Miss Nancy' : 'Pending Verification'}
+                  {isVerified ? 'Verified by Miss Nancie' : 'Pending Verification'}
                 </span>
               </div>
 
@@ -191,7 +192,7 @@ export const TeacherDetailDrawer: React.FC<TeacherDetailDrawerProps> = ({
               {/* Verification Toggle */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                  Miss Nancy Verification Status
+                  Miss Nancie Verification Status
                 </label>
                 <div className="flex items-center gap-2">
                   <button
@@ -250,7 +251,9 @@ export const TeacherDetailDrawer: React.FC<TeacherDetailDrawerProps> = ({
                 className="p-3 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 rounded-xl hidden sm:flex items-center justify-between text-xs font-bold text-emerald-900 transition-colors"
               >
                 <span className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-extrabold text-[10px]">WA</span>
+                  <span className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center">
+                    <WhatsAppIcon className="w-3.5 h-3.5 text-white" />
+                  </span>
                   <span>WhatsApp: {teacher.contactWhatsappNumber}</span>
                 </span>
                 <ExternalLink className="w-3.5 h-3.5 text-emerald-700" />
@@ -300,7 +303,7 @@ export const TeacherDetailDrawer: React.FC<TeacherDetailDrawerProps> = ({
               </div>
               <div className="flex items-center justify-between py-1">
                 <span className="font-medium text-slate-600">Reviewed By</span>
-                <span className="font-bold text-slate-900">Miss Nancy (Lead Consultant)</span>
+                <span className="font-bold text-slate-900">Miss Nancie (Lead Consultant)</span>
               </div>
             </div>
           </div>

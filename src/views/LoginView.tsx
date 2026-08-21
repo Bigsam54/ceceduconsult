@@ -51,7 +51,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onNavigate, onLoginSuccess
             </h2>
 
             <p className="text-slate-300 text-xs leading-relaxed">
-              Access candidate profiles, management tools, teacher applications, and Miss Nancy's consultation schedules.
+              Access candidate profiles, management tools, teacher applications, and Miss Nancie's consultation schedules.
             </p>
           </div>
 

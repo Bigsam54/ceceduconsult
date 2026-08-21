@@ -4,7 +4,6 @@ import { safeOpenUrl } from '../utils/safeWindow';
 import { 
   X, 
   ArrowLeft,
-  MessageCircle, 
   Copy, 
   Check, 
   Send, 
@@ -14,6 +13,7 @@ import {
   Phone, 
   Calendar 
 } from 'lucide-react';
+import { WhatsAppIcon } from './icons/WhatsAppIcon';
 
 interface ContactTeacherModalProps {
   teacher: Teacher | null;
@@ -51,7 +51,7 @@ export const ContactTeacherModal: React.FC<ContactTeacherModalProps> = ({ teache
 
   const initials = teacher.name.split(' ').map(n => n[0]).join('').slice(0, 2);
 
-  const defaultMessage = `Hello Miss Nancy (CEC Consults, Ghana),\n\nI am ${contactPerson || '[Your Name]'} representing ${schoolName || '[School Name]'}.\n\nWe viewed the verified profile for ${teacher.name} (${teacher.title}, ${teacher.teachingLevel}) on the CEC Teacher Network.\n\nWe would like to request candidate details and schedule an interview on ${requestedDate || '[Target Date]'}.\n\nPlease reach us back at ${phone || '[Phone]'}.\n\nThank you!`;
+  const defaultMessage = `Hello Miss Nancie (CEC Consults, Ghana),\n\nI am ${contactPerson || '[Your Name]'} representing ${schoolName || '[School Name]'}.\n\nWe viewed the verified profile for ${teacher.name} (${teacher.title}, ${teacher.teachingLevel}) on the CEC Teacher Network.\n\nWe would like to request candidate details and schedule an interview on ${requestedDate || '[Target Date]'}.\n\nPlease reach us back at ${phone || '[Phone]'}.\n\nThank you!`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(defaultMessage);
@@ -221,8 +221,8 @@ export const ContactTeacherModal: React.FC<ContactTeacherModalProps> = ({ teache
               onClick={handleSendWhatsApp}
               className="w-full sm:flex-1 py-3 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer text-xs"
             >
-              <MessageCircle className="w-4 h-4" />
-              <span>Send WhatsApp to Miss Nancy</span>
+              <WhatsAppIcon className="w-4 h-4" />
+              <span>Send WhatsApp to Miss Nancie</span>
             </button>
             <button
               type="button"

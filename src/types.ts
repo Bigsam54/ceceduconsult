@@ -35,12 +35,14 @@ export interface VideoTestimonial {
   role: string;
   school: string;
   location: string;
-  duration: string;
+  duration?: string;
   coverImage: string;
   headline: string;
-  quote: string;
-  videoTopic: string;
-  verifiedSchool: boolean;
+  videoUrl?: string;
+  embedFallbackUrl?: string;
+  quote?: string;
+  videoTopic?: string;
+  verifiedSchool?: boolean;
 }
 
 export interface TimelineItem {
@@ -200,7 +202,7 @@ export interface AvailabilityMovementLog {
   avatar?: string;
   previousStatus: AvailabilityStatus;
   newStatus: AvailabilityStatus;
-  changedBy: 'Teacher Self-Update' | 'Miss Nancy (Admin)' | 'Placement Match System';
+  changedBy: 'Teacher Self-Update' | 'Miss Nancie (Admin)' | 'Placement Match System';
   reason: string;
   schoolInvolved?: string;
   timestamp: string;

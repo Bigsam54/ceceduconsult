@@ -3,15 +3,13 @@ import { safeOpenUrl } from '../utils/safeWindow';
 import { 
   Mail, 
   Phone, 
-  MapPin, 
-  MessageCircle, 
   Send, 
   Clock, 
   CheckCircle2,
-  Building2,
-  User,
-  Sparkles
+  ShieldCheck,
+  Headphones
 } from 'lucide-react';
+import { WhatsAppIcon } from '../components/icons/WhatsAppIcon';
 import confetti from 'canvas-confetti';
 
 export const ContactView: React.FC = () => {
@@ -35,7 +33,7 @@ export const ContactView: React.FC = () => {
   };
 
   const launchWhatsApp = () => {
-    const text = `Hello Miss Nancy / CEC Consults (Ghana)!\n\nI am ${formData.name || 'a visitor'} from ${formData.schoolName || 'our school'}.\n\nMessage: ${formData.message || 'I would like to inquire about your teacher recruitment, reading club, and consultancy services.'}`;
+    const text = `Hello Miss Nancie / CEC Consults!\n\nI am ${formData.name || 'a visitor'} from ${formData.schoolName || 'our school'}.\n\nMessage: ${formData.message || 'I would like to inquire about your teacher recruitment, reading club, and consultancy services.'}`;
     safeOpenUrl(`https://wa.me/233540390029?text=${encodeURIComponent(text)}`);
   };
 
@@ -44,15 +42,11 @@ export const ContactView: React.FC = () => {
       
       {/* Banner */}
       <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-3 sm:space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#2ac0db]/15 border border-[#2ac0db]/30 rounded-full text-xs font-bold text-[#2ac0db]">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Accra, Ghana Headquarters</span>
-        </div>
         <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
           Contact CEC Educational Consults
         </h1>
         <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
-          Have questions about teacher recruitment in Ghana, school setup, reading clubs, or consulting with Miss Nancy? We are here to assist you.
+          Have questions about teacher recruitment, school setup, reading clubs, or consulting with Miss Nancie? We are here to assist you.
         </p>
       </div>
 
@@ -69,7 +63,7 @@ export const ContactView: React.FC = () => {
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-slate-900">Message Received!</h3>
               <p className="text-slate-600 text-xs">
-                Thank you for contacting CEC Consults. Miss Nancy's team in Accra will respond to your inquiry within 24 business hours.
+                Thank you for contacting CEC Consults. Miss Nancie's team will respond to your inquiry within 24 business hours.
               </p>
               <button
                 type="button"
@@ -137,7 +131,7 @@ export const ContactView: React.FC = () => {
                 <textarea
                   rows={4}
                   required
-                  placeholder="How can Miss Nancy & CEC Consults assist your school, teaching career, or child literacy in Ghana?"
+                  placeholder="How can Miss Nancie & CEC Consults assist your school, teaching career, or child literacy?"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="w-full p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
@@ -148,9 +142,9 @@ export const ContactView: React.FC = () => {
                 <button
                   type="button"
                   onClick={launchWhatsApp}
-                  className="w-full sm:w-auto px-4 sm:px-5 py-2.5 sm:py-3 bg-[#2ac0db]/15 text-[#126373] font-bold rounded-xl flex items-center justify-center gap-2 border border-[#2ac0db]/30 cursor-pointer text-xs"
+                  className="w-full sm:w-auto px-4 sm:px-5 py-2.5 sm:py-3 bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 font-bold rounded-xl flex items-center justify-center gap-2 border border-emerald-500/30 cursor-pointer text-xs transition-colors"
                 >
-                  <MessageCircle className="w-4 h-4 text-[#126373]" />
+                  <WhatsAppIcon className="w-4 h-4 text-emerald-600" />
                   <span>Instant WhatsApp Chat</span>
                 </button>
 
@@ -168,27 +162,22 @@ export const ContactView: React.FC = () => {
 
         </div>
 
-        {/* Right: Info & Map */}
+        {/* Right: Info & Contact Channels */}
         <div className="lg:col-span-5 space-y-4 sm:space-y-6">
           
           <div className="bg-slate-950 text-white p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-5 shadow-md">
-            <h3 className="font-heading font-bold text-base sm:text-lg text-[#2ac0db]">CEC Office Headquarters (Ghana)</h3>
+            <h3 className="font-heading font-bold text-base sm:text-lg text-[#2ac0db]">Direct Inquiries & Support</h3>
 
             <div className="space-y-4 text-xs">
-              <div className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-[#2ac0db] shrink-0 mt-0.5" />
-                <div>
-                  <strong className="block text-slate-200">Accra Office Location</strong>
-                  <span className="text-slate-400">CEC Consults Hub, East Legon / Airport Residential Area, Accra, Ghana</span>
-                </div>
-              </div>
-
               <div className="flex items-start gap-3">
                 <Phone className="w-4 h-4 text-[#2ac0db] shrink-0 mt-0.5" />
                 <div>
                   <strong className="block text-slate-200">Phone & WhatsApp Lines</strong>
                   <div className="text-slate-300 space-y-1 mt-1 font-semibold">
-                    <p>+233 54 039 0029 (Primary / WhatsApp)</p>
+                    <p className="flex items-center gap-2">
+                      <WhatsAppIcon className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>+233 54 039 0029 (Primary / WhatsApp)</span>
+                    </p>
                     <p>+233 20 685 5347</p>
                     <p>+233 24 935 6337</p>
                   </div>
@@ -213,13 +202,22 @@ export const ContactView: React.FC = () => {
             </div>
           </div>
 
-          {/* Map Visual Badge */}
-          <div className="bg-slate-100 rounded-3xl overflow-hidden h-40 sm:h-44 relative flex items-center justify-center text-center p-6 border border-slate-200">
-            <div className="space-y-1">
-              <MapPin className="w-7 h-7 text-[#fa7b2d] mx-auto animate-bounce" />
-              <p className="font-bold text-slate-800 text-xs">CEC Ghana HQ • East Legon, Accra</p>
-              <p className="text-[10px] text-slate-500">Advisory, Teacher Placement & Training Center</p>
+          {/* Rapid Response Callout Box */}
+          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center">
+              <Headphones className="w-5 h-5 text-[#2ac0db]" />
             </div>
+            <h4 className="font-heading font-bold text-sm text-slate-900">Need Immediate Assistance?</h4>
+            <p className="text-slate-600 text-xs leading-relaxed">
+              Our team provides quick advisory support for school leaders, teachers, and parents via our direct WhatsApp channel.
+            </p>
+            <button
+              onClick={launchWhatsApp}
+              className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <WhatsAppIcon className="w-4 h-4 text-white" />
+              <span>Connect on WhatsApp</span>
+            </button>
           </div>
 
         </div>

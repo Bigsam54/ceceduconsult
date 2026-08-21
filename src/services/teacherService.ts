@@ -139,7 +139,7 @@ export const teacherService = {
       return {
         success: true,
         data: { id: `cec-t-${Date.now()}` },
-        message: 'Application received and submitted to Miss Nancy for audit'
+        message: 'Application received and submitted to Miss Nancie for audit'
       };
     }
   }

@@ -27,10 +27,6 @@ export const PageFaqSection: React.FC<PageFaqSectionProps> = ({
     <section className={`bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-10 shadow-2xs space-y-8 ${className}`}>
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-100 pb-6">
         <div className="space-y-2 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#2ac0db]/15 text-[#126373] rounded-full text-xs font-extrabold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-[#2ac0db]" />
-            <span>{badgeText}</span>
-          </div>
           <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
             {title}
           </h2>

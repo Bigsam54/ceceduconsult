@@ -94,15 +94,11 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
       
       {/* Header */}
       <div className="text-center space-y-1.5 sm:space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#2ac0db]/15 border border-[#2ac0db]/30 rounded-full text-xs font-bold text-[#126373]">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Ghana Early Childhood Network</span>
-        </div>
         <h1 className="text-2xl sm:text-3xl font-heading font-extrabold text-slate-900">
           Join the CEC Teacher Network
         </h1>
         <p className="text-slate-500 text-xs sm:text-sm">
-          Complete your application to get vetted by Miss Nancy and placed in top preschools in Accra.
+          Complete your application to get vetted by Miss Nancie and placed in top preschools in Accra.
         </p>
       </div>
 
@@ -383,7 +379,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
             </div>
             <h2 className="text-2xl font-bold text-slate-900">Application Submitted!</h2>
             <p className="text-xs text-slate-600 max-w-sm mx-auto">
-              Miss Nancy and the CEC verification team in Accra will review your application within 48 hours. You will receive an invitation for your classroom simulation audit.
+              Miss Nancie and the CEC verification team in Accra will review your application within 48 hours. You will receive an invitation for your classroom simulation audit.
             </p>
             <button
               type="button"

@@ -1,5 +1,5 @@
 /**
- * Super Admin Domain API Service (Miss Nancy's Hub)
+ * Super Admin Domain API Service (Miss Nancie's Hub)
  * 
  * Endpoints for:
  * 1. Live Teacher Availability Summary & Audit Verification

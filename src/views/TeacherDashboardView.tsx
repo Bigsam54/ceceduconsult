@@ -286,7 +286,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                     <Briefcase className="w-4 h-4 text-[#fa7b2d]" />
                   </div>
                   <div className="text-2xl font-extrabold text-slate-900">4</div>
-                  <p className="text-[11px] text-slate-500 font-medium">Pending Miss Nancy's schedule</p>
+                  <p className="text-[11px] text-slate-500 font-medium">Pending Miss Nancie's schedule</p>
                 </div>
 
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
@@ -362,7 +362,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                   </div>
 
                   <button 
-                    onClick={() => showSaveNotification(`Interest registered for ${job.role} at ${job.school}. Miss Nancy's team will contact you!`)}
+                    onClick={() => showSaveNotification(`Interest registered for ${job.role} at ${job.school}. Miss Nancie's team will contact you!`)}
                     className="px-4 py-2.5 bg-slate-900 hover:bg-[#126373] text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer shrink-0 transition-colors"
                   >
                     <span>Express Interest</span>
@@ -487,7 +487,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                     <GraduationCap className="w-5 h-5 text-[#2ac0db]" />
                     Candidate Profile & Qualifications
                   </h3>
-                  <p className="text-xs text-slate-500">Keep your information up-to-date for school proprietors and Miss Nancy's placement team.</p>
+                  <p className="text-xs text-slate-500">Keep your information up-to-date for school proprietors and Miss Nancie's placement team.</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

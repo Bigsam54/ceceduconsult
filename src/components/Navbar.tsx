@@ -144,13 +144,17 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                       currentView === 'reading-club' ? 'bg-[#2ac0db]/15 text-[#126373] font-bold' : 'text-slate-700'
                     }`}
                   >
-                    <div className="w-8 h-8 rounded-xl bg-[#fa7b2d]/15 text-[#fa7b2d] flex items-center justify-center shrink-0">
-                      <BookOpen className="w-4 h-4" />
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 p-1 border border-slate-200">
+                      <img
+                        src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293997/The_Reading_Lounge_5.png"
+                        alt="The Reading Lounge"
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                     <div>
                       <div className="font-semibold text-slate-900 flex items-center gap-1.5">
-                        <span>CEC Reading Club</span>
-                        <span className="px-1.5 py-0.2 bg-[#fa7b2d] text-white text-[9px] font-bold rounded">New</span>
+                        <span>The Reading Lounge</span>
+                        <span className="px-1.5 py-0.2 bg-[#fa7b2d] text-white text-[9px] font-bold rounded">Club</span>
                       </div>
                       <div className="text-[11px] text-slate-500">Phonics, book boxes & storytelling</div>
                     </div>
@@ -207,8 +211,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                       currentView === 'learning-essentials' ? 'bg-[#2ac0db]/15 text-[#126373] font-bold' : 'text-slate-700'
                     }`}
                   >
-                    <div className="w-8 h-8 rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center shrink-0">
-                      <ShoppingBag className="w-4 h-4" />
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 p-1 border border-slate-200">
+                      <img
+                        src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786994345/CEC_Learning_Essentials-removebg-preview.png"
+                        alt="CEC Learning Essentials"
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                     <div>
                       <div className="font-semibold text-slate-900">Learning Essentials</div>
@@ -246,7 +254,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                     }`}
                   >
                     <Info className="w-4 h-4 text-[#126373]" />
-                    <span>About Miss Nancy & CEC</span>
+                    <span>About Miss Nancie & CEC</span>
                   </button>
 
                   <button
@@ -428,7 +436,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
               className="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded-xl flex items-center gap-2.5"
             >
               <Info className="w-4 h-4 text-[#126373]" />
-              <span>About Miss Nancy & CEC</span>
+              <span>About Miss Nancie & CEC</span>
             </button>
             <button
               onClick={() => handleNav('join-network')}

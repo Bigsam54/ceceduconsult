@@ -46,129 +46,64 @@ export const HomeView: React.FC<HomeViewProps> = ({
     <div className="space-y-12 sm:space-y-16 pb-12 sm:pb-16">
       
       {/* HERO SECTION */}
-      <section className="relative pt-8 sm:pt-12 pb-12 sm:pb-16 bg-slate-900 text-white border-b border-slate-800 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            
-            {/* Left Content Column */}
-            <div className="lg:col-span-7 text-left space-y-4 sm:space-y-6">
-              
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#2ac0db]/15 border border-[#2ac0db]/30 text-xs font-bold text-[#2ac0db]">
-                <ShieldCheck className="w-4 h-4" />
-                <span>Vetted Early Years Educators • Accra, Ghana</span>
-              </div>
-
-              {/* Main Headline */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-heading font-extrabold text-white tracking-tight leading-tight">
-                Quality Teachers for <span className="block text-[#2ac0db] mt-1">Growing Schools</span>
-              </h1>
-
-              {/* Subheadline */}
-              <p className="text-xs sm:text-sm md:text-base text-slate-300 leading-relaxed max-w-xl">
-                We connect Ghanaian preschools and primary schools with vetted, EYFS-trained teachers and support educators through mentorship, workshops, and classroom development.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-1">
-                <button
-                  onClick={() => onNavigate('directory')}
-                  className="px-5 sm:px-6 py-3 sm:py-3.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold rounded-xl shadow-md transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
-                >
-                  <Search className="w-4 h-4" />
-                  <span>Teachers Directory</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-
-                <button
-                  onClick={() => onNavigate('reading-club')}
-                  className="px-5 sm:px-6 py-3 sm:py-3.5 bg-[#fa7b2d] hover:bg-[#e66b1d] text-white font-extrabold rounded-xl shadow-md transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
-                >
-                  <BookOpen className="w-4 h-4" />
-                  <span>Reading Club</span>
-                </button>
-
-                <button
-                  onClick={() => onNavigate('join-network')}
-                  className="px-4 sm:px-5 py-3 sm:py-3.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl border border-slate-700 transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
-                >
-                  <GraduationCap className="w-4 h-4 text-[#2ac0db]" />
-                  <span>Join as Teacher</span>
-                </button>
-              </div>
-
-            </div>
-
-            {/* Right Hero Image */}
-            <div className="lg:col-span-5">
-              <div className="relative mx-auto max-w-md lg:max-w-none">
-                <div className="rounded-3xl overflow-hidden border-2 border-[#2ac0db]/30 shadow-2xl relative aspect-4/3 sm:aspect-16/11 bg-slate-950">
-                  <img
-                    src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80"
-                    alt="African children actively learning and reading in a modern preschool classroom"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                  
-                  {/* Floating Highlight Badge */}
-                  <div className="absolute bottom-3 left-3 right-3 p-3 bg-slate-900/90 backdrop-blur-xs rounded-2xl border border-white/15 flex items-center justify-between text-xs text-white">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-[#2ac0db] text-slate-950 flex items-center justify-center font-bold">
-                        <CheckCircle2 className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="font-extrabold text-white">100% Vetted & Verified</div>
-                        <div className="text-[10px] text-slate-300">Preschool & Nursery Specialists</div>
-                      </div>
-                    </div>
-                    <span className="text-[11px] font-bold text-[#fa7b2d] bg-[#fa7b2d]/15 px-2 py-0.5 rounded-full border border-[#fa7b2d]/30">
-                      Ghana
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
+      <section className="relative pt-10 sm:pt-14 pb-14 sm:pb-20 bg-slate-950 text-white border-b border-slate-800 overflow-hidden min-h-[380px] sm:min-h-[440px] flex items-center">
+        
+        {/* Elite African School Campus Aerial Background Photo */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+          <img
+            src="https://images.unsplash.com/photo-1592280771190-3e2e4d571952?auto=format&fit=crop&w=1920&q=80"
+            alt="Aerial view of modern elite school campus"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover object-center filter brightness-75 contrast-105"
+          />
+          {/* Ambient Lighting Gradients - Ensures text remains crisp and readable */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/80 to-slate-950/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-slate-950/40" />
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#2ac0db]/15 rounded-full blur-3xl pointer-events-none" />
         </div>
-      </section>
 
-      {/* STATS STRIP */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200 shadow-2xs grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-center divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
-          
-          <div className="space-y-0.5">
-            <div className="text-xl sm:text-2xl lg:text-3xl font-heading font-extrabold text-[#126373]">
-              1,000+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+          <div className="max-w-3xl space-y-5 sm:space-y-6 text-left">
+            
+            {/* Main Headline */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-extrabold text-white tracking-tight leading-tight">
+              Quality Teachers for <span className="text-[#2ac0db]">Growing Schools</span>
+            </h1>
+
+            {/* Shortened Subtitle Text */}
+            <p className="text-sm sm:text-base md:text-lg text-slate-200 leading-relaxed max-w-2xl font-medium">
+              Connecting Ghanaian preschools and primary schools with vetted, EYFS-trained teachers and early literacy reading clubs.
+            </p>
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <button
+                onClick={() => onNavigate('directory')}
+                className="px-5 sm:px-6 py-3 sm:py-3.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold rounded-xl shadow-lg transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+              >
+                <Search className="w-4 h-4" />
+                <span>Teachers Directory</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={() => onNavigate('reading-club')}
+                className="px-5 sm:px-6 py-3 sm:py-3.5 bg-[#fa7b2d] hover:bg-[#e66b1d] text-white font-extrabold rounded-xl shadow-lg transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>Reading Club</span>
+              </button>
+
+              <button
+                onClick={() => onNavigate('join-network')}
+                className="px-4 sm:px-5 py-3 sm:py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/15 transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+              >
+                <GraduationCap className="w-4 h-4 text-[#2ac0db]" />
+                <span>Join as Teacher</span>
+              </button>
             </div>
-            <div className="text-xs font-bold text-slate-800">Vetted Teachers</div>
-            <p className="text-[10px] sm:text-[11px] text-slate-500">Nursery & Primary</p>
-          </div>
 
-          <div className="space-y-0.5 pt-3 sm:pt-0">
-            <div className="text-xl sm:text-2xl lg:text-3xl font-heading font-extrabold text-[#fa7b2d]">
-              250+
-            </div>
-            <div className="text-xs font-bold text-slate-800">Partner Schools</div>
-            <p className="text-[10px] sm:text-[11px] text-slate-500">Preschools & Academies</p>
           </div>
-
-          <div className="space-y-0.5 pt-3 sm:pt-0">
-            <div className="text-xl sm:text-2xl lg:text-3xl font-heading font-extrabold text-[#126373]">
-              500+
-            </div>
-            <div className="text-xs font-bold text-slate-800">Placements Made</div>
-            <p className="text-[10px] sm:text-[11px] text-slate-500">90-Day Guarantee</p>
-          </div>
-
-          <div className="space-y-0.5 pt-3 sm:pt-0">
-            <div className="text-xl sm:text-2xl lg:text-3xl font-heading font-extrabold text-slate-800">
-              10+ Yrs
-            </div>
-            <div className="text-xs font-bold text-slate-800">Advisory Experience</div>
-            <p className="text-[10px] sm:text-[11px] text-slate-500">Led by Miss Nancy</p>
-          </div>
-
         </div>
       </section>
 
@@ -216,14 +151,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
               Featured
             </div>
             <div className="space-y-2">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#fa7b2d]/15 text-[#fa7b2d] flex items-center justify-center">
-                <BookOpen className="w-5 h-5" />
+              <div className="h-10 flex items-center">
+                <img
+                  src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293997/The_Reading_Lounge_5.png"
+                  alt="The Reading Lounge Logo"
+                  referrerPolicy="no-referrer"
+                  className="h-8 w-auto object-contain"
+                />
               </div>
               <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#fa7b2d]">
-                Reading Club
+                The Reading Lounge
               </h3>
               <p className="text-slate-600 text-xs leading-relaxed">
-                Weekly phonics, guided storytelling, and monthly book boxes for ages 2–8.
+                Inspiring lifelong love for reading in children ages 4 to 11 years through hands-on activities, Synthetic Phonics, guided storytelling, tactile reading games and monthly curated book collections.
               </p>
             </div>
             <span className="text-xs font-bold text-[#fa7b2d] flex items-center gap-1 pt-2">
@@ -279,18 +219,23 @@ export const HomeView: React.FC<HomeViewProps> = ({
             className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-3 flex flex-col justify-between"
           >
             <div className="space-y-2">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center">
-                <ShoppingBag className="w-5 h-5" />
+              <div className="h-10 flex items-center">
+                <img
+                  src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786994345/CEC_Learning_Essentials-removebg-preview.png"
+                  alt="CEC Learning Essentials Logo"
+                  referrerPolicy="no-referrer"
+                  className="h-8 w-auto object-contain"
+                />
               </div>
               <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#126373]">
-                Learning Store
+                Learning Essentials
               </h3>
               <p className="text-slate-600 text-xs leading-relaxed">
                 Montessori wooden materials, Jolly Phonics cards, and sensory aids.
               </p>
             </div>
             <span className="text-xs font-bold text-[#126373] flex items-center gap-1 pt-2">
-              Store <ArrowRight className="w-3 h-3" />
+              Essentials <ArrowRight className="w-3 h-3" />
             </span>
           </div>
 
@@ -337,7 +282,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               {[
                 { num: '01', title: 'Search Directory', desc: 'Browse verified candidates with EYFS qualifications and location filters.' },
                 { num: '02', title: 'Inspect Profiles', desc: 'Review verified credentials, classroom experience, and salary ranges.' },
-                { num: '03', title: 'Contact CEC', desc: 'Schedule interviews with Miss Nancy to review candidate suitability.' },
+                { num: '03', title: 'Contact CEC', desc: 'Schedule interviews with Miss Nancie to review candidate suitability.' },
                 { num: '04', title: 'Hire with Guarantee', desc: 'Onboard your teacher backed by CEC’s 90-day replacement guarantee.' }
               ].map((step, idx) => (
                 <div key={idx} className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5 sm:space-y-2">
@@ -374,16 +319,12 @@ export const HomeView: React.FC<HomeViewProps> = ({
       {/* MEET MISS NANCY SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-slate-800 shadow-xl relative overflow-hidden text-center max-w-4xl mx-auto space-y-4 sm:space-y-5">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#2ac0db]/15 text-[#2ac0db] text-xs font-bold border border-[#2ac0db]/30 mx-auto">
-            <span>Meet Miss Nancy</span>
-          </div>
-
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-heading font-bold text-white leading-snug max-w-3xl mx-auto">
             “Every preschooler deserves a teacher who understands early child development.”
           </h2>
 
           <p className="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
-            Miss Nancy founded CEC Educational Consults to solve the challenge school owners face in finding vetted early years teachers, and to provide educators with mentorship and dignified compensation.
+            Miss Nancie founded CEC Educational Consults to solve the challenge school owners face in finding vetted early years teachers, and to provide educators with mentorship and dignified compensation.
           </p>
 
           <div className="pt-2">
@@ -392,7 +333,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               className="w-full sm:w-auto px-6 py-3 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold rounded-xl shadow transition-all text-xs sm:text-sm inline-flex items-center justify-center gap-2 cursor-pointer"
             >
               <MessageCircle className="w-4 h-4" />
-              <span>Book Advisory Session with Miss Nancy</span>
+              <span>Book Advisory Session with Miss Nancie</span>
             </button>
           </div>
         </div>

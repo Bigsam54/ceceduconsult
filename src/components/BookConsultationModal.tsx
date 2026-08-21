@@ -11,10 +11,9 @@ import {
   CheckCircle2, 
   ShieldCheck, 
   Send,
-  MessageCircle,
-  Clock,
-  MapPin
+  Clock
 } from 'lucide-react';
+import { WhatsAppIcon } from './icons/WhatsAppIcon';
 import confetti from 'canvas-confetti';
 
 interface BookConsultationModalProps {
@@ -120,7 +119,7 @@ export const BookConsultationModal: React.FC<BookConsultationModalProps> = ({ se
                 <ShieldCheck className="w-3.5 h-3.5" /> Early Years Advisory
               </span>
               <h3 className="text-sm sm:text-base font-heading font-bold text-white truncate max-w-[220px] sm:max-w-xs">
-                {submitted ? 'Request Received' : 'Schedule Call with Miss Nancy'}
+                {submitted ? 'Request Received' : 'Schedule Call with Miss Nancie'}
               </h3>
             </div>
           </div>
@@ -147,7 +146,7 @@ export const BookConsultationModal: React.FC<BookConsultationModalProps> = ({ se
                 Consultation Request Received!
               </h4>
               <p className="text-slate-600 text-xs sm:text-sm leading-relaxed max-w-sm mx-auto">
-                Thank you, <strong className="text-slate-900">{formData.name || 'School Leader'}</strong>. Miss Nancy’s advisory team in Accra, Ghana will reach out to you within 24 hours.
+                Thank you, <strong className="text-slate-900">{formData.name || 'School Leader'}</strong>. Miss Nancie’s advisory team in Accra, Ghana will reach out to you within 24 hours.
               </p>
 
               <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-700 text-left space-y-1.5">
@@ -162,13 +161,13 @@ export const BookConsultationModal: React.FC<BookConsultationModalProps> = ({ se
               <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-center space-y-2">
                 <p className="text-xs text-emerald-950 font-medium">Need immediate advisory assistance?</p>
                 <a
-                  href={`https://wa.me/233540390029?text=Hello%20Miss%20Nancy,%20I%20just%20submitted%20a%20consultation%20request%20for%20${encodeURIComponent(formData.schoolName || 'my school')}.`}
+                  href={`https://wa.me/233540390029?text=Hello%20Miss%20Nancie,%20I%20just%20submitted%20a%20consultation%20request%20for%20${encodeURIComponent(formData.schoolName || 'my school')}.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs transition-colors"
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>Chat with Miss Nancy on WhatsApp</span>
+                  <WhatsAppIcon className="w-4 h-4" />
+                  <span>Chat with Miss Nancie on WhatsApp</span>
                 </a>
               </div>
 

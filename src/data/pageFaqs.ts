@@ -3,7 +3,7 @@ import { FAQItem } from '../types';
 export const DIRECTORY_FAQS: FAQItem[] = [
   {
     id: 'dir-faq-1',
-    question: 'How are teachers screened before receiving the Miss Nancy Verified Badge?',
+    question: 'How are teachers screened before receiving the Miss Nancie Verified Badge?',
     answer: 'Every verified candidate undergoes a 4-tier audit: 1) Physical verification of degree certificates & Montessori/EYFS diplomas; 2) Police background clearance and TRCN licensing validation; 3) A recorded 15-minute micro-teaching phonics/math demo; 4) Direct reference calls to at least two previous school heads.'
   },
   {
@@ -42,7 +42,7 @@ export const READING_CLUB_FAQS: FAQItem[] = [
   {
     id: 'read-faq-3',
     question: 'How do the weekly Saturday Live Story & Phonics Circles work?',
-    answer: 'Sessions run for 45 minutes on Zoom led by Miss Nancy and certified reading specialists. They feature interactive phoneme songs, puppet-led story narration, character reenactments, and guided comprehension games with small breakout groups.'
+    answer: 'Sessions run for 45 minutes on Zoom led by Miss Nancie and certified reading specialists. They feature interactive phoneme songs, puppet-led story narration, character reenactments, and guided comprehension games with small breakout groups.'
   },
   {
     id: 'read-faq-4',
@@ -64,8 +64,8 @@ export const CONSULTANCY_FAQS: FAQItem[] = [
   },
   {
     id: 'cons-faq-2',
-    question: 'Does Miss Nancy conduct in-person on-site audits or virtual advisory?',
-    answer: 'We offer both. On-site audits involve Miss Nancy and senior consultants spending 1–3 full school days observing classroom lessons, inspecting facilities, and facilitating live teacher feedback sessions. Virtual advisory is also available for regional and international schools.'
+    question: 'Does Miss Nancie conduct in-person on-site audits or virtual advisory?',
+    answer: 'We offer both. On-site audits involve Miss Nancie and senior consultants spending 1–3 full school days observing classroom lessons, inspecting facilities, and facilitating live teacher feedback sessions. Virtual advisory is also available for regional and international schools.'
   },
   {
     id: 'cons-faq-3',
@@ -106,7 +106,7 @@ export const WORKSHOPS_FAQS: FAQItem[] = [
   {
     id: 'ws-faq-1',
     question: 'Are CEC Masterclass certificates accredited and recognized for Teacher CPD?',
-    answer: 'Yes. All participants receive an official CEC Continuing Professional Development (CPD) Certificate with verified training hours, signed by Miss Nancy and accredited for professional early years portfolio submission.'
+    answer: 'Yes. All participants receive an official CEC Continuing Professional Development (CPD) Certificate with verified training hours, signed by Miss Nancie and accredited for professional early years portfolio submission.'
   },
   {
     id: 'ws-faq-2',
@@ -120,7 +120,7 @@ export const WORKSHOPS_FAQS: FAQItem[] = [
   },
   {
     id: 'ws-faq-4',
-    question: 'Can Miss Nancy deliver this training privately as an in-house school retreat?',
+    question: 'Can Miss Nancie deliver this training privately as an in-house school retreat?',
     answer: 'Yes! We frequently deliver customized in-house INSET day workshops tailored to your school’s exact curriculum goals, staff dynamics, and development milestones.'
   }
 ];
@@ -138,12 +138,12 @@ export const JOIN_NETWORK_FAQS: FAQItem[] = [
   },
   {
     id: 'join-faq-3',
-    question: 'How does Miss Nancy prepare candidates before sending them to school interviews?',
+    question: 'How does Miss Nancie prepare candidates before sending them to school interviews?',
     answer: 'Shortlisted candidates receive complimentary 1-on-1 interview prep, lesson plan structuring guidance, micro-teaching coaching, and salary negotiation advisory to ensure you secure fair, competitive compensation.'
   },
   {
     id: 'join-faq-4',
     question: 'What happens when I toggle my availability status on my teacher dashboard?',
-    answer: 'Your status updates instantly in the public directory and notifies Miss Nancy’s placement team. Toggling to "Immediate" alerts recruiting school heads that you are actively ready for interviews and placement offers.'
+    answer: 'Your status updates instantly in the public directory and notifies Miss Nancie’s placement team. Toggling to "Immediate" alerts recruiting school heads that you are actively ready for interviews and placement offers.'
   }
 ];

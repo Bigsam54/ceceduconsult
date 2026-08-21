@@ -4,7 +4,6 @@ import {
   GraduationCap, 
   Mail, 
   Phone, 
-  MapPin, 
   ArrowRight, 
   CheckCircle2, 
   MessageCircle,
@@ -35,7 +34,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               Ready to Partner with CEC?
             </h3>
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-              Find vetted teachers, join the reading club, or schedule a school audit with Miss Nancy today.
+              Find vetted teachers, join the reading club, or schedule a school audit with Miss Nancie today.
             </p>
           </div>
           
@@ -81,7 +80,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               />
             </div>
             <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
-              Africa's premier preschool educational agency founded by Miss Nancy. We specialize in teacher recruitment, EYFS curriculum audits, Reading Club setups, and classroom design.
+              Africa's premier preschool educational agency founded by Miss Nancie. We specialize in teacher recruitment, EYFS curriculum audits, Reading Club setups, and classroom design.
             </p>
             
             <div className="flex items-center gap-4 text-xs text-slate-400 pt-1">
@@ -109,8 +108,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               </li>
               <li>
                 <button onClick={() => onNavigate('reading-club')} className="hover:text-[#fa7b2d] transition-colors cursor-pointer flex items-center gap-1 text-[#fa7b2d]">
-                  <span>CEC Reading Club</span>
-                  <span className="text-[9px] px-1 bg-[#fa7b2d]/20 rounded">New</span>
+                  <span>The Reading Lounge</span>
+                  <span className="text-[9px] px-1 bg-[#fa7b2d]/20 rounded">Club</span>
                 </button>
               </li>
               <li>
@@ -125,7 +124,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               </li>
               <li>
                 <button onClick={() => onNavigate('learning-essentials')} className="hover:text-[#2ac0db] transition-colors cursor-pointer">
-                  Learning Essentials Store
+                  CEC Learning Essentials Store
                 </button>
               </li>
               <li>
@@ -149,7 +148,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               </li>
               <li>
                 <button onClick={() => onNavigate('about')} className="hover:text-[#2ac0db] transition-colors cursor-pointer">
-                  About Miss Nancy
+                  About Miss Nancie
                 </button>
               </li>
               <li>
@@ -176,10 +175,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               Get in Touch
             </h4>
             <ul className="space-y-2 text-xs text-slate-400">
-              <li className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#2ac0db] shrink-0 mt-0.5" />
-                <span>CEC HQ, East Legon, Accra, Ghana</span>
-              </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-[#2ac0db] shrink-0" />
                 <span>+233 54 039 0029 / +233 20 685 5347</span>

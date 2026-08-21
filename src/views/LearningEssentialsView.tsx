@@ -49,25 +49,38 @@ export const LearningEssentialsView: React.FC<LearningEssentialsViewProps> = ({ 
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 sm:space-y-10">
       
       {/* Banner */}
-      <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-3 sm:space-y-4">
-        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
-          Tactile Learning Tools for Early Childhood
-        </h1>
-        <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
-          Premium Montessori trays, sensory play items, Jolly Phonics card decks, and early math concrete aids shipped directly to your school.
-        </p>
+      <div className="relative bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl overflow-hidden">
+        
+        {/* Clearly Visible Background Accent */}
+        <div className="absolute right-0 sm:right-6 top-1/2 -translate-y-1/2 opacity-75 sm:opacity-85 pointer-events-none select-none drop-shadow-2xl">
+          <img
+            src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786994345/CEC_Learning_Essentials-removebg-preview.png"
+            alt="CEC Learning Essentials Backdrop"
+            referrerPolicy="no-referrer"
+            className="h-48 sm:h-64 w-auto object-contain"
+          />
+        </div>
 
-        {/* Search */}
-        <div className="pt-2 max-w-md">
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search products (e.g., Phonics, Tracing Trays)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white text-slate-900 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#2ac0db] shadow-xs"
-            />
+        <div className="relative z-10 space-y-3 sm:space-y-4 max-w-3xl">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
+            CEC Learning Essentials
+          </h1>
+          <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
+            Premium Montessori trays, sensory play items, Jolly Phonics card decks, and early math concrete aids shipped directly to your school.
+          </p>
+
+          {/* Search */}
+          <div className="pt-2 max-w-md">
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search products (e.g., Phonics, Tracing Trays)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-white text-slate-900 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#2ac0db] shadow-xs"
+              />
+            </div>
           </div>
         </div>
       </div>

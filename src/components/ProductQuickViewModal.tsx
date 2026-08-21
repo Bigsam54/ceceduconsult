@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { LearningProduct } from '../types';
 import { safeOpenUrl } from '../utils/safeWindow';
-import { X, ArrowLeft, Star, MessageCircle, Truck, Package, BookOpen, Sparkles, Shapes, Music, Puzzle } from 'lucide-react';
+import { X, ArrowLeft, Star, Truck, Package, BookOpen, Sparkles, Shapes, Music, Puzzle } from 'lucide-react';
+import { WhatsAppIcon } from './icons/WhatsAppIcon';
 
 interface ProductQuickViewModalProps {
   product: LearningProduct | null;
@@ -177,7 +178,7 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({ pr
                   onClick={handleInquiry}
                   className="w-full py-3 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
-                  <MessageCircle className="w-4 h-4" />
+                  <WhatsAppIcon className="w-4 h-4" />
                   <span>Order on WhatsApp (${product.price * quantity})</span>
                 </button>
               </div>
