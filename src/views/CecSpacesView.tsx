@@ -29,25 +29,25 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
 
   const zones = [
     { id: 'reading', name: 'Reading & Literacy Haven', size: '20%', desc: 'Low-profile forward-facing bookshelves with cozy ergonomic floor cushions.', icon: BookOpen },
-    { id: 'montessori', name: 'Montessori Practical Life', size: '30%', desc: 'Self-accessible wooden trays, pouring stations, and sensory sorting racks.', icon: Blocks },
-    { id: 'sensory', name: 'Sensory & STEM Discovery', size: '25%', desc: 'Water play basin, kinetic sand tray, and natural magnifying light table.', icon: FlaskConical },
-    { id: 'circle', name: 'Circle Time & Expressive Arts', size: '25%', desc: 'High-contrast perimeter line, acoustic dampening wall art, and easel bay.', icon: Palette },
+    { id: 'practical', name: 'Practical Life & Independence', size: '30%', desc: 'Self-accessible wooden trays, pouring stations and sensory sorting racks.', icon: Blocks },
+    { id: 'sensory', name: 'Sensory & STEM Discovery', size: '25%', desc: 'Water play basin, kinetic sand tray and natural magnifying light table.', icon: FlaskConical },
+    { id: 'circle', name: 'Circle Time & Expressive Arts', size: '25%', desc: 'High-contrast perimeter line, acoustic dampening wall art and easel bay.', icon: Palette },
   ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-12 sm:space-y-16">
       
       {/* Hero */}
-      <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-3.5 sm:space-y-4">
-        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
+      <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-4">
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white leading-tight">
           Transform Rooms into Inspiring Learning Sanctuaries
         </h1>
-        <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
-          We design ergonomic, Montessori-aligned, safety-audited preschool environments that ignite children's natural curiosity.
+        <p className="text-slate-300 text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed">
+          We design ergonomic, child-friendly, safety-audited early childhood environments that ignite children's natural curiosity.
         </p>
         <button
           onClick={() => onOpenConsultationModal()}
-          className="w-full sm:w-auto px-5 sm:px-6 py-3 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold rounded-xl shadow-xl transition-all text-xs sm:text-sm inline-flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full sm:w-auto px-6 py-3.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold rounded-xl shadow-xl transition-all text-sm inline-flex items-center justify-center gap-2 cursor-pointer"
         >
           <MessageCircle className="w-4 h-4" />
           <span>Book School Setup Consultation</span>
@@ -55,11 +55,11 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
       </div>
 
       {/* Interactive Blueprint & Modern Classroom Showcase */}
-      <section className="bg-white p-5 sm:p-8 lg:p-10 rounded-3xl border border-slate-200/90 shadow-lg space-y-6 sm:space-y-8">
+      <section className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl border border-slate-200/90 shadow-lg space-y-6 sm:space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-slate-100">
           <div>
             <h2 className="text-xl sm:text-2xl font-heading font-bold text-slate-900">{activeProject.title}</h2>
-            <p className="text-xs text-slate-500">{activeProject.schoolName} • {activeProject.location}</p>
+            <p className="text-sm text-slate-500">{activeProject.schoolName} • {activeProject.location}</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
@@ -67,7 +67,7 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
             <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
               <button
                 onClick={() => setViewMode('photo')}
-                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
                   viewMode === 'photo'
                     ? 'bg-white text-slate-900 shadow-xs border border-slate-200/60'
                     : 'text-slate-600 hover:text-slate-900'
@@ -78,7 +78,7 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
               </button>
               <button
                 onClick={() => setViewMode('blueprint')}
-                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
                   viewMode === 'blueprint'
                     ? 'bg-white text-slate-900 shadow-xs border border-slate-200/60'
                     : 'text-slate-600 hover:text-slate-900'
@@ -104,7 +104,7 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
               <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-slate-200/90 shadow-xl bg-slate-950 aspect-4/3 sm:aspect-16/10 group">
                 <img
                   src={activeProject.afterImage}
-                  alt="Modernized African Elite School Montessori Classroom"
+                  alt="Modernized Early Childhood Learning Space"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-700"
                 />
@@ -112,7 +112,7 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
                 <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white text-xs">
                   <div className="bg-slate-950/80 backdrop-blur-xs px-3 py-1.5 rounded-lg border border-white/20 font-semibold flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Completed Montessori Transformation • Accra</span>
+                    <span>Completed Early Childhood Transformation • Accra</span>
                   </div>
                 </div>
               </div>
@@ -164,25 +164,25 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
           {/* Details & Key Upgrades */}
           <div className="lg:col-span-5 space-y-4">
             <div className="p-4 rounded-2xl bg-[#2ac0db]/10 border border-[#2ac0db]/20">
-              <span className="text-[11px] font-bold text-[#126373] uppercase tracking-wider block mb-1">
+              <span className="text-xs font-bold text-[#126373] uppercase tracking-wider block mb-1">
                 {viewMode === 'photo' ? 'Space Architecture' : 'Selected Zone Spotlight'}
               </span>
-              <h4 className="font-bold text-sm text-slate-900">
-                {viewMode === 'photo' ? 'Natural Beechwood & Montessori Layout' : zones.find(z => z.id === selectedZone)?.name}
+              <h4 className="font-bold text-base text-slate-900">
+                {viewMode === 'photo' ? 'Natural Beechwood & Child-Friendly Layout' : zones.find(z => z.id === selectedZone)?.name}
               </h4>
-              <p className="text-xs text-slate-700 mt-1 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
                 {viewMode === 'photo' 
-                  ? 'Ergonomic, accessible low-shelving, cozy tactile literacy corners, and vibrant child-led discovery stations.'
+                  ? 'Ergonomic, accessible low-shelving, cozy tactile literacy corners and vibrant child-led discovery stations.'
                   : zones.find(z => z.id === selectedZone)?.desc}
               </p>
             </div>
 
             <h3 className="font-heading font-bold text-base sm:text-lg text-slate-900">Key Upgrades Made</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">{activeProject.description}</p>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{activeProject.description}</p>
 
             <div className="space-y-2 pt-1">
               {activeProject.keyUpgrades.map((upg, i) => (
-                <div key={i} className="flex items-center gap-2 text-xs font-semibold text-slate-800">
+                <div key={i} className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-800">
                   <CheckCircle2 className="w-4 h-4 text-[#2ac0db] shrink-0" />
                   <span>{upg}</span>
                 </div>
@@ -191,7 +191,7 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
 
             <button
               onClick={() => onOpenConsultationModal()}
-              className="w-full py-3 bg-[#fa7b2d] hover:bg-[#e66b1d] text-white font-bold text-xs rounded-xl shadow-xs transition-all mt-3 cursor-pointer"
+              className="w-full py-3.5 bg-[#fa7b2d] hover:bg-[#e66b1d] text-white font-bold text-sm rounded-xl shadow-xs transition-all mt-3 cursor-pointer"
             >
               Transform Your Classroom Space
             </button>
@@ -204,17 +204,17 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
         <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
           <Ruler className="w-7 h-7 sm:w-8 sm:h-8 text-[#2ac0db]" />
           <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">3D Spatial & Zoning Layout</h3>
-          <p className="text-xs text-slate-600">Custom floorplan mapping for sensory play, reading nooks, and practical life centers.</p>
+          <p className="text-xs text-slate-600">Custom floorplan mapping for sensory play, reading nooks and practical life centers.</p>
         </div>
         <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
           <Palette className="w-7 h-7 sm:w-8 sm:h-8 text-[#fa7b2d]" />
           <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">Wooden Furniture Sourcing</h3>
-          <p className="text-xs text-slate-600">Child-height ergonomic natural beechwood shelves, tables, and low chairs.</p>
+          <p className="text-xs text-slate-600">Child-height ergonomic natural beechwood shelves, tables and low chairs.</p>
         </div>
         <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3 sm:col-span-2 md:col-span-1">
           <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-[#2ac0db]" />
           <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">Child Safety & Sanitation Audit</h3>
-          <p className="text-xs text-slate-600">Corner rounding, non-toxic finishes, impact flooring, and electrical socket child-proofing.</p>
+          <p className="text-xs text-slate-600">Corner rounding, non-toxic finishes, impact flooring and electrical socket child-proofing.</p>
         </div>
       </section>
 

@@ -43,7 +43,7 @@ export const JoinNetworkView: React.FC<JoinNetworkViewProps> = ({ onNavigate }) 
           </h1>
 
           <p className="text-slate-200 text-xs sm:text-sm md:text-base leading-relaxed max-w-xl font-medium">
-            Join Ghana's most reputable early years teacher community. Get discovered by top international and private preschools in Accra and Kumasi, access Miss Nancie's mentorship, and earn dignified compensation.
+            Join the most reputable early childhood teacher community. Get discovered by top international and private schools, access CEC's specialized mentorship and earn dignified compensation.
           </p>
 
           <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
@@ -83,10 +83,10 @@ export const JoinNetworkView: React.FC<JoinNetworkViewProps> = ({ onNavigate }) 
       <section className="space-y-8 sm:space-y-10">
         <div className="text-center space-y-1.5 sm:space-y-2 max-w-2xl mx-auto">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-slate-900">
-            Why Top Educators in Ghana Choose CEC
+            Why Top Educators Choose CEC
           </h2>
           <p className="text-slate-600 text-xs sm:text-sm">
-            We don't just place teachers — we nurture your professional dignity and long-term career growth.
+            We do not just place teachers, we nurture your professional dignity and long-term career growth.
           </p>
         </div>
 
@@ -100,7 +100,7 @@ export const JoinNetworkView: React.FC<JoinNetworkViewProps> = ({ onNavigate }) 
               Higher Salary Opportunities
             </h3>
             <p className="text-slate-600 text-xs leading-relaxed">
-              CEC partners with leading international and private preschools in Accra and across Ghana that offer competitive compensation and respectful work environments.
+              CEC partners with leading international and private early childhood schools that offer competitive compensation and respectful work environments.
             </p>
           </div>
 
@@ -109,10 +109,10 @@ export const JoinNetworkView: React.FC<JoinNetworkViewProps> = ({ onNavigate }) 
               <Award className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <h3 className="font-heading font-bold text-base sm:text-lg text-slate-900">
-              Miss Nancie's Mentorship
+              CEC Specialized Mentorship
             </h3>
-            <p className="text-slate-600 text-xs leading-relaxed">
-              Receive direct coaching on EYFS lesson planning, Montessori apparatus usage, Jolly Phonics mastery, and classroom management techniques.
+            <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+              Receive direct coaching on EYFS lesson planning, child-friendly apparatus usage, Synthetic Phonics mastery and classroom management techniques.
             </p>
           </div>
 
@@ -143,8 +143,8 @@ export const JoinNetworkView: React.FC<JoinNetworkViewProps> = ({ onNavigate }) 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {[
               { step: '01', title: 'Submit Application', desc: 'Fill out our 5-minute teacher profile form with your qualifications and preferences.' },
-              { step: '02', title: 'Credentials Audit', desc: 'Our team verifies your degrees, certifications, and previous school references in Ghana.' },
-              { step: '03', title: 'Classroom Demo', desc: 'Participate in a practical teaching simulation audited by Miss Nancie.' },
+              { step: '02', title: 'Credentials Audit', desc: 'Our team verifies your degrees, certifications and previous school references.' },
+              { step: '03', title: 'Classroom Demo', desc: 'Participate in a practical teaching simulation audited by CEC education leads.' },
               { step: '04', title: 'Get Placed', desc: 'Your profile goes live on the CEC Network and school interview offers begin!' }
             ].map((s, i) => (
               <div key={i} className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-2.5">

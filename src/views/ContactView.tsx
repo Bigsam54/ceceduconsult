@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { safeOpenUrl } from '../utils/safeWindow';
+import { useToast } from '../context/ToastContext';
 import { 
   Mail, 
   Phone, 
   Send, 
   Clock, 
-  CheckCircle2,
-  ShieldCheck,
-  Headphones
+  CheckCircle2, 
+  ShieldCheck, 
+  Headphones 
 } from 'lucide-react';
 import { WhatsAppIcon } from '../components/icons/WhatsAppIcon';
 import confetti from 'canvas-confetti';
 
 export const ContactView: React.FC = () => {
+  const toast = useToast();
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -25,6 +27,10 @@ export const ContactView: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
+    toast.success(
+      `Thank you ${formData.name}! Your message has been sent to Miss Nancie and the CEC team.`,
+      'Message Dispatched'
+    );
     try {
       confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
     } catch {
@@ -33,7 +39,8 @@ export const ContactView: React.FC = () => {
   };
 
   const launchWhatsApp = () => {
-    const text = `Hello Miss Nancie / CEC Consult!\n\nI am ${formData.name || 'a visitor'} from ${formData.schoolName || 'our school'}.\n\nMessage: ${formData.message || 'I would like to inquire about your teacher recruitment, reading club, and consultancy services.'}`;
+    const text = `Hello CEC Educational Consult Team!\n\nI am ${formData.name || 'a visitor'} from ${formData.schoolName || 'our school'}.\n\nMessage: ${formData.message || 'I would like to inquire about your teacher recruitment, reading club and consultancy services.'}`;
+    toast.info('Connecting to Miss Nancie on WhatsApp...', 'Opening WhatsApp');
     safeOpenUrl(`https://wa.me/233540390029?text=${encodeURIComponent(text)}`);
   };
 
@@ -46,7 +53,7 @@ export const ContactView: React.FC = () => {
           Contact CEC Educational Consult
         </h1>
         <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
-          Have questions about teacher recruitment, school setup, reading clubs, or consulting with Miss Nancie? We are here to assist you.
+          Have questions about teacher recruitment, school setup, reading clubs or consulting with CEC? We are here to assist you.
         </p>
       </div>
 
@@ -63,7 +70,7 @@ export const ContactView: React.FC = () => {
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-slate-900">Message Received!</h3>
               <p className="text-slate-600 text-xs">
-                Thank you for contacting CEC Consult. Miss Nancie's team will respond to your inquiry within 24 business hours.
+                Thank you for contacting CEC Educational Consult. The CEC team will respond to your inquiry within 24 business hours.
               </p>
               <button
                 type="button"
@@ -131,7 +138,7 @@ export const ContactView: React.FC = () => {
                 <textarea
                   rows={4}
                   required
-                  placeholder="How can Miss Nancie & CEC Consult assist your school, teaching career, or child literacy?"
+                  placeholder="How can CEC Educational Consult assist your school, teaching career or child literacy?"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="w-full p-2.5 sm:p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
@@ -209,7 +216,7 @@ export const ContactView: React.FC = () => {
             </div>
             <h4 className="font-heading font-bold text-sm text-slate-900">Need Immediate Assistance?</h4>
             <p className="text-slate-600 text-xs leading-relaxed">
-              Our team provides quick advisory support for school leaders, teachers, and parents via our direct WhatsApp channel.
+              Our team provides quick advisory support for school leaders, teachers and parents via our direct WhatsApp channel.
             </p>
             <button
               onClick={launchWhatsApp}

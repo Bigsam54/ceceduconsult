@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ViewMode } from '../types';
+import { useToast } from '../context/ToastContext';
 import { 
   GraduationCap, 
   Lock, 
@@ -14,12 +15,21 @@ interface LoginViewProps {
 }
 
 export const LoginView: React.FC<LoginViewProps> = ({ onNavigate, onLoginSuccess }) => {
+  const toast = useToast();
   const [email, setEmail] = useState('amina.bello@cecteachers.org');
   const [password, setPassword] = useState('••••••••••••');
   const [accountType, setAccountType] = useState<'teacher' | 'admin'>('teacher');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email || !password) {
+      toast.error('Please enter both email and password.', 'Sign In Required');
+      return;
+    }
+    toast.success(
+      `Welcome back! Logged into ${accountType === 'teacher' ? 'Teacher Dashboard' : 'Admin Portal'} successfully.`,
+      'Authentication Successful'
+    );
     onLoginSuccess(accountType);
   };
 
@@ -42,16 +52,12 @@ export const LoginView: React.FC<LoginViewProps> = ({ onNavigate, onLoginSuccess
               />
             </div>
 
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/20 text-sky-200 text-xs font-bold border border-sky-400/30">
-              <Sparkles className="w-3.5 h-3.5 text-sky-400" /> Portal Access
-            </span>
-
             <h2 className="text-2xl sm:text-3xl font-heading font-bold text-white leading-tight">
               Welcome Back to CEC Educational Consult
             </h2>
 
             <p className="text-slate-300 text-xs leading-relaxed">
-              Access candidate profiles, management tools, teacher applications, and Miss Nancie's consultation schedules.
+              Access candidate profiles, management tools, teacher applications and Miss Nancie's consultation schedules.
             </p>
           </div>
 
@@ -88,7 +94,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onNavigate, onLoginSuccess
               type="button"
               onClick={() => {
                 setAccountType('admin');
-                setEmail('miss.nancy@ceceduconsult.org');
+                setEmail('miss.nancie@ceceduconsult.org');
               }}
               className={`py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                 accountType === 'admin'

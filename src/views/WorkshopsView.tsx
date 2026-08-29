@@ -9,8 +9,7 @@ import {
   GraduationCap, 
   ArrowRight,
   Award,
-  BookOpenCheck,
-  UserCheck
+  BookOpenCheck
 } from 'lucide-react';
 
 interface WorkshopsViewProps {
@@ -20,7 +19,7 @@ interface WorkshopsViewProps {
 export const WorkshopsView: React.FC<WorkshopsViewProps> = ({ onRegisterWorkshop }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  const categories = ['All', 'Classroom Management', 'Early Literacy & Phonics', 'Montessori & STEM', 'Preschool Leadership'];
+  const categories = ['All', 'Classroom Management', 'Early Literacy & Phonics', 'Early STEM & Math', 'Early Childhood Leadership'];
 
   const filteredWorkshops = selectedCategory === 'All'
     ? MOCK_WORKSHOPS
@@ -32,9 +31,9 @@ export const WorkshopsView: React.FC<WorkshopsViewProps> = ({ onRegisterWorkshop
       {/* Banner */}
       <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-3 sm:space-y-4">
         <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
-          Upcoming Preschool Teacher Workshops
+          Upcoming Early Childhood Teacher Workshops
         </h1>
-        <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
+        <p className="text-slate-300 text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed">
           Interactive masterclasses for educators and school leaders. Earn CEC Professional Development certificates and master modern early childhood methods.
         </p>
       </div>
@@ -45,7 +44,7 @@ export const WorkshopsView: React.FC<WorkshopsViewProps> = ({ onRegisterWorkshop
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs font-bold rounded-xl transition-all whitespace-nowrap cursor-pointer ${
+            className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all whitespace-nowrap cursor-pointer ${
               selectedCategory === cat
                 ? 'bg-[#2ac0db] text-slate-950 shadow-xs'
                 : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
@@ -65,45 +64,44 @@ export const WorkshopsView: React.FC<WorkshopsViewProps> = ({ onRegisterWorkshop
           >
             <div>
               {/* Workshop Graphic Header */}
-              <div className="p-5 sm:p-6 bg-gradient-to-br from-slate-950 to-[#0d3842] text-white relative overflow-hidden">
+              <div className="p-6 sm:p-7 bg-gradient-to-br from-slate-950 to-[#0d3842] text-white relative overflow-hidden">
                 <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 opacity-10 pointer-events-none">
                   <GraduationCap className="w-36 h-36" />
                 </div>
                 
                 <div className="flex items-center justify-between relative z-10">
-                  <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-[#2ac0db] text-[10px] font-extrabold uppercase rounded-full border border-white/10">
+                  <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-[#2ac0db] text-xs font-extrabold uppercase rounded-full border border-white/10">
                     {wk.category}
                   </span>
-                  <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1">
-                    <Award className="w-3.5 h-3.5 text-[#fa7b2d]" /> CPD Certified
+                  <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <Award className="w-4 h-4 text-[#fa7b2d]" /> CPD Certified
                   </span>
                 </div>
 
-                <div className="mt-4 sm:mt-6 relative z-10">
-                  <p className="text-[11px] font-semibold text-slate-400">Facilitator</p>
-                  <p className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
-                    <UserCheck className="w-4 h-4 text-[#2ac0db]" /> {wk.facilitator}
-                  </p>
+                <div className="mt-4 relative z-10">
+                  <span className="text-xs font-medium text-slate-300 bg-white/5 px-2.5 py-1 rounded-lg border border-white/10">
+                    {wk.availableSeats} of {wk.totalSeats} seats remaining
+                  </span>
                 </div>
               </div>
 
               {/* Body */}
-              <div className="p-5 sm:p-6 space-y-3.5 sm:space-y-4">
-                <h3 className="text-lg sm:text-xl font-heading font-bold text-slate-900 group-hover:text-[#126373] transition-colors">
+              <div className="p-6 sm:p-7 space-y-4">
+                <h3 className="text-xl sm:text-2xl font-heading font-bold text-slate-900 group-hover:text-[#126373] transition-colors leading-snug">
                   {wk.title}
                 </h3>
 
-                <p className="text-slate-600 text-xs leading-relaxed">
+                <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
                   {wk.description}
                 </p>
 
                 {/* Details Pills */}
-                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-2 text-xs font-semibold text-slate-700">
-                  <div className="flex items-center gap-2">
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-2.5 text-xs sm:text-sm font-semibold text-slate-700">
+                  <div className="flex items-center gap-2.5">
                     <Calendar className="w-4 h-4 text-[#2ac0db] shrink-0" />
                     <span>{wk.date} ({wk.time})</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5">
                     <MapPin className="w-4 h-4 text-[#fa7b2d] shrink-0" />
                     <span className="truncate">{wk.venue}</span>
                   </div>
@@ -112,18 +110,18 @@ export const WorkshopsView: React.FC<WorkshopsViewProps> = ({ onRegisterWorkshop
             </div>
 
             {/* Footer Action */}
-            <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-2 border-t border-slate-100 flex items-center justify-between gap-4">
+            <div className="px-6 sm:px-7 pb-6 sm:pb-7 pt-3 border-t border-slate-100 flex items-center justify-between gap-4">
               <div>
-                <span className="text-[11px] text-slate-400 block font-medium">Investment Fee</span>
-                <span className="text-base sm:text-lg font-extrabold text-slate-900">{wk.price}</span>
+                <span className="text-xs text-slate-400 block font-medium">Investment Fee</span>
+                <span className="text-lg sm:text-xl font-extrabold text-slate-900">{wk.price}</span>
               </div>
 
               <button
                 onClick={() => onRegisterWorkshop(wk)}
-                className="px-4 sm:px-6 py-2.5 sm:py-3 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-5 sm:px-6 py-2.5 sm:py-3 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 <span>Reserve Seat</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 

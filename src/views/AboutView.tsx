@@ -88,6 +88,24 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
       image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/f_auto,q_auto/v1787294779/IMG_4128.jpg',
       tag: 'Sample 6',
       rotation: 'rotate-1'
+    },
+    {
+      id: 'act-7',
+      title: 'Sample 7',
+      category: 'Activity',
+      description: 'description',
+      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788008924/photo_2026-08-29_13-03-56.jpg',
+      tag: 'Sample 7',
+      rotation: '-rotate-1'
+    },
+    {
+      id: 'act-8',
+      title: 'Sample 8',
+      category: 'Activity',
+      description: 'description',
+      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788008924/photo_2026-08-29_13-04-18.jpg',
+      tag: 'Sample 8',
+      rotation: 'rotate-2'
     }
   ];
 
@@ -101,13 +119,13 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
         <div className="absolute top-0 right-1/4 w-72 h-72 bg-[#2ac0db]/15 rounded-full blur-3xl pointer-events-none z-0" />
 
         {/* Hero Text Content */}
-        <div className="relative z-10 max-w-2xl space-y-4 text-left">
+        <div className="relative z-10 max-w-3xl space-y-4 text-left">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white tracking-tight leading-tight">
-            Pioneering Preschool <span className="text-[#2ac0db]">Excellence</span>
+            Pioneering Early Childhood <span className="text-[#2ac0db]">Excellence</span>
           </h1>
 
           <p className="text-slate-200 text-xs sm:text-sm md:text-base leading-relaxed">
-            Founded by Miss Nancie to connect Ghanaian preschools with exceptional, vetted early years educators, spatial design, and child literacy programs.
+            Connecting early childhood institutions with exceptional vetted early years educators, spatial design and child literacy programs.
           </p>
         </div>
       </div>
@@ -129,15 +147,15 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
           {/* Profile Bio & Leadership Information */}
           <div className="lg:col-span-7 space-y-4 text-left">
             <h2 className="text-2xl sm:text-3xl font-heading font-bold text-slate-900">
-              Miss Nancie <span className="text-[#126373]">(Education Consultant)</span>
+              Miss Nancie <span className="text-[#126373]">(Founder & Lead Education Consultant)</span>
             </h2>
 
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              With over a decade of practical experience as a preschool director, early years mentor, and Montessori trainer, Miss Nancie leads CEC's teacher placement, curriculum audits, and reading club development across Ghana.
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+              With over a decade of practical experience as an early childhood director, early years mentor and educator trainer, Miss Nancie established CEC Educational Consult to champion high-standard teacher placements, curriculum audits and reading initiatives.
             </p>
 
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Her passion lies in bridging the gap between preschool owners seeking reliable, pedagogically trained teachers and passionate educators looking for mentorship, dignity, and career progression.
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+              At CEC, our passion lies in bridging the gap between school owners seeking reliable, pedagogically trained educators and dedicated teachers looking for mentorship, dignity and global career progression.
             </p>
 
             <div className="pt-3 flex flex-wrap gap-3">
@@ -146,7 +164,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
                 className="px-5 py-3 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
               >
                 <CalendarCheck className="w-4 h-4" />
-                <span>Book 1-on-1 Consultation</span>
+                <span>Book Consultation</span>
               </button>
               <button
                 onClick={() => onNavigate('reading-club')}
@@ -169,13 +187,13 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
               Teaching, Mentorship & Activities in Action
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 max-w-2xl">
-              Moments from Miss Nancie’s Phonics workshops, classroom setup audits, teacher trainings, and joyful child reading sessions.
+              Moments from CEC Phonics workshops, classroom setup audits, teacher trainings and joyful child reading sessions.
             </p>
           </div>
         </div>
 
         {/* Fun Scrapbook / Polaroid Tilted Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
           {activities.map((act) => (
             <div
               key={act.id}
@@ -204,7 +222,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
           </div>
           <h3 className="font-heading font-bold text-lg text-slate-900">Our Mission</h3>
           <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-            To provide schools with verified, competent early years educators and literacy programs while elevating teacher training, compensation, and professional standards across Ghana.
+            To provide schools with verified, competent early childhood educators and literacy programs while elevating teacher training, compensation and professional standards internationally.
           </p>
         </div>
 
@@ -214,7 +232,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
           </div>
           <h3 className="font-heading font-bold text-lg text-slate-900">Our Vision</h3>
           <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-            To be Africa's benchmark early childhood educational consultancy for teacher recruitment, classroom spatial design, and transformative child literacy.
+            To be an international benchmark early childhood educational consultancy for teacher recruitment, classroom spatial design and transformative child literacy.
           </p>
         </div>
       </section>

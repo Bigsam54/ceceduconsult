@@ -22,11 +22,11 @@ export const LearningEssentialsView: React.FC<LearningEssentialsViewProps> = ({ 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  const categories = ['All', 'Montessori Tools', 'Sensory & Play', 'Phonics & Reading', 'Early Math', 'Classroom Decor'];
+  const categories = ['All', 'Tactile & Wood Tools', 'Sensory & Play', 'Phonics & Reading', 'Early Math', 'Classroom Decor'];
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'Montessori Tools':
+      case 'Tactile & Wood Tools':
         return <Blocks className="w-10 h-10 text-[#126373]" />;
       case 'Phonics & Reading':
         return <BookOpen className="w-10 h-10 text-[#126373]" />;
@@ -65,8 +65,8 @@ export const LearningEssentialsView: React.FC<LearningEssentialsViewProps> = ({ 
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
             CEC Learning Essentials
           </h1>
-          <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
-            Premium Montessori trays, sensory play items, Jolly Phonics card decks, and early math concrete aids shipped directly to your school.
+          <p className="text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
+            Premium child-friendly trays, sensory play items, Synthetic Phonics card decks and early math concrete aids shipped directly to your school.
           </p>
 
           {/* Search */}

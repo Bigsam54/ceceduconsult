@@ -41,8 +41,8 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
   const [sortBy, setSortBy] = useState<'rating' | 'experience' | 'name'>('rating');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  const levelOptions = ['All', 'Preschool (EYFS)', 'Nursery', 'Kindergarten', 'Lower Primary', 'Special Needs (SEN)'];
-  const qualificationOptions = ['All', 'B.Ed Early Childhood', 'EYFS Certified', 'Montessori Diploma', 'PGDE', 'Early Years Specialist'];
+  const levelOptions = ['All', 'Early Childhood (EYFS)', 'Nursery', 'Kindergarten', 'Lower Primary', 'Special Needs (SEN)'];
+  const qualificationOptions = ['All', 'B.Ed Early Childhood', 'EYFS Certified', 'Early Childhood Diploma', 'PGDE', 'Early Years Specialist'];
   const availabilityOptions = ['All', 'Immediate', '2 Weeks Notice', 'Next Academic Term'];
   const locationOptions = ['All', 'East Legon', 'Airport Residential', 'Cantonments', 'Tema', 'Kumasi', 'Takoradi'];
 
@@ -116,7 +116,7 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
           Find & Hire Verified Teachers
         </h1>
         <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
-          Search top preschool and primary educators. Filter by EYFS qualifications, experience, salary, and instant availability.
+          Search top early childhood and primary educators. Filter by qualifications, experience, salary and instant availability.
         </p>
 
         {/* Search Input Bar */}
@@ -125,7 +125,7 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
             <Search className="w-4 h-4 sm:w-5 sm:h-5 absolute left-3.5 sm:left-4 top-3 sm:top-3.5 text-slate-400" />
             <input
               type="text"
-              placeholder="Search by name, skill (e.g., Jolly Phonics), or title..."
+              placeholder="Search by name, skill (e.g. Synthetic Phonics), or title..."
               value={filters.searchQuery}
               onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
               className="w-full pl-10 sm:pl-11 pr-4 py-2.5 sm:py-3 bg-white text-slate-900 placeholder-slate-400 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#2ac0db] shadow-xs"

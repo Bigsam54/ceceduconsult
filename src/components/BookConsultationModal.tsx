@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ConsultationService } from '../types';
+import { useToast } from '../context/ToastContext';
 import { 
   X, 
   ArrowLeft, 
@@ -23,6 +24,7 @@ interface BookConsultationModalProps {
 }
 
 export const BookConsultationModal: React.FC<BookConsultationModalProps> = ({ service, isOpen, onClose }) => {
+  const toast = useToast();
   const validService = (service && typeof service === 'object' && 'title' in service && typeof service.title === 'string') 
     ? service 
     : null;
@@ -74,6 +76,10 @@ export const BookConsultationModal: React.FC<BookConsultationModalProps> = ({ se
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
+    toast.success(
+      `Consultation booking request received for "${formData.serviceTitle}". Miss Nancie will contact you within 24 hours.`,
+      'Booking Received'
+    );
     try {
       confetti({ particleCount: 60, spread: 60, origin: { y: 0.6 } });
     } catch (err) {

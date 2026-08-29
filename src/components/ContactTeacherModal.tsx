@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Teacher } from '../types';
 import { safeOpenUrl } from '../utils/safeWindow';
+import { useToast } from '../context/ToastContext';
 import { 
   X, 
   ArrowLeft,
@@ -22,6 +23,7 @@ interface ContactTeacherModalProps {
 }
 
 export const ContactTeacherModal: React.FC<ContactTeacherModalProps> = ({ teacher, isOpen, onClose }) => {
+  const toast = useToast();
   const [schoolName, setSchoolName] = useState('');
   const [contactPerson, setContactPerson] = useState('');
   const [phone, setPhone] = useState('');
@@ -56,11 +58,13 @@ export const ContactTeacherModal: React.FC<ContactTeacherModalProps> = ({ teache
   const handleCopy = () => {
     navigator.clipboard.writeText(defaultMessage);
     setCopied(true);
+    toast.success('Interview request template copied to clipboard!', 'Copied');
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleSendWhatsApp = () => {
     const encoded = encodeURIComponent(defaultMessage);
+    toast.info(`Connecting with Miss Nancie on WhatsApp for candidate ${teacher.name}...`, 'Opening WhatsApp');
     safeOpenUrl(`https://wa.me/233540390029?text=${encoded}`);
   };
 

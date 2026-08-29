@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { ViewMode } from '../types';
 import { safeScrollToTop } from '../utils/safeWindow';
+import { useToast } from '../context/ToastContext';
 import { 
   CheckCircle2, 
   ArrowRight, 
@@ -11,10 +12,12 @@ import {
   Clock, 
   Sparkles, 
   Upload, 
-  ShieldCheck,
-  Check,
-  Camera,
-  Trash2
+  ShieldCheck, 
+  Check, 
+  Camera, 
+  Trash2,
+  MapPin,
+  BookOpen
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -23,6 +26,7 @@ interface RegisterViewProps {
 }
 
 export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
+  const toast = useToast();
   const [step, setStep] = useState(1);
   const [profileImage, setProfileImage] = useState<string>('');
   const [uploadError, setUploadError] = useState<string>('');
@@ -32,10 +36,10 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
     fullName: '',
     email: '',
     phone: '',
-    location: 'East Legon, Accra',
-    teachingLevel: 'Preschool (EYFS)',
+    location: '',
+    teachingLevel: '',
     experienceYears: '5',
-    qualification: 'B.Ed Early Childhood',
+    qualification: '',
     salaryExpectation: 'GH₵ 8,000 - 12,000 / month',
     availability: 'Immediate',
     bio: ''
@@ -45,7 +49,9 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        setUploadError('File size exceeds 5MB limit. Please choose a smaller photo.');
+        const err = 'File size exceeds 5MB limit. Please choose a smaller photo.';
+        setUploadError(err);
+        toast.error(err, 'Upload Failed');
         return;
       }
       setUploadError('');
@@ -53,6 +59,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
       reader.onload = (event) => {
         if (event.target?.result) {
           setProfileImage(event.target.result as string);
+          toast.success('Profile photo uploaded successfully!', 'Photo Updated');
         }
       };
       reader.readAsDataURL(file);
@@ -70,6 +77,10 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
       } catch {
         // ignore
       }
+      toast.success(
+        'Your teacher profile has been received. Miss Nancie and the CEC team will contact you shortly!',
+        'Application Submitted'
+      );
       setStep(6);
     }
   };
@@ -149,8 +160,11 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                 {profileImage && (
                   <button
                     type="button"
-                    onClick={() => setProfileImage('')}
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-rose-600 text-white rounded-full flex items-center justify-center shadow hover:bg-rose-700"
+                    onClick={() => {
+                      setProfileImage('');
+                      toast.info('Profile photo removed.');
+                    }}
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-rose-600 text-white rounded-full flex items-center justify-center shadow hover:bg-rose-700 cursor-pointer"
                   >
                     ×
                   </button>
@@ -196,7 +210,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                 <input
                   type="email"
                   required
-                  placeholder="akosua@example.com"
+                  placeholder="e.g. akosua.mensah@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
@@ -216,20 +230,40 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
               </div>
             </div>
 
+            {/* Custom Location Field with Pre-filled Example & Suggestions */}
             <div>
-              <label className="block font-bold text-slate-700 mb-1">Current Location in Ghana *</label>
-              <select
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
-              >
-                <option value="East Legon, Accra">East Legon, Accra</option>
-                <option value="Airport Residential / Cantonments, Accra">Airport Residential / Cantonments, Accra</option>
-                <option value="Tema / Spintex, Accra">Tema / Spintex, Accra</option>
-                <option value="Osu / Labone, Accra">Osu / Labone, Accra</option>
-                <option value="Kumasi, Ashanti Region">Kumasi, Ashanti Region</option>
-                <option value="Takoradi, Western Region">Takoradi, Western Region</option>
-              </select>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block font-bold text-slate-700">
+                  Current Location & Preferred Teaching Zones *
+                </label>
+                <span className="text-[11px] text-slate-400">Type any location</span>
+              </div>
+              <div className="relative">
+                <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Osu, Accra or Odumase, Krobo"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
+                />
+              </div>
+              
+              {/* Quick suggestion badges */}
+              <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                <span className="text-[10px] text-slate-500 font-semibold">Quick Suggestions:</span>
+                {['Osu, Accra', 'Odumase, Krobo', 'East Legon, Accra', 'Cantonments, Accra', 'Tema / Spintex', 'Kumasi'].map((loc) => (
+                  <button
+                    key={loc}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, location: loc })}
+                    className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-[#2ac0db]/20 text-slate-700 hover:text-slate-900 text-[10px] font-medium transition-colors border border-slate-200 cursor-pointer"
+                  >
+                    + {loc}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -237,22 +271,49 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
         {step === 2 && (
           <div className="space-y-4 text-xs">
             <h2 className="text-lg font-heading font-bold text-slate-900 flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-[#2ac0db]" /> Step 2: Professional Experience
+              <Briefcase className="w-5 h-5 text-[#2ac0db]" /> Step 2: Professional Experience & Teaching Level
             </h2>
 
+            {/* Custom Teaching Level Field with Pre-filled Example & Suggestions */}
             <div>
-              <label className="block font-bold text-slate-700 mb-1">Teaching Level Preference *</label>
-              <select
-                value={formData.teachingLevel}
-                onChange={(e) => setFormData({ ...formData, teachingLevel: e.target.value })}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
-              >
-                <option value="Preschool (EYFS)">Preschool (EYFS)</option>
-                <option value="Nursery">Nursery</option>
-                <option value="Kindergarten">Kindergarten</option>
-                <option value="Lower Primary">Lower Primary</option>
-                <option value="Special Needs (SEN)">Special Needs (SEN)</option>
-              </select>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block font-bold text-slate-700">
+                  Teaching Level & Specialization *
+                </label>
+                <span className="text-[11px] text-slate-400">Type or select your level</span>
+              </div>
+              <div className="relative">
+                <BookOpen className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Nursery & KG, Preschool (EYFS), Lower Primary (Grades 1 to 3), or Jolly Phonics Specialist"
+                  value={formData.teachingLevel}
+                  onChange={(e) => setFormData({ ...formData, teachingLevel: e.target.value })}
+                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
+                />
+              </div>
+
+              {/* Quick suggestion badges */}
+              <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                <span className="text-[10px] text-slate-500 font-semibold">Quick Suggestions:</span>
+                {[
+                  'Preschool (EYFS)',
+                  'Nursery & Kindergarten',
+                  'Lower Primary (Grades 1 to 3)',
+                  'Special Needs (SEN)',
+                  'Synthetic Phonics Specialist'
+                ].map((lvl) => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, teachingLevel: lvl })}
+                    className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-[#2ac0db]/20 text-slate-700 hover:text-slate-900 text-[10px] font-medium transition-colors border border-slate-200 cursor-pointer"
+                  >
+                    + {lvl}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div>
@@ -281,22 +342,49 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
         {step === 3 && (
           <div className="space-y-4 text-xs">
             <h2 className="text-lg font-heading font-bold text-slate-900 flex items-center gap-2">
-              <GraduationCap className="w-5 h-5 text-[#2ac0db]" /> Step 3: Qualifications
+              <GraduationCap className="w-5 h-5 text-[#2ac0db]" /> Step 3: Qualifications & Certifications
             </h2>
 
+            {/* Custom Qualifications Field with Pre-filled Example & Suggestions */}
             <div>
-              <label className="block font-bold text-slate-700 mb-1">Highest Early Childhood Qualification *</label>
-              <select
-                value={formData.qualification}
-                onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
-              >
-                <option value="B.Ed Early Childhood">B.Ed Early Childhood</option>
-                <option value="EYFS Certified">EYFS Certified</option>
-                <option value="Montessori Diploma">Montessori Diploma</option>
-                <option value="PGDE">PGDE</option>
-                <option value="Early Years Specialist">Early Years Specialist</option>
-              </select>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block font-bold text-slate-700">
+                  Highest Early Childhood Qualification & Certifications *
+                </label>
+                <span className="text-[11px] text-slate-400">Type your exact credentials</span>
+              </div>
+              <div className="relative">
+                <GraduationCap className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. B.Ed. Early Childhood Education, PGDE, Montessori Diploma, or Jolly Phonics Certified"
+                  value={formData.qualification}
+                  onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
+                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
+                />
+              </div>
+
+              {/* Quick suggestion badges */}
+              <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                <span className="text-[10px] text-slate-500 font-semibold">Quick Suggestions:</span>
+                {[
+                  'B.Ed Early Childhood Education',
+                  'Early Childhood Diploma',
+                  'EYFS & Montessori Certified',
+                  'PGDE (Early Years)',
+                  'Jolly Phonics Lead Trainer'
+                ].map((qual) => (
+                  <button
+                    key={qual}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, qualification: qual })}
+                    className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-[#2ac0db]/20 text-slate-700 hover:text-slate-900 text-[10px] font-medium transition-colors border border-slate-200 cursor-pointer"
+                  >
+                    + {qual}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="p-4 bg-slate-50 border border-dashed border-slate-300 rounded-2xl text-center space-y-2">
@@ -355,16 +443,16 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                 )}
                 <div>
                   <p className="font-bold text-sm text-slate-900">{formData.fullName || 'Akosua Mensah'}</p>
-                  <p className="text-xs text-slate-500">{formData.location}</p>
+                  <p className="text-xs text-slate-500">{formData.location || 'Osu, Accra'}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <p><strong>Email:</strong> {formData.email || 'akosua@example.com'}</p>
                 <p><strong>Phone:</strong> {formData.phone || '+233 54 039 0029'}</p>
-                <p><strong>Level:</strong> {formData.teachingLevel}</p>
+                <p><strong>Level:</strong> {formData.teachingLevel || 'Preschool (EYFS)'}</p>
                 <p><strong>Experience:</strong> {formData.experienceYears} Years</p>
-                <p><strong>Qualification:</strong> {formData.qualification}</p>
+                <p><strong>Qualification:</strong> {formData.qualification || 'B.Ed Early Childhood'}</p>
                 <p><strong>Availability:</strong> {formData.availability}</p>
                 <p className="col-span-2"><strong>Salary:</strong> {formData.salaryExpectation}</p>
               </div>

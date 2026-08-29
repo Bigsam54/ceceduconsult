@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { ViewMode } from '../types';
+import { useToast } from '../context/ToastContext';
 import { 
   LayoutDashboard, 
   Eye, 
@@ -18,7 +19,8 @@ import {
   MapPin,
   DollarSign,
   BookOpen,
-  FileCheck
+  FileCheck,
+  LogOut
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 
@@ -37,22 +39,23 @@ const viewsData = [
 ];
 
 export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNavigate }) => {
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState<'overview' | 'opportunities' | 'settings'>('overview');
   const [availability, setAvailability] = useState<'Immediate' | '2 Weeks Notice' | 'Not Available'>('Immediate');
   
   // Teacher profile state with direct image upload support
   const [profileImage, setProfileImage] = useState<string>('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80');
   const [fullName, setFullName] = useState<string>('Akosua Mensah');
-  const [headline, setHeadline] = useState<string>('Lead EYFS & Montessori Educator');
-  const [location, setLocation] = useState<string>('Accra, Ghana (East Legon / Cantonments)');
-  const [qualification, setQualification] = useState<string>('B.Ed Early Childhood + Montessori Diploma');
+  const [headline, setHeadline] = useState<string>('Lead EYFS & Early Childhood Educator');
+  const [teachingLevel, setTeachingLevel] = useState<string>('Preschool (EYFS) & Kindergarten');
+  const [location, setLocation] = useState<string>('Osu, Accra');
+  const [qualification, setQualification] = useState<string>('B.Ed Early Childhood + Early Years Diploma');
   const [salaryExpectation, setSalaryExpectation] = useState<string>('GH₵ 8,000 - 12,000 / month');
-  const [bio, setBio] = useState<string>('Dedicated early childhood specialist with 6+ years of classroom experience. Certified in EYFS curriculum delivery, Jolly Phonics multi-sensory reading, and Montessori math sensorial methods in Accra.');
+  const [bio, setBio] = useState<string>('Dedicated early childhood specialist with 6+ years of classroom experience. Certified in EYFS curriculum delivery, Synthetic Phonics multi-sensory reading and child-friendly math sensorial methods in Accra.');
   const [selectedSkills, setSelectedSkills] = useState<string[]>([
-    'Jolly Phonics', 'EYFS Framework', 'Montessori Pedagogy', 'Sensory Play', 'Early Literacy', 'Classroom Management'
+    'Synthetic Phonics', 'EYFS Framework', 'Child-Friendly Pedagogy', 'Sensory Play', 'Early Literacy', 'Classroom Management'
   ]);
   const [newSkillInput, setNewSkillInput] = useState<string>('');
-  const [saveSuccessMessage, setSaveSuccessMessage] = useState<string>('');
   
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -60,14 +63,14 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        showSaveNotification('File size exceeds 5MB limit. Please choose a smaller image.');
+        toast.error('File size exceeds 5MB limit. Please choose a smaller image.', 'Upload Failed');
         return;
       }
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
           setProfileImage(event.target.result as string);
-          showSaveNotification('Profile picture updated successfully!');
+          toast.success('Profile picture updated successfully!', 'Photo Updated');
         }
       };
       reader.readAsDataURL(file);
@@ -79,14 +82,14 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith('image/')) {
       if (file.size > 5 * 1024 * 1024) {
-        showSaveNotification('File size exceeds 5MB limit. Please choose a smaller image.');
+        toast.error('File size exceeds 5MB limit. Please choose a smaller image.', 'Upload Failed');
         return;
       }
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
           setProfileImage(event.target.result as string);
-          showSaveNotification('Profile picture uploaded successfully!');
+          toast.success('Profile picture uploaded successfully!', 'Photo Updated');
         }
       };
       reader.readAsDataURL(file);
@@ -98,30 +101,30 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-    showSaveNotification('Profile photo removed.');
+    toast.info('Profile photo removed.');
   };
 
   const handleAddSkill = () => {
     if (newSkillInput.trim() && !selectedSkills.includes(newSkillInput.trim())) {
       setSelectedSkills([...selectedSkills, newSkillInput.trim()]);
       setNewSkillInput('');
+      toast.success(`Skill "${newSkillInput.trim()}" added to your profile.`);
     }
   };
 
   const handleRemoveSkill = (skillToRemove: string) => {
     setSelectedSkills(selectedSkills.filter(s => s !== skillToRemove));
-  };
-
-  const showSaveNotification = (msg: string) => {
-    setSaveSuccessMessage(msg);
-    setTimeout(() => {
-      setSaveSuccessMessage('');
-    }, 4000);
+    toast.info(`Removed "${skillToRemove}" from skills list.`);
   };
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
-    showSaveNotification('Candidate profile and qualifications saved successfully!');
+    toast.success('Candidate profile, qualifications and teaching level saved successfully!', 'Profile Updated');
+  };
+
+  const handleLogout = () => {
+    toast.success('Logged out successfully from Teacher Portal.', 'Logged Out');
+    onNavigate('home');
   };
 
   const initials = fullName
@@ -134,14 +137,6 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       
-      {/* Save Success Banner */}
-      {saveSuccessMessage && (
-        <div className="bg-[#2ac0db]/15 border border-[#2ac0db] text-[#126373] px-4 py-3 rounded-2xl flex items-center gap-2 font-bold text-xs animate-in fade-in slide-in-from-top-2 duration-200">
-          <CheckCircle2 className="w-4 h-4 text-[#2ac0db] shrink-0" />
-          <span>{saveSuccessMessage}</span>
-        </div>
-      )}
-
       {/* Top Welcome Bar */}
       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4 sm:gap-6">
@@ -176,7 +171,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                 <CheckCircle2 className="w-3 h-3" /> CEC Verified Teacher
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">{headline} • {location}</p>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">{headline} • <span className="font-semibold text-slate-800">{location}</span></p>
             <p className="text-[11px] text-slate-400 mt-1">Profile ID: <span className="font-mono font-bold text-slate-600">CEC-T-8492</span></p>
           </div>
         </div>
@@ -187,7 +182,11 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
             <span className="text-xs font-bold text-slate-700">Placement:</span>
             <select
               value={availability}
-              onChange={(e) => setAvailability(e.target.value as any)}
+              onChange={(e) => {
+                const val = e.target.value as any;
+                setAvailability(val);
+                toast.info(`Placement status updated to "${val}".`, 'Status Updated');
+              }}
               className="bg-white border border-slate-200 rounded-xl px-3 py-1 text-xs font-bold text-slate-800 outline-none cursor-pointer focus:ring-2 focus:ring-[#2ac0db]"
             >
               <option value="Immediate">Immediate Placement</option>
@@ -201,6 +200,15 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
             className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-2xl transition-colors cursor-pointer"
           >
             Public Directory
+          </button>
+
+          <button
+            onClick={handleLogout}
+            className="px-3.5 py-2.5 bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-700 font-bold text-xs rounded-2xl border border-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+            title="Log Out of Teacher Portal"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Logout</span>
           </button>
         </div>
       </div>
@@ -304,7 +312,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-heading font-bold text-slate-900 text-sm">School Owner Search Views</h3>
-                    <p className="text-xs text-slate-500">Impressions when school owners filter by EYFS & Montessori credentials</p>
+                    <p className="text-xs text-slate-500">Impressions when school owners filter by EYFS & Early Childhood credentials</p>
                   </div>
                   <span className="text-xs text-slate-400 font-semibold">Last 7 Days</span>
                 </div>
@@ -334,8 +342,8 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-heading font-bold text-slate-900 text-base">Recommended Preschool Opportunities</h3>
-                  <p className="text-xs text-slate-500">Matched to your EYFS and Montessori qualifications</p>
+                  <h3 className="font-heading font-bold text-slate-900 text-base">Recommended Early Childhood Opportunities</h3>
+                  <p className="text-xs text-slate-500">Matched to your EYFS and early childhood qualifications</p>
                 </div>
                 <span className="text-xs font-bold text-[#126373] bg-[#2ac0db]/15 px-3 py-1 rounded-full border border-[#2ac0db]/30">
                   3 Open Vacancies
@@ -344,8 +352,8 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
               
               {[
                 { school: 'Morning Star Early Years Academy', role: 'Head Nursery Educator', location: 'East Legon, Accra', salary: 'GH₵ 9,000 - 12,000 / mo', requirements: 'EYFS + 4+ Years Experience' },
-                { school: 'Lincoln Community Early Childhood', role: 'EYFS Phonics Specialist', location: 'Airport Residential, Accra', salary: 'GH₵ 10,000 - 13,500 / mo', requirements: 'Jolly Phonics Certified' },
-                { school: 'Al-Rayan International Preschool', role: 'Senior Kindergarten Lead', location: 'Cantonments, Accra', salary: 'GH₵ 8,500 - 11,000 / mo', requirements: 'Montessori Diploma' }
+                { school: 'Lincoln Community Early Childhood', role: 'EYFS Phonics Specialist', location: 'Airport Residential, Accra', salary: 'GH₵ 10,000 - 13,500 / mo', requirements: 'Synthetic Phonics Certified' },
+                { school: 'Al-Rayan International Early Learning', role: 'Senior Kindergarten Lead', location: 'Cantonments, Accra', salary: 'GH₵ 8,500 - 11,000 / mo', requirements: 'Early Childhood Diploma' }
               ].map((job, i) => (
                 <div key={i} className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="space-y-1">
@@ -362,7 +370,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                   </div>
 
                   <button 
-                    onClick={() => showSaveNotification(`Interest registered for ${job.role} at ${job.school}. Miss Nancie's team will contact you!`)}
+                    onClick={() => toast.success(`Interest registered for ${job.role} at ${job.school}. Miss Nancie's placement team notified!`, 'Application Sent')}
                     className="px-4 py-2.5 bg-slate-900 hover:bg-[#126373] text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer shrink-0 transition-colors"
                   >
                     <span>Express Interest</span>
@@ -485,52 +493,134 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                 <div>
                   <h3 className="font-heading font-bold text-slate-900 text-base flex items-center gap-2 mb-1">
                     <GraduationCap className="w-5 h-5 text-[#2ac0db]" />
-                    Candidate Profile & Qualifications
+                    Candidate Profile, Teaching Level & Qualifications
                   </h3>
                   <p className="text-xs text-slate-500">Keep your information up-to-date for school proprietors and Miss Nancie's placement team.</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Full Legal Name *</label>
                     <input
                       type="text"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
+                      placeholder="e.g. Akosua Mensah"
                       className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Headline Role</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Headline Professional Title *</label>
                     <input
                       type="text"
                       value={headline}
                       onChange={(e) => setHeadline(e.target.value)}
+                      placeholder="e.g. Lead EYFS & Early Childhood Educator"
                       className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
                       required
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Location & Preferred Zones</label>
-                    <input
-                      type="text"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                    />
+                  {/* Location free text with pre-filled examples */}
+                  <div className="sm:col-span-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-bold text-slate-700">
+                        Current Location & Preferred Zones *
+                      </label>
+                      <span className="text-[10px] text-slate-400">Type freely or choose a suggestion</span>
+                    </div>
+                    <div className="relative">
+                      <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                      <input
+                        type="text"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        placeholder="e.g. Osu, Accra or Odumase, Krobo"
+                        className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                      <span className="text-[10px] text-slate-500 font-semibold">Examples:</span>
+                      {['Osu, Accra', 'Odumase, Krobo', 'East Legon, Accra', 'Cantonments, Accra', 'Tema / Spintex', 'Kumasi', 'Takoradi'].map((loc) => (
+                        <button
+                          key={loc}
+                          type="button"
+                          onClick={() => setLocation(loc)}
+                          className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-[#2ac0db]/20 text-slate-700 hover:text-slate-900 text-[10px] font-medium transition-colors border border-slate-200 cursor-pointer"
+                        >
+                          + {loc}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
+                  {/* Teaching Level free text with pre-filled examples */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Primary Qualification</label>
-                    <input
-                      type="text"
-                      value={qualification}
-                      onChange={(e) => setQualification(e.target.value)}
-                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                    />
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-bold text-slate-700">
+                        Teaching Level & Focus Age Group *
+                      </label>
+                      <span className="text-[10px] text-slate-400">Type your level</span>
+                    </div>
+                    <div className="relative">
+                      <BookOpen className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                      <input
+                        type="text"
+                        value={teachingLevel}
+                        onChange={(e) => setTeachingLevel(e.target.value)}
+                        placeholder="e.g. Nursery & KG, Preschool (EYFS), Lower Primary (Grades 1 to 3), or Jolly Phonics Specialist"
+                        className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                      {['Preschool (EYFS)', 'Nursery & Kindergarten', 'Lower Primary (Grades 1 to 3)', 'Special Needs (SEN)'].map((lvl) => (
+                        <button
+                          key={lvl}
+                          type="button"
+                          onClick={() => setTeachingLevel(lvl)}
+                          className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-[#2ac0db]/20 text-slate-700 hover:text-slate-900 text-[10px] font-medium transition-colors border border-slate-200 cursor-pointer"
+                        >
+                          + {lvl}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Primary Qualification free text with pre-filled examples */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-bold text-slate-700">
+                        Primary Qualifications & Certifications *
+                      </label>
+                      <span className="text-[10px] text-slate-400">Type your qualifications</span>
+                    </div>
+                    <div className="relative">
+                      <GraduationCap className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                      <input
+                        type="text"
+                        value={qualification}
+                        onChange={(e) => setQualification(e.target.value)}
+                        placeholder="e.g. B.Ed. Early Childhood Education, PGDE, Montessori Diploma, or Jolly Phonics Certified"
+                        className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                      {['B.Ed Early Childhood', 'EYFS & Montessori Diploma', 'PGDE (Early Years)', 'Jolly Phonics Lead Trainer'].map((q) => (
+                        <button
+                          key={q}
+                          type="button"
+                          onClick={() => setQualification(q)}
+                          className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-[#2ac0db]/20 text-slate-700 hover:text-slate-900 text-[10px] font-medium transition-colors border border-slate-200 cursor-pointer"
+                        >
+                          + {q}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="sm:col-span-2">
@@ -539,6 +629,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                       type="text"
                       value={salaryExpectation}
                       onChange={(e) => setSalaryExpectation(e.target.value)}
+                      placeholder="e.g. GH₵ 8,000 - 12,000 / month"
                       className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
                     />
                   </div>
@@ -578,7 +669,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                   <div className="flex items-center gap-2 pt-2 max-w-md">
                     <input
                       type="text"
-                      placeholder="Add a new skill (e.g. Jolly Phonics, EYFS Assessment)..."
+                      placeholder="Add a new skill (e.g. Synthetic Phonics, EYFS Assessment)..."
                       value={newSkillInput}
                       onChange={(e) => setNewSkillInput(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddSkill(); } }}

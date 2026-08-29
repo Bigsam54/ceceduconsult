@@ -87,7 +87,7 @@ export const TeacherDetailDrawer: React.FC<TeacherDetailDrawerProps> = ({
                 Teacher Profile & Details
               </h2>
               <p className="text-xs text-slate-500">
-                View qualifications, contact info, and update work availability
+                View qualifications, contact info and update work availability
               </p>
             </div>
           </div>

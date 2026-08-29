@@ -19,7 +19,7 @@ export interface CheckoutOrderPayload {
 
 export const storeService = {
   /**
-   * Fetch Montessori & Phonics learning tools
+   * Fetch child-friendly & phonics learning tools
    * Route: GET /api/products
    */
   async getProducts(): Promise<LearningProduct[]> {

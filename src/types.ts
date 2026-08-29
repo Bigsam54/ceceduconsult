@@ -69,12 +69,12 @@ export interface Teacher {
   name: string;
   title: string;
   photo: string;
-  teachingLevel: 'Preschool (EYFS)' | 'Nursery' | 'Kindergarten' | 'Lower Primary' | 'Special Needs (SEN)';
+  teachingLevel: 'Early Childhood (EYFS)' | 'Nursery' | 'Kindergarten' | 'Lower Primary' | 'Special Needs (SEN)';
   location: string;
   experienceYears: number;
   salaryExpectation: string;
   availability: AvailabilityStatus;
-  qualification: 'B.Ed Early Childhood' | 'EYFS Certified' | 'Montessori Diploma' | 'PGDE' | 'Early Years Specialist';
+  qualification: 'B.Ed Early Childhood' | 'EYFS Certified' | 'Early Childhood Diploma' | 'PGDE' | 'Early Years Specialist';
   isVerified: boolean;
   verificationStatus?: VerificationStatus;
   rating: number;
@@ -117,14 +117,13 @@ export interface ConsultationService {
 export interface Workshop {
   id: string;
   title: string;
-  category: 'Preschool Leadership' | 'Early Literacy & Phonics' | 'Classroom Management' | 'Montessori & STEM';
+  category: 'Early Childhood Leadership' | 'Early Literacy & Phonics' | 'Classroom Management' | 'Early STEM & Math';
   date: string;
   time: string;
   venue: string;
   price: string;
   availableSeats: number;
   totalSeats: number;
-  facilitator: string;
   description: string;
   image: string;
 }
@@ -134,7 +133,7 @@ export interface CECSpaceProject {
   title: string;
   schoolName: string;
   location: string;
-  type: 'Montessori Classroom' | 'Preschool Sensory Room' | 'Outdoor Early Play Lab' | 'Complete School Layout';
+  type: 'Child-Friendly Classroom' | 'Early Childhood Sensory Room' | 'Outdoor Early Play Lab' | 'Complete School Layout';
   beforeImage: string;
   afterImage: string;
   description: string;
@@ -144,7 +143,7 @@ export interface CECSpaceProject {
 export interface LearningProduct {
   id: string;
   name: string;
-  category: 'Montessori Tools' | 'Sensory & Play' | 'Phonics & Reading' | 'Early Math' | 'Classroom Decor';
+  category: 'Child-Friendly Tools' | 'Sensory & Play' | 'Phonics & Reading' | 'Early Math' | 'Classroom Decor';
   price: number;
   rating: number;
   reviews: number;
@@ -202,7 +201,7 @@ export interface AvailabilityMovementLog {
   avatar?: string;
   previousStatus: AvailabilityStatus;
   newStatus: AvailabilityStatus;
-  changedBy: 'Teacher Self-Update' | 'Miss Nancie (Admin)' | 'Placement Match System';
+  changedBy: 'Teacher Self-Update' | 'CEC Admin' | 'Placement Match System';
   reason: string;
   schoolInvolved?: string;
   timestamp: string;

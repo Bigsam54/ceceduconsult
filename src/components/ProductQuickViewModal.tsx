@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LearningProduct } from '../types';
 import { safeOpenUrl } from '../utils/safeWindow';
+import { useToast } from '../context/ToastContext';
 import { X, ArrowLeft, Star, Truck, Package, BookOpen, Sparkles, Shapes, Music, Puzzle } from 'lucide-react';
 import { WhatsAppIcon } from './icons/WhatsAppIcon';
 
@@ -11,6 +12,7 @@ interface ProductQuickViewModalProps {
 }
 
 export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({ product, isOpen, onClose }) => {
+  const toast = useToast();
   const [quantity, setQuantity] = useState(1);
 
   // Reset quantity when modal opens with new product
@@ -59,6 +61,7 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({ pr
   };
 
   const handleInquiry = () => {
+    toast.info(`Preparing WhatsApp order for ${quantity}x ${product.name}...`, 'Opening WhatsApp');
     const msg = `Hello CEC Learning Essentials (Ghana)!\n\nI would like to order ${quantity}x "${product.name}" (GH₵${product.price * quantity * 15} / $${product.price * quantity}).\n\nPlease let me know delivery availability in Accra/Ghana.`;
     safeOpenUrl(`https://wa.me/233540390029?text=${encodeURIComponent(msg)}`);
   };

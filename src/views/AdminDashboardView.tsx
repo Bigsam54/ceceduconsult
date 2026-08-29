@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useToast } from '../context/ToastContext';
 import { 
   ViewMode, 
   PendingTeacherApproval, 
@@ -110,6 +111,7 @@ interface BroadcastMessage {
 }
 
 export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNavigate }) => {
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState<
     'dashboard' | 'movements' | 'candidates' | 'calendar' | 'approvals' | 'consultations' | 'placements' | 'workshops' | 'store' | 'broadcasts'
   >('dashboard');
@@ -152,7 +154,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       time: '10:00 AM - 11:30 AM',
       type: 'EYFS Audit',
       format: 'Google Meet / Zoom',
-      meetingLink: 'https://meet.google.com/cec-audit-missnancy',
+      meetingLink: 'https://meet.google.com/cec-audit-missnancie',
       status: 'Confirmed',
       notes: 'Reviewing Nursery 1 & 2 phonics progress and lesson plan alignment.'
     },
@@ -165,9 +167,9 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       time: '02:00 PM - 03:00 PM',
       type: 'Proprietor Consultation',
       format: 'Google Meet / Zoom',
-      meetingLink: 'https://meet.google.com/cec-proprietor-nancy',
+      meetingLink: 'https://meet.google.com/cec-proprietor-nancie',
       status: 'Confirmed',
-      notes: 'Needs 2 EYFS Montessori specialists for September term start.'
+      notes: 'Needs 2 EYFS early childhood specialists for September term start.'
     },
     {
       id: 'apt-3',
@@ -179,19 +181,19 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       type: 'Teacher Screening',
       format: 'Google Meet / Zoom',
       status: 'Pending Review',
-      notes: 'Evaluate Jolly Phonics accent neutral delivery and micro-teaching video.'
+      notes: 'Evaluate Synthetic Phonics accent neutral delivery and micro-teaching video.'
     },
     {
       id: 'apt-4',
       title: 'CEC Space Floorplan & Sensory Nook Inspection',
       clientName: 'Mrs. Folashade Adeleke',
-      schoolName: 'Meadowland International Preschool',
+      schoolName: 'Meadowland International Early Learning',
       date: '2026-08-20',
       time: '01:30 PM - 03:30 PM',
       type: 'CEC Space Walkthrough',
       format: 'On-Site School Visit',
       status: 'Confirmed',
-      notes: 'Site visit in Ikoyi for preschool reading hub installation.'
+      notes: 'Site visit in Ikoyi for early childhood reading hub installation.'
     }
   ]);
 
@@ -239,7 +241,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       schoolName: 'Grange School Early Years',
       contactPerson: 'Mrs. Judith Rowland',
       contactPhone: '+234 809 555 7711',
-      requestedRole: 'Early STEM Facilitator',
+      requestedRole: 'Early STEM Educator',
       location: 'Ikeja GRA, Lagos',
       stage: 'Placed',
       assignedTeacher: 'David Osei (Placed)',
@@ -251,7 +253,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       schoolName: 'Heritage Early Years Academy',
       contactPerson: 'Dr. Patrick Danladi',
       contactPhone: '+234 805 111 4455',
-      requestedRole: '2x Montessori Kindergarten Teachers',
+      requestedRole: '2x Early Childhood Kindergarten Teachers',
       location: 'Maitama, Abuja',
       stage: 'Discovery',
       budget: '$1,200 - $1,500/mo',
@@ -265,7 +267,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       id: 'bc-1',
       target: 'All Teachers',
       title: 'Term 1 Job Matching Window Now Open',
-      body: 'Top tier British and Montessori schools in Lagos and Abuja are actively screening for September appointments. Ensure your credentials are fully updated on your candidate dashboard.',
+      body: 'Top tier British and international early childhood schools in Lagos, Abuja, Accra and worldwide are actively screening for September appointments. Ensure your credentials are fully updated on your candidate dashboard.',
       date: 'Aug 15, 2026',
       status: 'Sent',
       readsCount: 842
@@ -288,9 +290,15 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
   // Helper feedback toast
   const triggerToast = (msg: string) => {
     setToastMessage(msg);
+    toast.success(msg, 'Admin Action');
     setTimeout(() => {
       setToastMessage('');
     }, 3500);
+  };
+
+  const handleLogout = () => {
+    toast.success('Logged out successfully from Admin Center.', 'Logged Out');
+    onNavigate('home');
   };
 
   // Open Profile Modal for any Teacher
@@ -317,7 +325,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             avatar: t.photo,
             previousStatus: t.availability,
             newStatus: newAvailability,
-            changedBy: 'Miss Nancie (Admin)',
+            changedBy: 'CEC Admin',
             reason: `Status changed from ${t.availability} to ${newAvailability}`,
             timestamp: 'Just Now'
           };
@@ -347,7 +355,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
           avatar: t.photo,
           previousStatus: t.availability,
           newStatus: newAvail,
-          changedBy: 'Miss Nancie (Admin)',
+          changedBy: 'CEC Admin',
           reason: `Availability changed to ${newAvail}`,
           timestamp: 'Just Now'
         };
@@ -371,8 +379,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             avatar: t.photo,
             previousStatus: t.availability,
             newStatus: t.availability,
-            changedBy: 'Miss Nancie (Admin)',
-            reason: 'Issued Miss Nancie Verified Badge after document verification.',
+            changedBy: 'CEC Admin',
+            reason: 'Issued CEC Verified Badge after document verification.',
             timestamp: 'Just Now'
           };
           setMovementLogs(prevLogs => [newLog, ...prevLogs]);
@@ -397,8 +405,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
         avatar: pendingItem.avatar,
         previousStatus: '2 Weeks Notice',
         newStatus: 'Immediate',
-        changedBy: 'Miss Nancie (Admin)',
-        reason: 'Application approved and verified by Miss Nancie.',
+        changedBy: 'CEC Admin',
+        reason: 'Application approved and verified by CEC Admin.',
         timestamp: 'Just Now'
       };
       setMovementLogs(prevLogs => [newLog, ...prevLogs]);
@@ -489,7 +497,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       teacherName: manualLogTeacherName,
       previousStatus: manualLogPrevStatus,
       newStatus: manualLogNewStatus,
-      changedBy: 'Miss Nancie (Admin)',
+      changedBy: 'CEC Admin',
       reason: manualLogReason,
       schoolInvolved: manualLogSchool || 'Partner School Network',
       timestamp: 'Just Now'
@@ -555,7 +563,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
               Miss Nancie's Admin Center
             </h1>
             <p className="text-xs text-slate-300 mt-1">
-              CEC Educational Consult — Early years educator recruitment, school audits, and workshop management
+              CEC Educational Consult: Early years educator recruitment, school audits and workshop management
             </p>
           </div>
         </div>
@@ -586,6 +594,12 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-xs rounded-xl border border-white/20 transition-all cursor-pointer"
           >
             Public Site View
+          </button>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 hover:text-white font-bold text-xs rounded-xl border border-rose-400/30 transition-all cursor-pointer flex items-center gap-1.5"
+          >
+            <span>Logout</span>
           </button>
         </div>
       </div>
@@ -1039,7 +1053,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     <Activity className="w-5 h-5 text-emerald-600" />
                     Live Teacher Availability Movement Stream
                   </h3>
-                  <p className="text-xs text-slate-500">Real-time audit log tracking who is currently available, who signed contracts, and status shifts</p>
+                  <p className="text-xs text-slate-500">Real-time audit log tracking who is currently available, who signed contracts and status shifts</p>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -1140,7 +1154,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     <Users className="w-5 h-5 text-[#2ac0db]" />
                     Teacher Directory & Profiles
                   </h3>
-                  <p className="text-xs text-slate-500">View teacher qualifications, demo lessons, references, and manage availability</p>
+                  <p className="text-xs text-slate-500">View teacher qualifications, demo lessons, references and manage availability</p>
                 </div>
                 <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl">
                   Showing {filteredCandidates.length} of {teachersList.length} Teachers
@@ -1284,7 +1298,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     <UserCheck className="w-5 h-5 text-[#2ac0db]" />
                     Candidate Verification Queue
                   </h3>
-                  <p className="text-xs text-slate-500">Audit applicant credentials, certifications, and approve verified badges</p>
+                  <p className="text-xs text-slate-500">Audit applicant credentials, certifications and approve verified badges</p>
                 </div>
                 <span className="text-xs font-bold text-[#126373] bg-[#2ac0db]/15 px-3 py-1 rounded-full border border-[#2ac0db]/30">
                   {pendingList.filter(p => p.status === 'Pending Review').length} Pending Audits
@@ -1347,7 +1361,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     <Calendar className="w-5 h-5 text-[#2ac0db]" />
                     Miss Nancie's Master Calendar & Appointments
                   </h3>
-                  <p className="text-xs text-slate-500">Manage client consultations, EYFS school audits, and candidate screening interviews</p>
+                  <p className="text-xs text-slate-500">Manage client consultations, EYFS school audits and candidate screening interviews</p>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -1485,7 +1499,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     <Building2 className="w-5 h-5 text-[#2ac0db]" />
                     School Placement Pipeline
                   </h3>
-                  <p className="text-xs text-slate-500">Track client school requests through matching, interviewing, and 90-day guarantee</p>
+                  <p className="text-xs text-slate-500">Track client school requests through matching, interviewing and 90-day guarantee</p>
                 </div>
                 <button
                   onClick={() => triggerToast('New vacancy lead registered into placement tracker.')}
@@ -1546,7 +1560,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                   <BookOpenCheck className="w-5 h-5 text-[#2ac0db]" />
                   Proprietor & School Inquiries
                 </h3>
-                <p className="text-xs text-slate-500">Incoming school requests for recruitment, classroom design, and EYFS audits</p>
+                <p className="text-xs text-slate-500">Incoming school requests for recruitment, classroom design and EYFS audits</p>
               </div>
 
               <div className="space-y-4">
@@ -1595,7 +1609,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     <Ticket className="w-5 h-5 text-[#2ac0db]" />
                     Workshops & Teacher Training Master
                   </h3>
-                  <p className="text-xs text-slate-500">Schedule certified training, download attendee rosters, and track CPD credentials</p>
+                  <p className="text-xs text-slate-500">Schedule certified training, download attendee rosters and track CPD credentials</p>
                 </div>
                 <button
                   onClick={() => triggerToast('New workshop created and listed on public site.')}
@@ -1648,7 +1662,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     <ShoppingBag className="w-5 h-5 text-[#2ac0db]" />
                     Learning Essentials & Orders Manager
                   </h3>
-                  <p className="text-xs text-slate-500">Manage physical shipments of Curated Book Boxes, Jolly Phonics kits, and sensory resources</p>
+                  <p className="text-xs text-slate-500">Manage physical shipments of Curated Book Boxes, Synthetic Phonics kits and sensory resources</p>
                 </div>
                 <button
                   onClick={() => triggerToast('New store product added to catalog.')}
@@ -1689,7 +1703,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                   <Send className="w-5 h-5 text-[#2ac0db]" />
                   System Announcements & Broadcasts
                 </h3>
-                <p className="text-xs text-slate-500">Dispatch platform notifications, job alerts, and policy updates to teachers & school proprietors</p>
+                <p className="text-xs text-slate-500">Dispatch platform notifications, job alerts and policy updates to teachers & school proprietors</p>
               </div>
 
               {/* Compose New Broadcast Form */}

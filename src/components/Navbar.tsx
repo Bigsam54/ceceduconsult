@@ -154,7 +154,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                     <div>
                       <div className="font-semibold text-slate-900 flex items-center gap-1.5">
                         <span>The Reading Lounge</span>
-                        <span className="px-1.5 py-0.2 bg-[#fa7b2d] text-white text-[9px] font-bold rounded">Club</span>
                       </div>
                       <div className="text-[11px] text-slate-500">Phonics, book boxes & storytelling</div>
                     </div>
@@ -220,7 +219,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                     </div>
                     <div>
                       <div className="font-semibold text-slate-900">Learning Essentials</div>
-                      <div className="text-[11px] text-slate-500">Montessori tools & learning aids</div>
+                      <div className="text-[11px] text-slate-500">Child-friendly tools & learning aids</div>
                     </div>
                   </button>
                 </div>
@@ -254,7 +253,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                     }`}
                   >
                     <Info className="w-4 h-4 text-[#126373]" />
-                    <span>About Miss Nancie & CEC</span>
+                    <span>About CEC Educational Consult</span>
                   </button>
 
                   <button
@@ -393,8 +392,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
             >
               <BookOpen className="w-4 h-4 text-[#fa7b2d]" />
               <span className="flex items-center justify-between flex-1">
-                <span>CEC Reading Club</span>
-                <span className="px-1.5 py-0.2 text-[9px] font-bold bg-[#fa7b2d] text-white rounded">Featured</span>
+                <span>The Reading Lounge</span>
               </span>
             </button>
             <button
@@ -436,7 +434,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
               className="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded-xl flex items-center gap-2.5"
             >
               <Info className="w-4 h-4 text-[#126373]" />
-              <span>About Miss Nancie & CEC</span>
+              <span>About CEC Educational Consult</span>
             </button>
             <button
               onClick={() => handleNav('join-network')}

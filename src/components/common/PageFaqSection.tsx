@@ -12,7 +12,7 @@ interface PageFaqSectionProps {
 
 export const PageFaqSection: React.FC<PageFaqSectionProps> = ({
   title = 'Frequently Asked Questions',
-  subtitle = 'Clear answers to common questions about our programs, standards, and services.',
+  subtitle = 'Clear answers to common questions about our programs, standards and services.',
   badgeText = 'Knowledge & Guidance',
   faqs,
   className = ''

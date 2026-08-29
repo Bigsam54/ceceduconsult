@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Workshop } from '../types';
+import { useToast } from '../context/ToastContext';
 import { 
   X, 
   ArrowLeft,
@@ -17,6 +18,7 @@ interface WorkshopRegisterModalProps {
 }
 
 export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ workshop, isOpen, onClose }) => {
+  const toast = useToast();
   const [registered, setRegistered] = useState(false);
   const [ticketCount, setTicketCount] = useState(1);
   const [formData, setFormData] = useState({
@@ -58,6 +60,10 @@ export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ wo
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setRegistered(true);
+    toast.success(
+      `Registration confirmed for ${ticketCount} seat(s) at "${workshop.title}". Confirmation email sent!`,
+      'Seat Reserved'
+    );
     try {
       confetti({ particleCount: 90, spread: 70, origin: { y: 0.5 } });
     } catch (e) {

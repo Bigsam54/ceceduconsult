@@ -9,7 +9,7 @@ export const INITIAL_MOVEMENT_LOGS: AvailabilityMovementLog[] = [
     previousStatus: '2 Weeks Notice',
     newStatus: 'Immediate',
     changedBy: 'Teacher Self-Update',
-    reason: 'Concluded handover at previous preschool; ready for immediate classroom deployment.',
+    reason: 'Concluded handover at previous early learning center; ready for immediate classroom deployment.',
     schoolInvolved: 'Meadow Hall Preparatory',
     timestamp: '12 mins ago'
   },
@@ -20,7 +20,7 @@ export const INITIAL_MOVEMENT_LOGS: AvailabilityMovementLog[] = [
     avatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=600',
     previousStatus: 'Immediate',
     newStatus: 'Placed / Employed',
-    changedBy: 'Miss Nancie (Admin)',
+    changedBy: 'CEC Admin',
     reason: 'Successfully signed 1-year contract as Lead Early Years Specialist.',
     schoolInvolved: 'Grange Early Years Campus, Ikeja GRA',
     timestamp: '1 hour ago'
@@ -44,8 +44,8 @@ export const INITIAL_MOVEMENT_LOGS: AvailabilityMovementLog[] = [
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=600',
     previousStatus: 'Immediate',
     newStatus: 'Immediate',
-    changedBy: 'Miss Nancie (Admin)',
-    reason: 'Passed Jolly Phonics Micro-Teaching Audit with 98% score; Verified Badge issued.',
+    changedBy: 'CEC Admin',
+    reason: 'Passed Foundational Phonics Micro-Teaching Audit with 98% score; Verified Badge issued.',
     schoolInvolved: 'CEC Quality Assurance Board',
     timestamp: '5 hours ago'
   },
@@ -68,8 +68,8 @@ export const INITIAL_MOVEMENT_LOGS: AvailabilityMovementLog[] = [
     avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=600',
     previousStatus: '2 Weeks Notice',
     newStatus: 'Placed / Employed',
-    changedBy: 'Miss Nancie (Admin)',
-    reason: 'Matched and dispatched to Montessori Toddler Room.',
+    changedBy: 'CEC Admin',
+    reason: 'Matched and dispatched to Early Childhood Toddler Room.',
     schoolInvolved: 'Children’s International School (CIS) Lekki',
     timestamp: '2 days ago'
   }

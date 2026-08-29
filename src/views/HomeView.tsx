@@ -13,11 +13,12 @@ import {
   LayoutGrid, 
   BookOpenCheck, 
   UserCheck, 
-  MessageCircle,
   ShoppingBag,
   BookOpen,
   FileCheck,
-  Check
+  Check,
+  Quote,
+  Sparkles
 } from 'lucide-react';
 
 interface HomeViewProps {
@@ -34,9 +35,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
   onOpenConsultationModal
 }) => {
   const [selectedLevel, setSelectedLevel] = useState<string>('All');
-  const [activeTab, setActiveTab] = useState<'schools' | 'teachers'>('schools');
 
-  const levels = ['All', 'Preschool (EYFS)', 'Nursery', 'Kindergarten', 'Lower Primary'];
+  const levels = ['All', 'Early Childhood (EYFS)', 'Nursery', 'Kindergarten', 'Lower Primary'];
 
   const filteredTeachers = selectedLevel === 'All'
     ? MOCK_TEACHERS.slice(0, 3)
@@ -46,19 +46,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
     <div className="space-y-12 sm:space-y-16 pb-12 sm:pb-16">
       
       {/* HERO SECTION */}
-      <section className="relative pt-10 sm:pt-14 pb-14 sm:pb-20 bg-slate-950 text-white border-b border-slate-800 overflow-hidden min-h-[380px] sm:min-h-[440px] flex items-center">
+      <section className="relative pt-10 sm:pt-14 pb-14 sm:pb-20 bg-slate-950 text-white border-b border-slate-800 overflow-hidden min-h-[420px] sm:min-h-[480px] flex items-center">
         
-        {/* Elite African School Campus Aerial Background Photo */}
+        {/* Kids Classroom Learning & Discovery Background Photo */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
           <img
-            src="https://images.unsplash.com/photo-1592280771190-3e2e4d571952?auto=format&fit=crop&w=1920&q=80"
-            alt="Aerial view of modern elite school campus"
+            src="https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=2000&q=85"
+            alt="Young children actively learning, reading, and exploring in a vibrant modern early years classroom"
             referrerPolicy="no-referrer"
-            className="w-full h-full object-cover object-center filter brightness-75 contrast-105"
+            className="w-full h-full object-cover object-center filter brightness-50 contrast-110 scale-102 transition-transform duration-1000"
           />
           {/* Ambient Lighting Gradients - Ensures text remains crisp and readable */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/80 to-slate-950/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-slate-950/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/85 to-slate-950/50" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-slate-950/50" />
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#2ac0db]/15 rounded-full blur-3xl pointer-events-none" />
         </div>
 
@@ -67,12 +67,12 @@ export const HomeView: React.FC<HomeViewProps> = ({
             
             {/* Main Headline */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-extrabold text-white tracking-tight leading-tight">
-              Quality Teachers for <span className="text-[#2ac0db]">Growing Schools</span>
+              Inspiring Early Learners, <span className="text-[#2ac0db]">Empowering Schools</span>
             </h1>
 
-            {/* Shortened Subtitle Text */}
-            <p className="text-sm sm:text-base md:text-lg text-slate-200 leading-relaxed max-w-2xl font-medium">
-              Connecting Ghanaian preschools and primary schools with vetted teachers and early childhood solutions.
+            {/* Short, direct CEC Brand Subtitle */}
+            <p className="text-sm sm:text-base md:text-lg text-slate-200 leading-relaxed max-w-xl font-medium">
+              We connect schools and families with vetted early years teachers, phonics programs, classroom setups and expert educational consultancy.
             </p>
 
             {/* Action Buttons */}
@@ -87,11 +87,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </button>
 
               <button
-                onClick={() => onNavigate('join-network')}
-                className="px-4 sm:px-5 py-3 sm:py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/15 transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+                onClick={() => onNavigate('reading-club')}
+                className="px-4 sm:px-5 py-3 sm:py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/15 transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer backdrop-blur-sm"
               >
-                <GraduationCap className="w-4 h-4 text-[#2ac0db]" />
-                <span>Join as Teacher</span>
+                <BookOpen className="w-4 h-4 text-[#2ac0db]" />
+                <span>The Reading Lounge</span>
+              </button>
+
+              <button
+                onClick={() => onNavigate('consultancy')}
+                className="px-4 sm:px-5 py-3 sm:py-3.5 bg-white/5 hover:bg-white/15 text-slate-200 hover:text-white font-semibold rounded-xl border border-white/10 transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer backdrop-blur-sm"
+              >
+                <GraduationCap className="w-4 h-4 text-[#fa7b2d]" />
+                <span>School Consultancy</span>
               </button>
             </div>
 
@@ -107,7 +115,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             What We Do at CEC
           </h2>
           <p className="text-slate-600 text-xs sm:text-sm">
-            Tailored solutions for preschool proprietors, teachers, and young learners.
+            Tailored solutions for early childhood proprietors, teachers and young learners.
           </p>
         </div>
 
@@ -126,7 +134,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 Teacher Recruitment
               </h3>
               <p className="text-slate-600 text-xs leading-relaxed">
-                Screened, certified preschool and EYFS teachers matched to your school.
+                Screened, certified early childhood and EYFS teachers matched to your school.
               </p>
             </div>
             <span className="text-xs font-bold text-[#126373] flex items-center gap-1 pt-2">
@@ -151,8 +159,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#126373]">
                 The Reading Lounge
               </h3>
-              <p className="text-slate-600 text-xs leading-relaxed">
-                Inspiring lifelong love for reading in children ages 4 to 11 years through hands-on activities, Synthetic Phonics, guided storytelling, tactile reading games and monthly curated book collections.
+              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                Inspiring lifelong love for reading in children ages 4 to 12 years through structured cohorts (Book Buddies, Book Champs, Booksmiths & Booked and Busy).
               </p>
             </div>
             <span className="text-xs font-bold text-[#126373] flex items-center gap-1 pt-2">
@@ -173,7 +181,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 Consultancy
               </h3>
               <p className="text-slate-600 text-xs leading-relaxed">
-                Curriculum audits, EYFS alignment, and school operational guidance.
+                Curriculum audits, EYFS alignment and school operational guidance.
               </p>
             </div>
             <span className="text-xs font-bold text-[#126373] flex items-center gap-1 pt-2">
@@ -194,7 +202,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 CEC Spaces
               </h3>
               <p className="text-slate-600 text-xs leading-relaxed">
-                Classroom setup, wooden furniture layout, and sensory play nooks.
+                Classroom setup, wooden furniture layout and sensory play nooks.
               </p>
             </div>
             <span className="text-xs font-bold text-[#126373] flex items-center gap-1 pt-2">
@@ -219,8 +227,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#126373]">
                 Learning Essentials
               </h3>
-              <p className="text-slate-600 text-xs leading-relaxed">
-                Montessori wooden materials, Jolly Phonics cards, and sensory aids.
+              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                Child-friendly wooden materials, Synthetic Phonics cards and sensory aids.
               </p>
             </div>
             <span className="text-xs font-bold text-[#126373] flex items-center gap-1 pt-2">
@@ -231,99 +239,46 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
-      {/* HOW IT WORKS SECTION */}
-      <section className="bg-slate-100/80 py-10 sm:py-12 border-y border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          
-          <div className="text-center space-y-2.5 max-w-xl mx-auto">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-slate-900">
-              How It Works
-            </h2>
-
-            {/* Toggle */}
-            <div className="inline-flex bg-white p-1 rounded-xl border border-slate-200 shadow-2xs">
-              <button
-                onClick={() => setActiveTab('schools')}
-                className={`px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === 'schools'
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                For School Owners
-              </button>
-              <button
-                onClick={() => setActiveTab('teachers')}
-                className={`px-3.5 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === 'teachers'
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                For Teachers
-              </button>
-            </div>
-          </div>
-
-          {/* Steps */}
-          {activeTab === 'schools' ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-              {[
-                { num: '01', title: 'Search Directory', desc: 'Browse verified candidates with EYFS qualifications and location filters.' },
-                { num: '02', title: 'Inspect Profiles', desc: 'Review verified credentials, classroom experience, and salary ranges.' },
-                { num: '03', title: 'Contact CEC', desc: 'Schedule interviews with Miss Nancie to review candidate suitability.' },
-                { num: '04', title: 'Hire with Guarantee', desc: 'Onboard your teacher backed by CEC’s 90-day replacement guarantee.' }
-              ].map((step, idx) => (
-                <div key={idx} className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5 sm:space-y-2">
-                  <div className="text-xl sm:text-2xl font-heading font-extrabold text-[#2ac0db]">
-                    {step.num}
-                  </div>
-                  <h3 className="font-heading font-bold text-slate-900 text-xs sm:text-sm">{step.title}</h3>
-                  <p className="text-slate-600 text-xs leading-relaxed">{step.desc}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-              {[
-                { num: '01', title: 'Register Profile', desc: 'Create your account and list your early childhood experience.' },
-                { num: '02', title: 'Add Credentials', desc: 'Upload certifications, teaching philosophy, and preferred levels.' },
-                { num: '03', title: 'Complete Vetting', desc: 'Pass CEC’s credentials audit and classroom practice review.' },
-                { num: '04', title: 'Get Placed', desc: 'Connect with reputable preschools matching your salary expectations.' }
-              ].map((step, idx) => (
-                <div key={idx} className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-xs space-y-1.5 sm:space-y-2">
-                  <div className="text-xl sm:text-2xl font-heading font-extrabold text-[#fa7b2d]">
-                    {step.num}
-                  </div>
-                  <h3 className="font-heading font-bold text-slate-900 text-xs sm:text-sm">{step.title}</h3>
-                  <p className="text-slate-600 text-xs leading-relaxed">{step.desc}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-        </div>
-      </section>
-
-      {/* MEET MISS NANCY SECTION */}
+      {/* ADVISORY & MISSION CALLOUT SECTION WITH INTEGRATED PHOTO */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-slate-800 shadow-xl relative overflow-hidden text-center max-w-4xl mx-auto space-y-4 sm:space-y-5">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-heading font-bold text-white leading-snug max-w-3xl mx-auto">
-            “Every preschooler deserves a teacher who understands early child development.”
-          </h2>
+        <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-[#082229] text-white rounded-3xl p-6 sm:p-8 lg:p-10 border border-[#2ac0db]/25 shadow-2xl relative overflow-hidden">
+          
+          {/* Subtle background glow */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-[#2ac0db]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#fa7b2d]/10 rounded-full blur-3xl pointer-events-none" />
 
-          <p className="text-slate-300 text-xs sm:text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
-            Miss Nancie founded CEC Educational Consult to solve the challenge school owners face in finding vetted early years teachers, and to provide educators with mentorship and dignified compensation.
-          </p>
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+            
+            {/* Left Column: Featured Photo (Cropped shifted to show subject) */}
+            <div className="lg:col-span-5 space-y-2">
+              <div className="relative rounded-2xl overflow-hidden border-2 border-white/15 shadow-2xl group bg-slate-950 aspect-4/3 sm:aspect-5/4 max-h-[400px]">
+                <img
+                  src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1788008924/photo_2026-08-29_13-03-56.jpg"
+                  alt="Early Childhood Mentorship and Teaching in Action"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover object-bottom group-hover:scale-103 transition-transform duration-700"
+                />
+              </div>
+            </div>
 
-          <div className="pt-2">
-            <button
-              onClick={() => onOpenConsultationModal()}
-              className="w-full sm:w-auto px-6 py-3 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold rounded-xl shadow transition-all text-xs sm:text-sm inline-flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span>Book Advisory Session with Miss Nancie</span>
-            </button>
+            {/* Right Column: Quote & Mission Message */}
+            <div className="lg:col-span-7 space-y-5 text-left">
+              
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#2ac0db]/15 border border-[#2ac0db]/30 text-[#2ac0db] text-xs font-bold">
+                <Quote className="w-3.5 h-3.5" />
+                <span>Our Guiding Philosophy</span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-white leading-snug">
+                “Every child deserves a teacher who understands early childhood development.”
+              </h2>
+
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                CEC Educational Consult was established to solve the challenge school owners face in finding vetted early years teachers and to provide educators with mentorship and dignified compensation.
+              </p>
+
+            </div>
+
           </div>
         </div>
       </section>
