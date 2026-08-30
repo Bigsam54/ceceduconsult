@@ -50,12 +50,16 @@ const VideoCardItem: React.FC<VideoCardItemProps> = ({ video, isPlaying, onPlay 
               <>
                 <video
                   ref={videoRef}
+                  src={video.videoUrl}
                   controls
                   playsInline
                   autoPlay
-                  preload="auto"
+                  preload="metadata"
                   onWaiting={() => setIsLoading(true)}
-                  onPlaying={() => setIsLoading(false)}
+                  onPlaying={() => {
+                    setIsLoading(false);
+                    setHasError(false);
+                  }}
                   onLoadedData={() => setIsLoading(false)}
                   onCanPlay={() => setIsLoading(false)}
                   onError={() => {
@@ -64,9 +68,6 @@ const VideoCardItem: React.FC<VideoCardItemProps> = ({ video, isPlaying, onPlay 
                   }}
                   className="w-full h-full object-contain bg-black"
                 >
-                  <source src={video.videoUrl} type="video/mp4" />
-                  <source src="https://res.cloudinary.com/qg0w6ewi/video/upload/vc_h264/v1787301607/455D148D-7D3E-4CF2-B954-03014580E217.mp4" type="video/mp4" />
-                  <source src="https://res.cloudinary.com/qg0w6ewi/video/upload/v1787301607/455D148D-7D3E-4CF2-B954-03014580E217.mp4" type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
 
@@ -81,15 +82,27 @@ const VideoCardItem: React.FC<VideoCardItemProps> = ({ video, isPlaying, onPlay 
                 {/* Error fallback option */}
                 {hasError && (
                   <div className="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-4 text-center space-y-3 z-10">
-                    <p className="text-xs text-slate-300">Could not stream in default format on this device.</p>
-                    {video.embedFallbackUrl && (
-                      <button
-                        onClick={() => setHasError(true)}
-                        className="px-3.5 py-1.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 text-xs font-bold rounded-lg flex items-center gap-1.5 cursor-pointer"
+                    <p className="text-xs text-slate-300 max-w-xs">
+                      This video format (such as an Apple .MOV or direct Dropbox link) cannot be decoded directly by the browser.
+                    </p>
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                      {video.embedFallbackUrl ? (
+                        <button
+                          onClick={() => setHasError(true)}
+                          className="px-3.5 py-1.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 text-xs font-bold rounded-lg flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5" /> Switch to Web Stream
+                        </button>
+                      ) : null}
+                      <a
+                        href={video.videoUrl?.replace('&raw=1', '&dl=0')}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition"
                       >
-                        <RefreshCw className="w-3.5 h-3.5" /> Switch to Web Stream
-                      </button>
-                    )}
+                        Open Video Link ↗
+                      </a>
+                    </div>
                   </div>
                 )}
               </>

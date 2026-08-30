@@ -368,10 +368,9 @@ export const MOCK_VIDEO_TESTIMONIALS: VideoTestimonial[] = [
     school: 'Partner School',
     location: 'Ghana',
     duration: 'Video Review',
-    coverImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop',
+    coverImage: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788091210/WhatsApp_Image_2026-08-30_at_11.57.37_AM.jpg',
     headline: 'Teacher Mentorship & Career Growth Feedback',
-    videoUrl: 'https://res.cloudinary.com/qg0w6ewi/video/upload/vc_h264,q_auto,w_720/v1787301607/455D148D-7D3E-4CF2-B954-03014580E217.mp4',
-    embedFallbackUrl: 'https://drive.google.com/file/d/1B57veOzRgbcauhScWPiLPuy6werhqP6W/preview?autoplay=1',
+    videoUrl: 'https://res.cloudinary.com/qg0w6ewi/video/upload/vc_h264,q_auto,w_720/v1788066406/review_2.mp4',
     videoTopic: 'Teacher Mentorship & Career Placement',
     verifiedSchool: true
   },
@@ -384,8 +383,7 @@ export const MOCK_VIDEO_TESTIMONIALS: VideoTestimonial[] = [
     duration: 'Video Review',
     coverImage: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop',
     headline: 'CEC Spaces Classroom Setup & Renovation',
-    videoUrl: 'https://res.cloudinary.com/qg0w6ewi/video/upload/vc_h264,q_auto,w_720/v1787301607/455D148D-7D3E-4CF2-B954-03014580E217.mp4',
-    embedFallbackUrl: 'https://drive.google.com/file/d/1B57veOzRgbcauhScWPiLPuy6werhqP6W/preview?autoplay=1',
+    videoUrl: 'https://www.dropbox.com/scl/fi/01i55sxr4yw5ac8a9ppn1/review-2.MP4?rlkey=li1z2b5y5rsptn8tlfdu7unqq&st=p3w0vhk3&raw=1',
     videoTopic: 'CEC Spaces Classroom Renovation & Setup',
     verifiedSchool: true
   },
