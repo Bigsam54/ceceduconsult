@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { AdvertisedSchool } from '../types';
 import { SchoolsToConsiderSection } from '../components/SchoolsToConsiderSection';
 import { SchoolDetailModal } from '../components/SchoolDetailModal';
-import { Building2, Search, Sparkles, Award, ShieldCheck, MapPin } from 'lucide-react';
 
 interface SchoolsViewProps {
   onOpenConsultationModal: () => void;
@@ -27,11 +26,6 @@ export const SchoolsView: React.FC<SchoolsViewProps> = ({ onOpenConsultationModa
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#2ac0db]/20 border border-[#2ac0db]/40 rounded-full text-xs font-bold text-[#2ac0db]">
-            <Building2 className="w-3.5 h-3.5" />
-            <span>CEC Partner Schools & Admissions Directory</span>
-          </div>
-
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-white tracking-tight">
             Schools to Consider in Ghana
           </h1>
@@ -39,21 +33,6 @@ export const SchoolsView: React.FC<SchoolsViewProps> = ({ onOpenConsultationModa
           <p className="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed font-medium">
             Helping parents make informed educational decisions. Explore accredited early childhood academies, Montessori preschools, and international primary schools audited and supported by CEC Educational Consult.
           </p>
-
-          <div className="flex flex-wrap items-center gap-4 pt-2 text-xs text-slate-400">
-            <div className="flex items-center gap-1.5 text-white font-medium">
-              <ShieldCheck className="w-4 h-4 text-[#2ac0db]" />
-              <span>CEC Audited Quality Standards</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-white font-medium">
-              <Award className="w-4 h-4 text-[#fa7b2d]" />
-              <span>Vetted Early Years Specialists</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-white font-medium">
-              <MapPin className="w-4 h-4 text-[#2ac0db]" />
-              <span>Accra, Tema, Kumasi & Nationwide</span>
-            </div>
-          </div>
         </div>
       </section>
 

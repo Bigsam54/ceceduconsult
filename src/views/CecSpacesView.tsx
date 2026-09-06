@@ -1,230 +1,321 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { MOCK_CEC_SPACES } from '../data/mockData';
-import { 
-  LayoutGrid, 
-  Sparkles, 
-  CheckCircle2, 
-  Ruler, 
-  Palette, 
-  ShieldCheck,
+import {
+  Quote,
+  MapPin,
+  CheckCircle2,
   MessageCircle,
-  Layers,
-  Compass,
-  Check,
+  Ruler,
+  Palette,
+  ShieldCheck,
   BookOpen,
   Blocks,
   FlaskConical,
-  Camera,
-  Eye
+  ClipboardList,
+  Compass,
+  PackageCheck,
+  ArrowRight,
+  Frame,
+  Globe2
 } from 'lucide-react';
 
 interface CecSpacesViewProps {
   onOpenConsultationModal: () => void;
 }
 
-export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultationModal }) => {
-  const [activeProject, setActiveProject] = useState(MOCK_CEC_SPACES[0]);
-  const [selectedZone, setSelectedZone] = useState<string>('reading');
-  const [viewMode, setViewMode] = useState<'photo' | 'blueprint'>('photo');
+const zones = [
+  { name: 'Reading & Literacy Haven', desc: 'Low-profile bookshelves with cozy ergonomic floor cushions for quiet reading time.', icon: BookOpen },
+  { name: 'Practical Life & Independence', desc: 'Self-accessible wooden trays, pouring stations and sensory sorting racks.', icon: Blocks },
+  { name: 'Sensory & STEM Discovery', desc: 'Water play basins, kinetic sand trays and natural-light magnifying tables.', icon: FlaskConical },
+  { name: 'Circle Time & Expressive Arts', desc: 'High-contrast perimeter lines, acoustic wall art and a dedicated easel bay.', icon: Palette }
+];
 
-  const zones = [
-    { id: 'reading', name: 'Reading & Literacy Haven', size: '20%', desc: 'Low-profile forward-facing bookshelves with cozy ergonomic floor cushions.', icon: BookOpen },
-    { id: 'practical', name: 'Practical Life & Independence', size: '30%', desc: 'Self-accessible wooden trays, pouring stations and sensory sorting racks.', icon: Blocks },
-    { id: 'sensory', name: 'Sensory & STEM Discovery', size: '25%', desc: 'Water play basin, kinetic sand tray and natural magnifying light table.', icon: FlaskConical },
-    { id: 'circle', name: 'Circle Time & Expressive Arts', size: '25%', desc: 'High-contrast perimeter line, acoustic dampening wall art and easel bay.', icon: Palette },
-  ];
+const process = [
+  { step: '01', title: 'Consult & Assess', desc: 'We visit or review your space virtually to understand your goals, budget and constraints.', icon: ClipboardList },
+  { step: '02', title: 'Design & Plan', desc: 'A themed layout and zoning plan tailored to your learners\' ages and curriculum.', icon: Compass },
+  { step: '03', title: 'Source & Build', desc: 'Ergonomic furniture, sensory materials and decor sourced and prepared for install.', icon: PackageCheck },
+  { step: '04', title: 'Install & Audit', desc: 'Full setup on-site, finished with a child-safety and sanitation audit.', icon: ShieldCheck }
+];
+
+const stats = [
+  { value: '12+', label: 'Classrooms Transformed' },
+  { value: '4', label: 'Signature Zones per Room' },
+  { value: '100%', label: 'Safety & Sanitation Audited' },
+  { value: '2+', label: 'Countries Served' }
+];
+
+export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultationModal }) => {
+  const spotlight = MOCK_CEC_SPACES[0];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-12 sm:space-y-16">
-      
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-14 sm:space-y-20">
+
       {/* Hero */}
-      <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-4">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#2ac0db]/20 border border-[#2ac0db]/40 text-[#2ac0db] text-xs sm:text-sm font-extrabold uppercase tracking-wide backdrop-blur-md">
-          <Sparkles className="w-4 h-4 text-[#fa7b2d]" />
-          <span>CEC Inspire Spaces</span>
+      <div className="relative rounded-3xl overflow-hidden border border-[#2ac0db]/20 shadow-2xl min-h-[280px] sm:min-h-[340px] flex items-center bg-slate-950 text-white">
+        <div className="absolute inset-0 z-0 select-none pointer-events-none">
+          <img
+            src={spotlight?.afterImage}
+            alt="A CEC-designed classroom space"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/75 to-slate-950/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
         </div>
-        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white leading-tight">
-          Themed School Design & Signature Classroom Setups
-        </h1>
-        <p className="text-slate-200 text-sm sm:text-base md:text-lg max-w-3xl leading-relaxed font-medium">
-          Themed school design, signature classroom setups, and child-friendly layouts with age-appropriate furniture sourcing for a complete school and classroom makeover.
-        </p>
-        <div className="pt-2">
-          <button
-            onClick={() => onOpenConsultationModal()}
-            className="w-full sm:w-auto px-6 py-3.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold rounded-xl shadow-xl transition-all text-sm sm:text-base inline-flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <MessageCircle className="w-4 h-4" />
-            <span>Book School Setup Consultation</span>
-          </button>
+
+        <div className="relative z-10 max-w-2xl space-y-4 text-left p-6 sm:p-10 lg:p-12">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white leading-tight">
+            CEC Inspire <span className="text-[#2ac0db]">Spaces</span>
+          </h1>
+          <p className="text-slate-200 text-sm sm:text-base md:text-lg leading-relaxed max-w-xl font-medium">
+            Themed school design and signature classroom setups that turn ordinary rooms into inspiring, child-friendly learning spaces.
+          </p>
+          <div className="pt-2">
+            <button
+              onClick={() => onOpenConsultationModal()}
+              className="px-6 py-3.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold rounded-xl shadow-xl transition-all text-sm sm:text-base inline-flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>Book a School Setup Consultation</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Interactive Blueprint & Modern Classroom Showcase */}
-      <section className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl border border-slate-200/90 shadow-lg space-y-6 sm:space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-slate-100">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-heading font-bold text-slate-900">{activeProject.title}</h2>
-            <p className="text-sm text-slate-500">{activeProject.schoolName} • {activeProject.location}</p>
+      {/* Stats Strip */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+        {stats.map((s, i) => (
+          <div key={i} className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs text-center space-y-1">
+            <div className="text-2xl sm:text-3xl font-heading font-extrabold text-[#126373]">{s.value}</div>
+            <div className="text-[11px] sm:text-xs text-slate-500 font-semibold uppercase tracking-wide">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Before & After Spotlight */}
+      {spotlight && (
+        <section className="space-y-6 sm:space-y-8">
+          <div className="text-center space-y-1.5 sm:space-y-2 max-w-2xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-slate-900">
+              See the Transformation
+            </h2>
+            <p className="text-slate-600 text-sm sm:text-base">{spotlight.title}</p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            {/* View Mode Toggle */}
-            <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-              <button
-                onClick={() => setViewMode('photo')}
-                className={`px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-                  viewMode === 'photo'
-                    ? 'bg-white text-slate-900 shadow-xs border border-slate-200/60'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <Camera className="w-3.5 h-3.5 text-[#126373]" />
-                <span>Classroom Photo</span>
-              </button>
-              <button
-                onClick={() => setViewMode('blueprint')}
-                className={`px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-                  viewMode === 'blueprint'
-                    ? 'bg-white text-slate-900 shadow-xs border border-slate-200/60'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <Layers className="w-3.5 h-3.5 text-[#2ac0db]" />
-                <span>3D Blueprint</span>
-              </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <div className="relative rounded-3xl overflow-hidden border border-slate-200/90 shadow-lg aspect-4/3 bg-slate-950">
+              <img
+                src={spotlight.beforeImage}
+                alt="Before"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover grayscale-[30%]"
+              />
+              <span className="absolute top-3 left-3 px-3 py-1 bg-slate-950/85 text-white text-xs font-extrabold uppercase rounded-full backdrop-blur-xs">
+                Before
+              </span>
             </div>
-
-            <span className="px-3 py-1.5 bg-[#2ac0db]/15 text-[#126373] text-xs font-bold rounded-xl border border-[#2ac0db]/30 flex items-center gap-1.5">
-              <Compass className="w-4 h-4 text-[#2ac0db]" /> EYFS Standard
-            </span>
+            <div className="relative rounded-3xl overflow-hidden border-2 border-[#2ac0db] shadow-xl aspect-4/3 bg-slate-950">
+              <img
+                src={spotlight.afterImage}
+                alt="After"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover"
+              />
+              <span className="absolute top-3 left-3 px-3 py-1 bg-[#2ac0db] text-slate-950 text-xs font-extrabold uppercase rounded-full">
+                After
+              </span>
+            </div>
           </div>
+
+          <div className="flex flex-wrap gap-2 justify-center">
+            {spotlight.keyUpgrades.map((upg, i) => (
+              <span
+                key={i}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2ac0db]/10 text-[#126373] text-xs font-semibold rounded-lg"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                <span>{upg}</span>
+              </span>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Room Zones We Design */}
+      <section className="space-y-6 sm:space-y-8">
+        <div className="text-center space-y-1.5 sm:space-y-2 max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-slate-900">
+            Signature Zones We Design
+          </h2>
+          <p className="text-slate-600 text-sm sm:text-base">
+            Every CEC classroom is built around purposeful, child-led zones.
+          </p>
         </div>
 
-        {/* Showcase Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
-          
-          {/* Main Visual Display (Photo or Blueprint) */}
-          <div className="lg:col-span-7">
-            {viewMode === 'photo' ? (
-              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-slate-200/90 shadow-xl bg-slate-950 aspect-4/3 sm:aspect-16/10 group">
-                <img
-                  src={activeProject.afterImage}
-                  alt="Modernized Early Childhood Learning Space"
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white text-xs">
-                  <div className="bg-slate-950/80 backdrop-blur-xs px-3 py-1.5 rounded-lg border border-white/20 font-semibold flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Completed Early Childhood Transformation • Accra</span>
-                  </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {zones.map((zone, i) => {
+            const Icon = zone.icon;
+            return (
+              <div key={i} className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-2xs space-y-3">
+                <div className="w-11 h-11 rounded-2xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center">
+                  <Icon className="w-5 h-5" />
                 </div>
+                <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">{zone.name}</h3>
+                <p className="text-slate-600 text-xs leading-relaxed">{zone.desc}</p>
               </div>
-            ) : (
-              <div className="bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border-2 border-slate-800 shadow-xl space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs text-[#2ac0db] font-mono">
-                  <span>// CEC-ARCH-SCALE: 1:50</span>
-                  <span>DIMENSIONS: 48m²</span>
-                </div>
+            );
+          })}
+        </div>
+      </section>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 min-h-[260px]">
-                  {zones.map((zone) => {
-                    const IconComponent = zone.icon;
-                    return (
-                      <div
-                        key={zone.id}
-                        onClick={() => setSelectedZone(zone.id)}
-                        className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
-                          selectedZone === zone.id
-                            ? 'bg-slate-800/90 border-[#2ac0db] text-white shadow-lg shadow-[#2ac0db]/20'
-                            : 'bg-slate-800/60 border-slate-700 text-slate-300 hover:border-slate-500'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="w-8 h-8 rounded-xl bg-slate-700/60 flex items-center justify-center text-[#2ac0db]">
-                            <IconComponent className="w-4 h-4" />
-                          </div>
-                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-700/80 text-[#2ac0db]">
-                            {zone.size} AREA
-                          </span>
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-xs mt-3 text-white">{zone.name}</h4>
-                          <p className="text-[10px] text-slate-400 line-clamp-2 mt-1">{zone.desc}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+      {/* Spaces We've Designed - Testimonial Style Gallery */}
+      <section className="space-y-6 sm:space-y-8">
+        <div className="text-center space-y-1.5 sm:space-y-2 max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-slate-900">
+            Spaces We've Designed
+          </h2>
+          <p className="text-slate-600 text-sm sm:text-base">
+            A look at some of the schools and classrooms CEC has transformed.
+          </p>
+        </div>
 
-                <div className="pt-2 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-                  <span>● Non-Toxic Polish Guarantee</span>
-                  <span>● Rounded Edge Certified</span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Details & Key Upgrades */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="p-4 rounded-2xl bg-[#2ac0db]/10 border border-[#2ac0db]/20">
-              <span className="text-xs font-bold text-[#126373] uppercase tracking-wider block mb-1">
-                {viewMode === 'photo' ? 'Space Architecture' : 'Selected Zone Spotlight'}
-              </span>
-              <h4 className="font-bold text-base text-slate-900">
-                {viewMode === 'photo' ? 'Natural Beechwood & Child-Friendly Layout' : zones.find(z => z.id === selectedZone)?.name}
-              </h4>
-              <p className="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
-                {viewMode === 'photo' 
-                  ? 'Ergonomic, accessible low-shelving, cozy tactile literacy corners and vibrant child-led discovery stations.'
-                  : zones.find(z => z.id === selectedZone)?.desc}
-              </p>
-            </div>
-
-            <h3 className="font-heading font-bold text-base sm:text-lg text-slate-900">Key Upgrades Made</h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{activeProject.description}</p>
-
-            <div className="space-y-2 pt-1">
-              {activeProject.keyUpgrades.map((upg, i) => (
-                <div key={i} className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-800">
-                  <CheckCircle2 className="w-4 h-4 text-[#2ac0db] shrink-0" />
-                  <span>{upg}</span>
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={() => onOpenConsultationModal()}
-              className="w-full py-3.5 bg-[#fa7b2d] hover:bg-[#e66b1d] text-white font-bold text-sm rounded-xl shadow-xs transition-all mt-3 cursor-pointer"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          {MOCK_CEC_SPACES.map((project) => (
+            <div
+              key={project.id}
+              className="bg-white rounded-3xl border border-slate-200/90 shadow-lg overflow-hidden flex flex-col"
             >
-              Transform Your Classroom Space
-            </button>
+              <div className="relative aspect-4/3 sm:aspect-16/10 bg-slate-950">
+                <img
+                  src={project.afterImage}
+                  alt={project.schoolName}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover"
+                />
+                <span className="absolute top-3 left-3 px-2.5 py-0.5 bg-white/95 text-[#126373] text-[10px] font-extrabold uppercase rounded-full shadow-xs backdrop-blur-xs">
+                  {project.type}
+                </span>
+              </div>
+
+              <div className="p-5 sm:p-6 space-y-4 text-left">
+                <div className="flex items-start gap-2.5">
+                  <Quote className="w-5 h-5 text-[#2ac0db] shrink-0 mt-0.5" />
+                  <p className="text-sm sm:text-base text-slate-700 font-medium leading-relaxed italic">
+                    {project.description}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold">
+                  <MapPin className="w-3.5 h-3.5 text-[#fa7b2d]" />
+                  <span>{project.schoolName} &bull; {project.location}</span>
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+                  {project.keyUpgrades.slice(0, 3).map((upg, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#2ac0db]/10 text-[#126373] text-[11px] font-semibold rounded-lg"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                      <span>{upg}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Our Design Process */}
+      <section className="space-y-6 sm:space-y-8">
+        <div className="text-center space-y-1.5 sm:space-y-2 max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-slate-900">
+            Our Design Process
+          </h2>
+          <p className="text-slate-600 text-sm sm:text-base">
+            From first conversation to finished classroom, in four steps.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {process.map((p, i) => {
+            const Icon = p.icon;
+            return (
+              <div key={i} className="relative bg-white p-5 sm:p-6 rounded-3xl border border-slate-200/90 shadow-2xs space-y-3">
+                <span className="text-[11px] font-mono font-bold text-[#2ac0db]/70">{p.step}</span>
+                <div className="w-11 h-11 rounded-2xl bg-[#fa7b2d]/15 text-[#fa7b2d] flex items-center justify-center">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">{p.title}</h3>
+                <p className="text-slate-600 text-xs leading-relaxed">{p.desc}</p>
+                {i < process.length - 1 && (
+                  <ArrowRight className="hidden lg:block absolute top-1/2 -right-3 -translate-y-1/2 w-5 h-5 text-slate-300" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* What's Included */}
+      <section className="space-y-6 sm:space-y-8">
+        <div className="text-center space-y-1.5 sm:space-y-2 max-w-2xl mx-auto">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-slate-900">
+            What's Included
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
+            <Ruler className="w-7 h-7 sm:w-8 sm:h-8 text-[#2ac0db]" />
+            <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">3D Spatial & Zoning Layout</h3>
+            <p className="text-xs text-slate-600">Custom floorplan mapping for sensory play, reading nooks and practical life centers.</p>
+          </div>
+          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
+            <Palette className="w-7 h-7 sm:w-8 sm:h-8 text-[#fa7b2d]" />
+            <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">Wooden Furniture Sourcing</h3>
+            <p className="text-xs text-slate-600">Child-height ergonomic natural beechwood shelves, tables and low chairs.</p>
+          </div>
+          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
+            <Frame className="w-7 h-7 sm:w-8 sm:h-8 text-[#2ac0db]" />
+            <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">Themed Decor & Branding</h3>
+            <p className="text-xs text-slate-600">Cohesive visual themes, wall art and signage that bring each classroom to life.</p>
+          </div>
+          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
+            <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-[#fa7b2d]" />
+            <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">Child Safety & Sanitation Audit</h3>
+            <p className="text-xs text-slate-600">Corner rounding, non-toxic finishes, impact flooring and electrical socket child-proofing.</p>
           </div>
         </div>
       </section>
 
-      {/* Services Included */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
-        <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
-          <Ruler className="w-7 h-7 sm:w-8 sm:h-8 text-[#2ac0db]" />
-          <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">3D Spatial & Zoning Layout</h3>
-          <p className="text-xs text-slate-600">Custom floorplan mapping for sensory play, reading nooks and practical life centers.</p>
+      {/* Global Reach Note */}
+      <section className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs flex items-center gap-3 text-left max-w-3xl mx-auto">
+        <Globe2 className="w-6 h-6 text-[#2ac0db] shrink-0" />
+        <p className="text-xs sm:text-sm text-slate-600">
+          Based in Accra, Ghana, with remote design consultations available for schools worldwide.
+        </p>
+      </section>
+
+      {/* Closing CTA */}
+      <section className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 border border-[#2ac0db]/20 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+        <div className="space-y-1.5">
+          <h3 className="text-xl sm:text-2xl font-heading font-bold text-white">
+            Ready to Transform Your Classroom?
+          </h3>
+          <p className="text-slate-300 text-sm">
+            Book a consultation and let's design a space your learners will love.
+          </p>
         </div>
-        <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
-          <Palette className="w-7 h-7 sm:w-8 sm:h-8 text-[#fa7b2d]" />
-          <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">Wooden Furniture Sourcing</h3>
-          <p className="text-xs text-slate-600">Child-height ergonomic natural beechwood shelves, tables and low chairs.</p>
-        </div>
-        <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3 sm:col-span-2 md:col-span-1">
-          <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-[#2ac0db]" />
-          <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">Child Safety & Sanitation Audit</h3>
-          <p className="text-xs text-slate-600">Corner rounding, non-toxic finishes, impact flooring and electrical socket child-proofing.</p>
-        </div>
+        <button
+          onClick={() => onOpenConsultationModal()}
+          className="shrink-0 px-6 py-3.5 bg-[#fa7b2d] hover:bg-[#e66b1d] text-white font-bold rounded-xl shadow-xl transition-all text-sm sm:text-base cursor-pointer"
+        >
+          Book School Setup Consultation
+        </button>
       </section>
 
     </div>
   );
 };
-

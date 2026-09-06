@@ -133,12 +133,19 @@
 .animate-ticker {
   display: flex;
   width: max-content;
-  animation: ticker-slide 28s linear infinite;
+  animation: ticker-slide 22s linear infinite reverse;
   will-change: transform;
 }
 
 .animate-ticker:hover {
   animation-play-state: paused;
+}
+
+.animate-ticker-slow {
+  display: flex;
+  width: max-content;
+  animation: ticker-slide 34s linear infinite reverse;
+  will-change: transform;
 }
 
 /* Outline Stroke Typography for CEC Tagline */

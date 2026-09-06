@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
 import { ViewMode, Teacher } from '../types';
 import { MOCK_TEACHERS } from '../data/mockData';
+import { MOCK_ADVERTISED_SCHOOLS } from '../data/mockSchools';
 import { TeacherCard } from '../components/TeacherCard';
 import { VideoTestimonialsSection } from '../components/VideoTestimonialsSection';
-import { 
-  Search, 
-  ShieldCheck, 
-  GraduationCap, 
-  ArrowRight, 
-  CheckCircle2, 
-  Star, 
-  LayoutGrid, 
-  BookOpenCheck, 
-  UserCheck, 
+import {
+  Search,
+  ShieldCheck,
+  GraduationCap,
+  ArrowRight,
+  CheckCircle2,
+  Star,
   ShoppingBag,
   BookOpen,
   FileCheck,
   Check,
   Quote,
-  Sparkles
+  Sparkles,
+  Building2,
+  MapPin
 } from 'lucide-react';
 
 interface HomeViewProps {
@@ -127,8 +127,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
             className="bg-white p-3.5 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-2 sm:space-y-3 flex flex-col justify-between"
           >
             <div className="space-y-1.5 sm:space-y-2.5">
-              <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center">
-                <UserCheck className="w-4 h-4 sm:w-6 sm:h-6" />
+              <div className="h-8 sm:h-11 flex items-center">
+                <img
+                  src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786929268/cece_png.png"
+                  alt="CEC Educational Consult Logo"
+                  referrerPolicy="no-referrer"
+                  className="h-8 sm:h-11 w-auto object-contain"
+                />
               </div>
               <h3 className="font-heading font-bold text-xs sm:text-base lg:text-lg text-slate-900 group-hover:text-[#126373] leading-snug">
                 Teacher Recruitment & Staff Placement
@@ -174,8 +179,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
             className="bg-white p-3.5 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-2 sm:space-y-3 flex flex-col justify-between"
           >
             <div className="space-y-1.5 sm:space-y-2.5">
-              <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center">
-                <BookOpenCheck className="w-4 h-4 sm:w-6 sm:h-6" />
+              <div className="h-8 sm:h-11 flex items-center">
+                <img
+                  src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786929268/cece_png.png"
+                  alt="CEC Educational Consult Logo"
+                  referrerPolicy="no-referrer"
+                  className="h-8 sm:h-11 w-auto object-contain"
+                />
               </div>
               <h3 className="font-heading font-bold text-xs sm:text-base lg:text-lg text-slate-900 group-hover:text-[#126373] leading-snug">
                 Educational Consultancy
@@ -195,8 +205,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
             className="bg-white p-3.5 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-2 sm:space-y-3 flex flex-col justify-between"
           >
             <div className="space-y-1.5 sm:space-y-2.5">
-              <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center">
-                <LayoutGrid className="w-4 h-4 sm:w-6 sm:h-6" />
+              <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl overflow-hidden border border-slate-200">
+                <img
+                  src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1788711783/WhatsApp_Image_2026-09-06_at_4.21.24_PM.jpg"
+                  alt="CEC Inspire Spaces"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <h3 className="font-heading font-bold text-xs sm:text-base lg:text-lg text-slate-900 group-hover:text-[#126373] leading-snug">
                 CEC Inspire Spaces
@@ -236,6 +251,70 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </span>
           </div>
 
+        </div>
+      </section>
+
+      {/* FEATURED SCHOOLS TEASER SECTION */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
+
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+          <div className="space-y-1.5 sm:space-y-2 text-left">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#fa7b2d]/15 border border-[#fa7b2d]/30 text-[#fa7b2d] text-[11px] font-bold uppercase rounded-full">
+              <Building2 className="w-3.5 h-3.5" />
+              <span>Featured Schools</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-slate-900">
+              Schools to Consider
+            </h2>
+            <p className="text-slate-600 text-xs sm:text-sm md:text-base font-medium max-w-xl">
+              A hand-picked selection of CEC-audited early years academies with admissions currently open.
+            </p>
+          </div>
+          <button
+            onClick={() => onNavigate('schools')}
+            className="shrink-0 self-start sm:self-auto px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+          >
+            <span>View All Schools</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {MOCK_ADVERTISED_SCHOOLS.slice(0, 3).map((school) => (
+            <div
+              key={school.id}
+              onClick={() => onNavigate('schools')}
+              className="group bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs hover:shadow-xl hover:border-[#2ac0db]/50 transition-all duration-200 flex flex-col overflow-hidden cursor-pointer"
+            >
+              <div className="relative h-40 sm:h-44 w-full bg-slate-100 overflow-hidden">
+                <img
+                  src={school.image}
+                  alt={school.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  referrerPolicy="no-referrer"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent" />
+                <span className="absolute top-3 left-3 px-2.5 py-0.5 bg-white/95 text-[#126373] text-[10px] font-extrabold uppercase rounded-full shadow-xs backdrop-blur-xs">
+                  {school.area}
+                </span>
+                <div className="absolute bottom-3 left-3 right-3 text-white">
+                  <h3 className="text-sm sm:text-base font-heading font-extrabold leading-tight text-white drop-shadow-xs truncate">
+                    {school.name}
+                  </h3>
+                </div>
+              </div>
+              <div className="p-4 space-y-2">
+                <p className="text-slate-600 text-xs leading-relaxed line-clamp-2">
+                  {school.tagline}
+                </p>
+                <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-semibold pt-1">
+                  <MapPin className="w-3.5 h-3.5 text-[#2ac0db]" />
+                  <span className="truncate">{school.location}</span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

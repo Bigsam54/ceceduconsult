@@ -1,20 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AdvertisedSchool } from '../types';
 import { MOCK_ADVERTISED_SCHOOLS } from '../data/mockSchools';
 import { safeOpenUrl } from '../utils/safeWindow';
-import { toast } from '../utils/toast';
-import { 
-  Building2, 
-  MapPin, 
-  GraduationCap, 
-  Users, 
-  CheckCircle2, 
-  ArrowRight, 
-  Sparkles, 
-  PhoneCall, 
+import { useToast } from '../context/ToastContext';
+import {
+  GraduationCap,
   Megaphone,
-  ChevronRight,
-  ShieldCheck
+  ChevronRight
 } from 'lucide-react';
 
 const WhatsAppIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
@@ -48,13 +40,7 @@ export const SchoolsToConsiderSection: React.FC<SchoolsToConsiderSectionProps> =
   subtitle = "Looking for the right school for your child? Discover reputable early years and primary institutions in Ghana partnered with CEC for excellence in pedagogy, safety, and classroom environment.",
   showAdvertiseBanner = true
 }) => {
-  const [selectedArea, setSelectedArea] = useState<string>('All');
-
-  const areas = ['All', 'Airport Residential', 'East Legon', 'Cantonments', 'Tema', 'West Legon'];
-
-  const filteredSchools = selectedArea === 'All'
-    ? MOCK_ADVERTISED_SCHOOLS
-    : MOCK_ADVERTISED_SCHOOLS.filter(s => s.area.toLowerCase().includes(selectedArea.toLowerCase()) || s.location.toLowerCase().includes(selectedArea.toLowerCase()));
+  const toast = useToast();
 
   const handleQuickWhatsApp = (e: React.MouseEvent, school: AdvertisedSchool) => {
     e.stopPropagation();
@@ -75,16 +61,6 @@ export const SchoolsToConsiderSection: React.FC<SchoolsToConsiderSectionProps> =
       {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-5">
         <div className="space-y-2 max-w-3xl">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 bg-[#2ac0db]/15 text-[#126373] text-[11px] font-extrabold uppercase rounded-full border border-[#2ac0db]/30 flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5" />
-              <span>Partner Institutions</span>
-            </span>
-            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-md">
-              Admissions Open
-            </span>
-          </div>
-
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-slate-900 tracking-tight">
             {title}
           </h2>
@@ -105,29 +81,9 @@ export const SchoolsToConsiderSection: React.FC<SchoolsToConsiderSectionProps> =
         </button>
       </div>
 
-      {/* Location Area Filter Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
-        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1.5 shrink-0 hidden sm:inline">
-          Location:
-        </span>
-        {areas.map((area) => (
-          <button
-            key={area}
-            onClick={() => setSelectedArea(area)}
-            className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all whitespace-nowrap cursor-pointer ${
-              selectedArea === area
-                ? 'bg-[#2ac0db] text-slate-950 shadow-xs'
-                : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
-            }`}
-          >
-            {area}
-          </button>
-        ))}
-      </div>
-
       {/* Schools Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredSchools.map((school) => (
+        {MOCK_ADVERTISED_SCHOOLS.map((school) => (
           <div
             key={school.id}
             onClick={() => onSelectSchool(school)}
@@ -174,26 +130,10 @@ export const SchoolsToConsiderSection: React.FC<SchoolsToConsiderSectionProps> =
                   {school.description}
                 </p>
 
-                {/* Key Specs Pill Grid */}
-                <div className="grid grid-cols-2 gap-2 text-[11px] bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                  <div>
-                    <span className="text-slate-400 uppercase text-[9px] font-bold block">Levels</span>
-                    <span className="font-semibold text-slate-800 truncate block">{school.levels}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 uppercase text-[9px] font-bold block">Staff Ratio</span>
-                    <span className="font-semibold text-[#126373] block">{school.studentTeacherRatio || '1:8'}</span>
-                  </div>
-                </div>
-
-                {/* Highlights List */}
-                <div className="space-y-1.5">
-                  {school.highlights.slice(0, 2).map((hl, idx) => (
-                    <div key={idx} className="flex items-start gap-2 text-xs text-slate-700">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#2ac0db] shrink-0 mt-0.5" />
-                      <span className="line-clamp-1 font-medium">{hl}</span>
-                    </div>
-                  ))}
+                {/* Levels Spec */}
+                <div className="text-[11px] bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                  <span className="text-slate-400 uppercase text-[9px] font-bold block">Levels</span>
+                  <span className="font-semibold text-slate-800 block">{school.levels}</span>
                 </div>
               </div>
 

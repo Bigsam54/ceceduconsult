@@ -24,6 +24,7 @@ import { ReadingClubView } from './views/ReadingClubView';
 import { WorkshopsView } from './views/WorkshopsView';
 import { CecSpacesView } from './views/CecSpacesView';
 import { LearningEssentialsView } from './views/LearningEssentialsView';
+import { SchoolsView } from './views/SchoolsView';
 import { AboutView } from './views/AboutView';
 import { ContactView } from './views/ContactView';
 import { LoginView } from './views/LoginView';
@@ -169,6 +170,10 @@ export default function App() {
 
         {currentView === 'learning-essentials' && (
           <LearningEssentialsView onQuickView={handleQuickViewProduct} />
+        )}
+
+        {currentView === 'schools' && (
+          <SchoolsView onOpenConsultationModal={handleOpenConsultationModal} />
         )}
 
         {currentView === 'about' && (

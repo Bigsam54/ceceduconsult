@@ -127,6 +127,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
                 </button>
               </li>
               <li>
+                <button onClick={() => onNavigate('workshops')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
+                  Teacher Workshops
+                </button>
+              </li>
+              <li>
                 <button onClick={() => onNavigate('consultancy')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
                   Early Childhood Curriculum Design
                 </button>
@@ -164,6 +169,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               <li>
                 <button onClick={() => onNavigate('register')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
                   Teacher Registration
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('contact')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
+                  Contact Us
                 </button>
               </li>
               <li>
@@ -205,24 +215,24 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
 
         </div>
 
-        {/* MASSIVE OUTLINE STROKE BRAND TAGLINE */}
+        {/* MASSIVE OUTLINE STROKE BRAND TAGLINE - Horizontal Scrolling Marquee */}
         <div className="pt-8 sm:pt-12 pb-4 border-t border-slate-900 overflow-hidden select-none pointer-events-none w-full">
-          <div className="w-full flex items-center justify-center overflow-hidden">
-            <p 
-              className="text-[12.5vw] sm:text-[10.5vw] font-heading font-black tracking-tighter uppercase whitespace-nowrap leading-none text-center stroke-text-huge"
-              style={{
-                WebkitTextStroke: '2px rgba(42, 192, 219, 0.45)',
-                textShadow: '0 0 30px rgba(42, 192, 219, 0.12)',
-                color: 'transparent'
-              }}
-            >
-              Create • Educate • Cultivate
-            </p>
-          </div>
-          <div className="flex items-center justify-center gap-3 mt-4 text-slate-500 text-[11px] sm:text-xs font-semibold tracking-widest uppercase">
-            <span className="w-10 sm:w-20 h-px bg-gradient-to-r from-transparent to-[#2ac0db]/50" />
-            <span className="text-[#2ac0db]/80 font-bold">CEC Brand Tagline</span>
-            <span className="w-10 sm:w-20 h-px bg-gradient-to-l from-transparent to-[#2ac0db]/50" />
+          <div className="w-full overflow-hidden">
+            <div className="animate-ticker-slow gap-x-16 sm:gap-x-24">
+              {[0, 1].map((i) => (
+                <p
+                  key={i}
+                  className="shrink-0 text-[12.5vw] sm:text-[10.5vw] font-heading font-black tracking-tighter uppercase whitespace-nowrap leading-none stroke-text-huge"
+                  style={{
+                    WebkitTextStroke: '2px rgba(42, 192, 219, 0.45)',
+                    textShadow: '0 0 30px rgba(42, 192, 219, 0.12)',
+                    color: 'transparent'
+                  }}
+                >
+                  Create • Educate • Cultivate
+                </p>
+              ))}
+            </div>
           </div>
         </div>
 

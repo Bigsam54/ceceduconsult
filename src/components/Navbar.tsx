@@ -17,7 +17,9 @@ import {
   PhoneCall,
   Ticket,
   ChevronRight,
-  BookOpen
+  BookOpen,
+  Mail,
+  Building2
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -66,12 +68,38 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
   const isAboutActive = ['about', 'join-network', 'contact'].includes(currentView);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-2xs transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 sm:h-24 lg:h-28 py-2">
-          
+    <>
+      {/* Top Utility Bar - Brand Tagline & Contact (Desktop Only) */}
+      <div className="hidden lg:block bg-slate-950 text-slate-300 text-[11px] font-semibold">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-9 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <a href="tel:+233540390029" className="flex items-center gap-1.5 hover:text-white transition-colors">
+              <PhoneCall className="w-3 h-3 text-[#2ac0db]" />
+              <span>+233 54 039 0029</span>
+            </a>
+            <a href="mailto:contact@ceceduconsult.org" className="flex items-center gap-1.5 hover:text-white transition-colors">
+              <Mail className="w-3 h-3 text-[#2ac0db]" />
+              <span>contact@ceceduconsult.org</span>
+            </a>
+          </div>
+          <div className="w-56 overflow-hidden">
+            <div className="animate-ticker gap-x-6 text-[#2ac0db] tracking-widest uppercase">
+              <span className="shrink-0">Create &bull; Educate &bull; Cultivate</span>
+              <span className="shrink-0">Create &bull; Educate &bull; Cultivate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-2xs transition-all relative">
+        {/* Brand Accent Stripe */}
+        <div className="absolute bottom-0 inset-x-0 h-[3px] bg-gradient-to-r from-[#2ac0db] via-[#fa7b2d] to-[#2ac0db]" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20 sm:h-24 lg:h-28 py-2 relative">
+
           {/* Brand Logo */}
-          <div 
+          <div
             onClick={() => handleNav('home')}
             className="flex items-center cursor-pointer select-none group py-1"
           >
@@ -81,6 +109,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
               className="h-16 sm:h-20 lg:h-24 w-auto max-w-[220px] sm:max-w-[280px] object-contain transition-transform group-hover:scale-105"
               referrerPolicy="no-referrer"
             />
+          </div>
+
+          {/* Mobile Scrolling Tagline - centered between logo and hamburger */}
+          <div className="lg:hidden absolute left-1/2 -translate-x-1/2 w-36 sm:w-52 overflow-hidden">
+            <div className="animate-ticker gap-x-6 text-[#2ac0db] text-sm sm:text-base font-bold tracking-widest uppercase">
+              <span className="shrink-0">Create &bull; Educate &bull; Cultivate</span>
+              <span className="shrink-0">Create &bull; Educate &bull; Cultivate</span>
+            </div>
           </div>
 
           {/* Consolidated Desktop Navigation */}
@@ -111,6 +147,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
               <span className="px-1.5 py-0.2 text-[9px] font-extrabold uppercase bg-[#2ac0db] text-slate-950 rounded-md">
                 1,000+
               </span>
+            </button>
+
+            {/* Schools */}
+            <button
+              onClick={() => handleNav('schools')}
+              className={`px-3.5 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 ${
+                currentView === 'schools'
+                  ? 'text-[#126373] bg-[#2ac0db]/15 border border-[#2ac0db]/30'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <span>Schools</span>
             </button>
 
             {/* Services Dropdown */}
@@ -162,8 +210,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                       currentView === 'consultancy' ? 'bg-[#2ac0db]/15 text-[#126373] font-bold' : 'text-slate-700'
                     }`}
                   >
-                    <div className="w-8 h-8 rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center shrink-0">
-                      <BookOpenCheck className="w-4 h-4" />
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 p-1 border border-slate-200">
+                      <img
+                        src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786929268/cece_png.png"
+                        alt="CEC Educational Consult"
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                     <div>
                       <div className="font-semibold text-slate-900">Educational Consultancy</div>
@@ -177,8 +229,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                       currentView === 'cec-spaces' ? 'bg-[#2ac0db]/15 text-[#126373] font-bold' : 'text-slate-700'
                     }`}
                   >
-                    <div className="w-8 h-8 rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center shrink-0">
-                      <LayoutGrid className="w-4 h-4" />
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden border border-slate-200">
+                      <img
+                        src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1788711783/WhatsApp_Image_2026-09-06_at_4.21.24_PM.jpg"
+                        alt="CEC Inspire Spaces"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div>
                       <div className="font-semibold text-slate-900">CEC Spaces</div>
@@ -192,8 +248,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                       currentView === 'workshops' ? 'bg-[#2ac0db]/15 text-[#126373] font-bold' : 'text-slate-700'
                     }`}
                   >
-                    <div className="w-8 h-8 rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center shrink-0">
-                      <Ticket className="w-4 h-4" />
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 p-1 border border-slate-200">
+                      <img
+                        src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786929268/cece_png.png"
+                        alt="CEC Educational Consult"
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                     <div>
                       <div className="font-semibold text-slate-900">Teacher Workshops</div>
@@ -375,6 +435,19 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
               </span>
               <ChevronRight className="w-4 h-4 text-slate-400" />
             </button>
+
+            <button
+              onClick={() => handleNav('schools')}
+              className={`w-full text-left px-4 py-2 text-xs font-bold rounded-xl flex items-center justify-between ${
+                currentView === 'schools' ? 'bg-[#2ac0db]/15 text-[#126373]' : 'text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-[#fa7b2d]" />
+                <span>Schools</span>
+              </span>
+              <ChevronRight className="w-4 h-4 text-slate-400" />
+            </button>
           </div>
 
           <div className="pt-2 border-t border-slate-100 space-y-1">
@@ -472,6 +545,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
 
         </div>
       )}
-    </header>
+      </header>
+    </>
   );
 };

@@ -55,16 +55,6 @@ export const LearningEssentialsView: React.FC<LearningEssentialsViewProps> = ({ 
       
       {/* Banner */}
       <div className="relative bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl overflow-hidden">
-        
-        {/* Clearly Visible Background Accent */}
-        <div className="absolute right-0 sm:right-6 top-1/2 -translate-y-1/2 opacity-75 sm:opacity-85 pointer-events-none select-none drop-shadow-2xl">
-          <img
-            src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786994345/CEC_Learning_Essentials-removebg-preview.png"
-            alt="CEC Learning Essentials Backdrop"
-            referrerPolicy="no-referrer"
-            className="h-48 sm:h-64 w-auto object-contain"
-          />
-        </div>
 
         <div className="relative z-10 space-y-3 sm:space-y-4 max-w-3xl">
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white leading-tight">

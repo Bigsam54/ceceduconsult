@@ -1,18 +1,12 @@
 import React, { useEffect } from 'react';
 import { AdvertisedSchool } from '../types';
 import { safeOpenUrl } from '../utils/safeWindow';
-import { toast } from '../utils/toast';
-import { 
-  X, 
-  MapPin, 
-  GraduationCap, 
-  Users, 
-  Sparkles, 
-  Phone, 
-  CheckCircle2, 
-  Clock, 
-  Award,
-  ExternalLink,
+import { useToast } from '../context/ToastContext';
+import {
+  X,
+  MapPin,
+  Phone,
+  CheckCircle2,
   ShieldCheck
 } from 'lucide-react';
 
@@ -39,6 +33,8 @@ interface SchoolDetailModalProps {
 }
 
 export const SchoolDetailModal: React.FC<SchoolDetailModalProps> = ({ school, isOpen, onClose }) => {
+  const toast = useToast();
+
   // Lock body scroll and ESC key listener
   useEffect(() => {
     if (!isOpen || !school) return;
@@ -113,16 +109,6 @@ export const SchoolDetailModal: React.FC<SchoolDetailModalProps> = ({ school, is
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
             
             <div className="absolute bottom-3 left-4 right-4 text-white">
-              <div className="flex flex-wrap gap-1.5 mb-1.5">
-                {school.badges.map((b, i) => (
-                  <span key={i} className="px-2.5 py-0.5 bg-[#2ac0db] text-slate-950 text-[10px] font-extrabold uppercase rounded-full">
-                    {b}
-                  </span>
-                ))}
-                <span className="px-2.5 py-0.5 bg-emerald-500 text-slate-950 text-[10px] font-extrabold uppercase rounded-full">
-                  {school.admissionStatus}
-                </span>
-              </div>
               <h2 className="text-xl sm:text-2xl font-heading font-extrabold leading-tight text-white drop-shadow-md">
                 {school.name}
               </h2>
@@ -143,7 +129,7 @@ export const SchoolDetailModal: React.FC<SchoolDetailModalProps> = ({ school, is
             </div>
 
             {/* Quick Metrics Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 py-3 border-y border-slate-100 bg-slate-50/70 p-3 rounded-2xl">
+            <div className="grid grid-cols-2 gap-2.5 py-3 border-y border-slate-100 bg-slate-50/70 p-3 rounded-2xl">
               <div>
                 <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">Curriculum</span>
                 <span className="text-xs font-bold text-slate-900 leading-tight block mt-0.5">{school.curriculum}</span>
@@ -151,14 +137,6 @@ export const SchoolDetailModal: React.FC<SchoolDetailModalProps> = ({ school, is
               <div>
                 <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">Ages / Grades</span>
                 <span className="text-xs font-bold text-slate-900 leading-tight block mt-0.5">{school.studentAges}</span>
-              </div>
-              <div>
-                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">Staff Ratio</span>
-                <span className="text-xs font-bold text-slate-900 leading-tight block mt-0.5">{school.studentTeacherRatio || '1:8'}</span>
-              </div>
-              <div>
-                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">Tuition Tier</span>
-                <span className="text-xs font-bold text-[#126373] leading-tight block mt-0.5">{school.tuitionTier || 'Moderate'}</span>
               </div>
             </div>
 

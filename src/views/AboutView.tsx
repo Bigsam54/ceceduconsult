@@ -111,14 +111,14 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
         </div>
 
         {/* 2 TEAM CARDS SIDE BY SIDE ON MOBILE */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8 max-w-4xl">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 sm:max-w-md">
           {teamMembers.map((member) => (
-            <div 
+            <div
               key={member.id}
-              className="bg-white p-2.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-md hover:border-[#2ac0db]/40 transition-all flex flex-col space-y-2.5 sm:space-y-4 text-left group"
+              className="bg-white p-2.5 sm:p-4 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-md hover:border-[#2ac0db]/40 transition-all flex flex-col space-y-2.5 sm:space-y-3 text-left group"
             >
-              {/* Bold Big Portrait Photo */}
-              <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-md border border-slate-200/80 bg-slate-950 aspect-[3/4] min-h-[190px] sm:min-h-[340px]">
+              {/* Bold Portrait Photo */}
+              <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-md border border-slate-200/80 bg-slate-950 aspect-[3/4] min-h-[190px] sm:min-h-[210px]">
                 <img 
                   src={member.imageUrl} 
                   alt={`${member.name} - ${member.position}`}
