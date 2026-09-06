@@ -133,7 +133,7 @@
 .animate-ticker {
   display: flex;
   width: max-content;
-  animation: ticker-slide 22s linear infinite reverse;
+  animation: ticker-slide 22s linear infinite;
   will-change: transform;
 }
 
@@ -144,7 +144,7 @@
 .animate-ticker-slow {
   display: flex;
   width: max-content;
-  animation: ticker-slide 34s linear infinite reverse;
+  animation: ticker-slide 34s linear infinite;
   will-change: transform;
 }
 

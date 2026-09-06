@@ -1,23 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ViewMode } from '../types';
 import { safeScrollToTop } from '../utils/safeWindow';
-import { 
-  GraduationCap, 
-  Menu, 
-  X, 
-  Search, 
-  UserCheck, 
-  LayoutDashboard, 
+import {
+  GraduationCap,
+  Menu,
+  X,
+  Search,
+  UserCheck,
+  LayoutDashboard,
   ShieldAlert,
   ChevronDown,
-  BookOpenCheck,
-  LayoutGrid,
-  ShoppingBag,
   Info,
   PhoneCall,
-  Ticket,
   ChevronRight,
-  BookOpen,
   Mail,
   Building2
 } from 'lucide-react';
@@ -460,7 +455,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                 currentView === 'reading-club' ? 'bg-[#fa7b2d]/15 text-[#fa7b2d] font-bold' : 'text-slate-700 hover:bg-slate-100'
               }`}
             >
-              <BookOpen className="w-4 h-4 text-[#fa7b2d]" />
+              <span className="w-5 h-5 rounded-md bg-slate-100 flex items-center justify-center shrink-0 p-0.5 border border-slate-200 overflow-hidden">
+                <img
+                  src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293997/The_Reading_Lounge_5.png"
+                  alt="The Reading Lounge"
+                  className="w-full h-full object-contain"
+                />
+              </span>
               <span className="flex items-center justify-between flex-1">
                 <span>The Reading Lounge</span>
               </span>
@@ -469,28 +470,52 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
               onClick={() => handleNav('consultancy')}
               className="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded-xl flex items-center gap-2.5"
             >
-              <BookOpenCheck className="w-4 h-4 text-[#126373]" />
+              <span className="w-5 h-5 rounded-md bg-slate-100 flex items-center justify-center shrink-0 p-0.5 border border-slate-200 overflow-hidden">
+                <img
+                  src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786929268/cece_png.png"
+                  alt="CEC Educational Consult"
+                  className="w-full h-full object-contain"
+                />
+              </span>
               <span>Educational Consultancy</span>
             </button>
             <button
               onClick={() => handleNav('cec-spaces')}
               className="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded-xl flex items-center gap-2.5"
             >
-              <LayoutGrid className="w-4 h-4 text-[#126373]" />
+              <span className="w-5 h-5 rounded-md bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200 overflow-hidden">
+                <img
+                  src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1788711783/WhatsApp_Image_2026-09-06_at_4.21.24_PM.jpg"
+                  alt="CEC Inspire Spaces"
+                  className="w-full h-full object-cover"
+                />
+              </span>
               <span>CEC Spaces (Classroom Setup)</span>
             </button>
             <button
               onClick={() => handleNav('workshops')}
               className="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded-xl flex items-center gap-2.5"
             >
-              <Ticket className="w-4 h-4 text-[#126373]" />
+              <span className="w-5 h-5 rounded-md bg-slate-100 flex items-center justify-center shrink-0 p-0.5 border border-slate-200 overflow-hidden">
+                <img
+                  src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786929268/cece_png.png"
+                  alt="CEC Educational Consult"
+                  className="w-full h-full object-contain"
+                />
+              </span>
               <span>Teacher Workshops</span>
             </button>
             <button
               onClick={() => handleNav('learning-essentials')}
               className="w-full text-left px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded-xl flex items-center gap-2.5"
             >
-              <ShoppingBag className="w-4 h-4 text-[#126373]" />
+              <span className="w-5 h-5 rounded-md bg-slate-100 flex items-center justify-center shrink-0 p-0.5 border border-slate-200 overflow-hidden">
+                <img
+                  src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786994345/CEC_Learning_Essentials-removebg-preview.png"
+                  alt="CEC Learning Essentials"
+                  className="w-full h-full object-contain"
+                />
+              </span>
               <span>Learning Essentials Store</span>
             </button>
           </div>

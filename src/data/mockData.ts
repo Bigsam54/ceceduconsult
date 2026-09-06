@@ -554,34 +554,6 @@ export const MOCK_VIDEO_TESTIMONIALS: VideoTestimonial[] = [
     embedFallbackUrl: 'https://player.cloudinary.com/embed/?cloud_name=qg0w6ewi&public_id=review_2&autoplay=true&controls=true',
     videoTopic: 'Teacher Mentorship & Career Placement',
     verifiedSchool: true
-  },
-  {
-    id: 'vid-3',
-    author: 'Crown Heritage School',
-    role: 'Head of School',
-    school: 'Crown Heritage International',
-    location: 'Ghana',
-    duration: 'Video Review',
-    coverImage: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop',
-    headline: 'CEC Spaces Classroom Setup & Renovation',
-    videoUrl: 'https://res.cloudinary.com/qg0w6ewi/video/upload/vc_h264,q_auto,w_720/v1788066406/review_2.mp4',
-    embedFallbackUrl: 'https://player.cloudinary.com/embed/?cloud_name=qg0w6ewi&public_id=review_2&autoplay=true&controls=true',
-    videoTopic: 'CEC Spaces Classroom Renovation & Setup',
-    verifiedSchool: true
-  },
-  {
-    id: 'vid-4',
-    author: 'Oakwood Ridge International',
-    role: 'Early Years Director',
-    school: 'Oakwood Ridge',
-    location: 'Ghana',
-    duration: 'Video Review',
-    coverImage: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=800&auto=format&fit=crop',
-    headline: 'Reading Lounge & Phonics Club Experience',
-    videoUrl: 'https://res.cloudinary.com/qg0w6ewi/video/upload/vc_h264,q_auto,w_720/v1787301607/455D148D-7D3E-4CF2-B954-03014580E217.mp4',
-    embedFallbackUrl: 'https://drive.google.com/file/d/1B57veOzRgbcauhScWPiLPuy6werhqP6W/preview?autoplay=1',
-    videoTopic: 'CEC Reading Club & Phonics Integration',
-    verifiedSchool: true
   }
 ];
 
