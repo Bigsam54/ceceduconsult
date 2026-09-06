@@ -34,7 +34,7 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
     phone: '',
     email: '',
     childName: '',
-    childAge: 'Book Buddies (Ages 4 to 5, Beginner Readers)',
+    childAge: 'Book Buddies (Beginner Readers)',
     track: 'Live Online Reading & Phonics Circle (Zoom)',
     schoolName: ''
   });
@@ -81,7 +81,7 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
           </h1>
 
           <p className="text-slate-200 text-sm sm:text-base md:text-lg leading-relaxed max-w-xl font-medium">
-            Inspiring lifelong love for reading in children ages 4 to 12 years through live interactive virtual sessions, Synthetic Phonics, guided storytelling, tactile reading games and monthly book collections delivered to your doorstep.
+            Inspiring lifelong love for reading in children ages 4 to 12 years through live interactive virtual sessions, Synthetic Phonics, guided storytelling and tactile reading games.
           </p>
         </div>
       </div>
@@ -94,7 +94,7 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
           </div>
           <h3 className="font-heading font-bold text-lg text-slate-900">Live Virtual Interactive Rooms</h3>
           <p className="text-slate-600 text-sm leading-relaxed">
-            Small cohort live Zoom circles with certified early literacy educators. Children interact, practice blending and share stories in real time from home.
+            Small cohort live virtual circles with certified literacy educators. Children interact, practice blending and share stories in real time from home.
           </p>
         </div>
 
@@ -104,7 +104,7 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
           </div>
           <h3 className="font-heading font-bold text-lg text-slate-900">Accessible Worldwide</h3>
           <p className="text-slate-600 text-sm leading-relaxed">
-            No commuting required. Families across Ghana, Nigeria, the UK, US, Canada and globally connect weekly to boost their children's reading fluency.
+            No commuting required. Families across Ghana and beyond and globally connect weekly to boost their children's reading fluency.
           </p>
         </div>
 
@@ -112,36 +112,36 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
           <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-700 flex items-center justify-center">
             <Package className="w-6 h-6" />
           </div>
-          <h3 className="font-heading font-bold text-lg text-slate-900">Monthly Book Box & Worksheets</h3>
+          <h3 className="font-heading font-bold text-lg text-slate-900">Weekly Book Box & Worksheets</h3>
           <p className="text-slate-600 text-sm leading-relaxed">
-            Physical book deliveries and printable decodable phonics packs complement our live online reading sessions for hands-on tactile practice.
+            Access to Online books, audio books, educational games and decodable phonics packs.
           </p>
         </div>
       </div>
 
-      {/* Structured Age Sections (Ages 4 to 12) */}
+      {/* Structured Cohort Sections */}
       <section className="space-y-6 sm:space-y-8">
         <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#2ac0db]/15 text-[#126373] text-xs font-bold rounded-full">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#2ac0db]/15 text-[#126373] text-xs font-bold rounded-full">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Structured Age Sections</span>
+            <span>Child-Centered Reading Circles</span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-slate-900">
-            Programs Tailored to Every Age (Ages 4 to 12)
+            Programs Tailored to Every Section
           </h2>
           <p className="text-slate-600 text-sm sm:text-base">
-            Child-centered live virtual cohorts designed for each developmental milestone from emergent readers to confident analytical leaders.
+            Child-centered live virtual cohorts designed for each developmental milestone from beginner readers to advanced leaders.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           
-          {/* Level 1: Book Buddies (Ages 4-5) */}
+          {/* Level 1: Book Buddies */}
           <div className="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200 shadow-xs hover:border-[#2ac0db] transition-all space-y-4 flex flex-col justify-between">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 bg-[#2ac0db]/15 text-[#126373] text-xs font-bold rounded-lg">
-                  Ages 4 to 5
+                  Foundation
                 </span>
                 <Smile className="w-6 h-6 text-[#2ac0db]" />
               </div>
@@ -173,7 +173,7 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
             </ul>
           </div>
 
-          {/* Level 2: Book Champs (Ages 6-7) */}
+          {/* Level 2: Book Champs */}
           <div className="bg-white p-6 sm:p-7 rounded-3xl border-2 border-[#2ac0db] shadow-md space-y-4 relative flex flex-col justify-between">
             <div className="absolute -top-3 right-4 px-3 py-0.5 bg-[#fa7b2d] text-white text-xs font-bold rounded-full">
               Popular Track
@@ -181,7 +181,7 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 bg-[#2ac0db]/20 text-[#126373] text-xs font-bold rounded-lg">
-                  Ages 6 to 7
+                  Fluency
                 </span>
                 <BookOpen className="w-6 h-6 text-[#2ac0db]" />
               </div>
@@ -213,12 +213,12 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
             </ul>
           </div>
 
-          {/* Level 3: Booksmiths (Ages 8-9) */}
+          {/* Level 3: Booksmiths */}
           <div className="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200 shadow-xs hover:border-[#2ac0db] transition-all space-y-4 flex flex-col justify-between">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 bg-[#2ac0db]/15 text-[#126373] text-xs font-bold rounded-lg">
-                  Ages 8 to 9
+                  Comprehension
                 </span>
                 <Award className="w-6 h-6 text-[#fa7b2d]" />
               </div>
@@ -250,12 +250,12 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
             </ul>
           </div>
 
-          {/* Level 4: Booked & Busy (Ages 10-12) */}
+          {/* Level 4: Booked & Busy */}
           <div className="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200 shadow-xs hover:border-[#2ac0db] transition-all space-y-4 flex flex-col justify-between">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 bg-[#2ac0db]/15 text-[#126373] text-xs font-bold rounded-lg">
-                  Ages 10 to 12
+                  Leadership
                 </span>
                 <GraduationCap className="w-6 h-6 text-[#126373]" />
               </div>
@@ -378,10 +378,10 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
                     onChange={(e) => setEnrollForm({ ...enrollForm, childAge: e.target.value })}
                     className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#2ac0db] outline-none text-slate-900 font-semibold text-sm"
                   >
-                    <option value="Book Buddies (Ages 4 to 5, Beginner Readers)">Book Buddies (Ages 4 to 5: Beginner Readers)</option>
-                    <option value="Book Champs (Ages 6 to 7, Early Readers)">Book Champs (Ages 6 to 7: Early Readers)</option>
-                    <option value="Booksmiths (Ages 8 to 9, Confident Readers)">Booksmiths (Ages 8 to 9: Confident Readers)</option>
-                    <option value="Booked & Busy (Ages 10 to 12, Advanced Readers)">Booked & Busy (Ages 10 to 12: Advanced Readers)</option>
+                    <option value="Book Buddies (Beginner Readers)">Book Buddies (Beginner Readers)</option>
+                    <option value="Book Champs (Early Readers)">Book Champs (Early Readers)</option>
+                    <option value="Booksmiths (Confident Readers)">Booksmiths (Confident Readers)</option>
+                    <option value="Booked & Busy (Advanced Readers)">Booked & Busy (Advanced Readers)</option>
                   </select>
                 </div>
               </div>

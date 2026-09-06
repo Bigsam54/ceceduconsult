@@ -93,7 +93,7 @@ export const BookConsultationModal: React.FC<BookConsultationModalProps> = ({ se
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 overscroll-contain">
       {/* Dimmed backdrop - clicking closes modal */}
       <div 
         onClick={() => onClose()}
@@ -104,8 +104,10 @@ export const BookConsultationModal: React.FC<BookConsultationModalProps> = ({ se
       {/* Modal Dialog Card */}
       <div 
         onClick={(e) => e.stopPropagation()} 
-        className="relative w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl z-10 flex flex-col max-h-[92vh] sm:max-h-[88vh] overflow-hidden border border-slate-200/80 animate-in slide-in-from-bottom-6 sm:zoom-in-95 fade-in duration-200"
+        className="relative w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl z-10 flex flex-col max-h-[85dvh] sm:max-h-[88vh] overflow-hidden border border-slate-200/80 animate-in slide-in-from-bottom-6 sm:zoom-in-95 fade-in duration-200"
       >
+        {/* Mobile Grab Indicator */}
+        <div className="w-12 h-1 bg-slate-300 rounded-full mx-auto mt-2 sm:hidden shrink-0" />
         
         {/* Modal Header */}
         <div className="bg-slate-900 px-5 py-4 text-white flex items-center justify-between border-b border-slate-800 shrink-0">
@@ -141,7 +143,7 @@ export const BookConsultationModal: React.FC<BookConsultationModalProps> = ({ se
         </div>
 
         {/* Scrollable Form Content */}
-        <div className="overflow-y-auto flex-1 p-5 sm:p-6 space-y-4">
+        <div className="overflow-y-auto flex-1 p-5 sm:p-6 space-y-4 overscroll-contain">
           
           {submitted ? (
             <div className="py-4 text-center space-y-4">

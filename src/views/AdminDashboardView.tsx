@@ -94,7 +94,7 @@ interface SchoolPipelineLead {
   contactPhone: string;
   requestedRole: string;
   location: string;
-  stage: 'Discovery' | 'Shortlisting' | 'Interviews' | 'Placed' | '90-Day Guarantee';
+  stage: 'Discovery' | 'Shortlisting' | 'Interviews' | 'Placed' | 'Active Placement';
   assignedTeacher?: string;
   budget: string;
   date: string;
@@ -221,7 +221,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       location: 'Lekki Phase 1, Lagos',
       stage: 'Interviews',
       assignedTeacher: 'Amina Bello (Vetted)',
-      budget: '$1,400 - $1,700/mo',
+      budget: 'GH₵ 18,000 - 22,000/mo',
       date: 'Aug 14, 2026'
     },
     {
@@ -233,7 +233,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       location: 'Ikoyi, Lagos',
       stage: 'Shortlisting',
       assignedTeacher: 'Grace Nwosu (Shortlisted)',
-      budget: '$1,300 - $1,600/mo',
+      budget: 'GH₵ 16,000 - 20,000/mo',
       date: 'Aug 15, 2026'
     },
     {
@@ -245,7 +245,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       location: 'Ikeja GRA, Lagos',
       stage: 'Placed',
       assignedTeacher: 'David Osei (Placed)',
-      budget: '$1,500/mo',
+      budget: 'GH₵ 19,000/mo',
       date: 'Aug 10, 2026'
     },
     {
@@ -256,7 +256,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       requestedRole: '2x Early Childhood Kindergarten Teachers',
       location: 'Maitama, Abuja',
       stage: 'Discovery',
-      budget: '$1,200 - $1,500/mo',
+      budget: 'GH₵ 15,000 - 18,000/mo',
       date: 'Aug 16, 2026'
     }
   ]);
@@ -926,7 +926,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     <span className="text-xs font-bold text-slate-700">Est. Total Revenue</span>
                     <TrendingUp className="w-4 h-4 text-emerald-600" />
                   </div>
-                  <div className="text-2xl font-extrabold text-emerald-700">$48,250</div>
+                  <div className="text-2xl font-extrabold text-emerald-700">GH₵ 48,250</div>
                   <p className="text-[11px] text-slate-500 font-medium">Recruitment & Audits</p>
                 </div>
               </div>

@@ -11,11 +11,13 @@ interface VideoCardItemProps {
 
 const VideoCardItem: React.FC<VideoCardItemProps> = ({ video, isPlaying, onPlay }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [useEmbed, setUseEmbed] = useState(false);
   const [hasError, setHasError] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
+  // When played, attempt to start video playback
   useEffect(() => {
-    if (isPlaying && videoRef.current) {
+    if (isPlaying && !useEmbed && videoRef.current) {
       setIsLoading(true);
       setHasError(false);
       const playPromise = videoRef.current.play();
@@ -24,13 +26,23 @@ const VideoCardItem: React.FC<VideoCardItemProps> = ({ video, isPlaying, onPlay 
           .then(() => {
             setIsLoading(false);
           })
-          .catch((_err) => {
-            // Autoplay with sound might be restricted by browser policy; user can tap controls to play
+          .catch(() => {
+            // Autoplay with audio might be blocked by browser policy; user can tap controls or unmute
             setIsLoading(false);
           });
       }
     }
-  }, [isPlaying]);
+  }, [isPlaying, useEmbed]);
+
+  const handleVideoError = () => {
+    setIsLoading(false);
+    if (video.embedFallbackUrl) {
+      // Automatically switch to cloud embed player if browser cannot decode MP4
+      setUseEmbed(true);
+    } else {
+      setHasError(true);
+    }
+  };
 
   return (
     <div className="bg-slate-800/90 rounded-2xl sm:rounded-3xl border border-slate-700/80 hover:border-[#2ac0db] overflow-hidden shadow-lg transition-all duration-300 flex flex-col justify-between">
@@ -38,12 +50,12 @@ const VideoCardItem: React.FC<VideoCardItemProps> = ({ video, isPlaying, onPlay 
       <div className="relative aspect-[4/5] sm:aspect-video bg-black overflow-hidden flex items-center justify-center">
         {isPlaying ? (
           <div className="relative w-full h-full bg-black flex items-center justify-center">
-            {hasError && video.embedFallbackUrl ? (
+            {useEmbed && video.embedFallbackUrl ? (
               <iframe
                 src={video.embedFallbackUrl}
                 title={video.headline}
                 className="w-full h-full border-0"
-                allow="autoplay; fullscreen; encrypted-media"
+                allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
                 allowFullScreen
               />
             ) : (
@@ -62,12 +74,10 @@ const VideoCardItem: React.FC<VideoCardItemProps> = ({ video, isPlaying, onPlay 
                   }}
                   onLoadedData={() => setIsLoading(false)}
                   onCanPlay={() => setIsLoading(false)}
-                  onError={() => {
-                    setIsLoading(false);
-                    setHasError(true);
-                  }}
+                  onError={handleVideoError}
                   className="w-full h-full object-contain bg-black"
                 >
+                  <source src={video.videoUrl} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
 
@@ -79,29 +89,35 @@ const VideoCardItem: React.FC<VideoCardItemProps> = ({ video, isPlaying, onPlay 
                   </div>
                 )}
 
-                {/* Error fallback option */}
+                {/* Error fallback option if both video and embed fail */}
                 {hasError && (
                   <div className="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-4 text-center space-y-3 z-10">
                     <p className="text-xs text-slate-300 max-w-xs">
-                      This video format (such as an Apple .MOV or direct Dropbox link) cannot be decoded directly by the browser.
+                      Unable to stream this video directly on your browser.
                     </p>
                     <div className="flex flex-wrap items-center justify-center gap-2">
-                      {video.embedFallbackUrl ? (
+                      {video.embedFallbackUrl && (
                         <button
-                          onClick={() => setHasError(true)}
+                          type="button"
+                          onClick={() => {
+                            setHasError(false);
+                            setUseEmbed(true);
+                          }}
                           className="px-3.5 py-1.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 text-xs font-bold rounded-lg flex items-center gap-1.5 cursor-pointer"
                         >
-                          <RefreshCw className="w-3.5 h-3.5" /> Switch to Web Stream
+                          <RefreshCw className="w-3.5 h-3.5" /> Play Web Stream
                         </button>
-                      ) : null}
-                      <a
-                        href={video.videoUrl?.replace('&raw=1', '&dl=0')}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition"
-                      >
-                        Open Video Link ↗
-                      </a>
+                      )}
+                      {video.videoUrl && (
+                        <a
+                          href={video.videoUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 transition"
+                        >
+                          Open Direct Video ↗
+                        </a>
+                      )}
                     </div>
                   </div>
                 )}
@@ -146,16 +162,29 @@ const VideoCardItem: React.FC<VideoCardItemProps> = ({ video, isPlaying, onPlay 
           {video.headline}
         </h4>
 
-        {!isPlaying && (
-          <button
-            type="button"
-            onClick={onPlay}
-            className="pt-3 mt-2 border-t border-slate-700/60 flex items-center justify-between text-xs text-[#2ac0db] font-bold w-full text-left cursor-pointer hover:text-[#52d4ec] transition-colors py-1"
-          >
-            <span>Play Video</span>
-            <span>▶</span>
-          </button>
-        )}
+        <div className="pt-3 mt-2 border-t border-slate-700/60 flex items-center justify-between text-xs text-[#2ac0db] font-bold">
+          {!isPlaying ? (
+            <button
+              type="button"
+              onClick={onPlay}
+              className="flex items-center justify-between text-xs text-[#2ac0db] font-bold w-full text-left cursor-pointer hover:text-[#52d4ec] transition-colors py-1"
+            >
+              <span>Play Video</span>
+              <span>▶</span>
+            </button>
+          ) : (
+            video.embedFallbackUrl && (
+              <button
+                type="button"
+                onClick={() => setUseEmbed(!useEmbed)}
+                className="text-[11px] text-slate-400 hover:text-[#2ac0db] transition-colors flex items-center gap-1 cursor-pointer"
+              >
+                <RefreshCw className="w-3 h-3" />
+                <span>{useEmbed ? 'Switch to Direct Video' : 'Switch to Web Player'}</span>
+              </button>
+            )
+          )}
+        </div>
       </div>
     </div>
   );

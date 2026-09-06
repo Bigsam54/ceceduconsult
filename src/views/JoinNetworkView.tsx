@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ViewMode } from '../types';
 import { 
   Award, 
@@ -8,14 +8,101 @@ import {
   DollarSign,
   CheckCircle2,
   GraduationCap,
-  Users
+  Users,
+  Camera
 } from 'lucide-react';
 
 interface JoinNetworkViewProps {
   onNavigate: (view: ViewMode) => void;
 }
 
+interface ActivityItem {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  image: string;
+  tag: string;
+  rotation: string;
+}
+
 export const JoinNetworkView: React.FC<JoinNetworkViewProps> = ({ onNavigate }) => {
+  const [selectedActivity, setSelectedActivity] = useState<ActivityItem | null>(null);
+
+  const activities: ActivityItem[] = [
+    {
+      id: 'act-1',
+      title: 'Practical Teaching & Phonics Workshop',
+      category: 'Mentorship',
+      description: 'Hands-on synthetic phonics and apparatus training led by CEC mentors.',
+      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293993/IMG_4483.jpg',
+      tag: 'Phonics Session',
+      rotation: '-rotate-2'
+    },
+    {
+      id: 'act-2',
+      title: 'Classroom Dynamic & Circle Time',
+      category: 'Classroom',
+      description: 'Engaging early learners with active storytelling, rhymes and structured exploration.',
+      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293993/IMG_4476.jpg',
+      tag: 'Circle Time',
+      rotation: 'rotate-1'
+    },
+    {
+      id: 'act-3',
+      title: 'Sensory Learning & Visual Literacy',
+      category: 'Sensory',
+      description: 'Applying sensory materials to build letter recognition and foundational motor skills.',
+      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293995/IMG_4472.jpg',
+      tag: 'Sensory Play',
+      rotation: '-rotate-1'
+    },
+    {
+      id: 'act-4',
+      title: 'Educator Mentorship in Action',
+      category: 'Mentorship',
+      description: 'One-on-one coaching sessions empowering early childhood teachers with confidence.',
+      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293993/IMG_4480.jpg',
+      tag: 'Teacher Coaching',
+      rotation: 'rotate-2'
+    },
+    {
+      id: 'act-5',
+      title: 'Child-Centered Learning Corners',
+      category: 'Setup',
+      description: 'Observing student self-directed play and discovery in themed classroom spaces.',
+      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293993/IMG_4479.jpg',
+      tag: 'Learning Corners',
+      rotation: '-rotate-2'
+    },
+    {
+      id: 'act-6',
+      title: 'CEC Network Teacher Cohort',
+      category: 'Community',
+      description: 'Vetted, passionate educators collaborating during termly peer enrichment forums.',
+      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/f_auto,q_auto/v1787294779/IMG_4128.jpg',
+      tag: 'Network Cohort',
+      rotation: 'rotate-1'
+    },
+    {
+      id: 'act-7',
+      title: 'Interactive Guided Reading',
+      category: 'Reading',
+      description: 'Fostering deep comprehension and phonemic awareness in small reader circles.',
+      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788008924/photo_2026-08-29_13-03-56.jpg',
+      tag: 'Guided Reading',
+      rotation: '-rotate-1'
+    },
+    {
+      id: 'act-8',
+      title: 'Joyful Early Literacy Milestones',
+      category: 'Achievement',
+      description: 'Celebrating learner breakthroughs in reading confidence and verbal expression.',
+      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788008924/photo_2026-08-29_13-04-18.jpg',
+      tag: 'Literacy Joy',
+      rotation: 'rotate-2'
+    }
+  ];
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 sm:space-y-12">
       
@@ -140,25 +227,64 @@ export const JoinNetworkView: React.FC<JoinNetworkViewProps> = ({ onNavigate }) 
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
             {[
-              { step: '01', title: 'Submit Application', desc: 'Fill out our 5-minute teacher profile form with your qualifications and preferences.' },
-              { step: '02', title: 'Credentials Audit', desc: 'Our team verifies your degrees, certifications and previous school references.' },
-              { step: '03', title: 'Classroom Demo', desc: 'Participate in a practical teaching simulation audited by CEC education leads.' },
-              { step: '04', title: 'Get Placed', desc: 'Your profile goes live on the CEC Network and school interview offers begin!' }
+              { step: '01', title: 'Submit Application', desc: 'Fill out our teacher profile form with your qualifications, teaching level and preferences.' },
+              { step: '02', title: 'Credentials Audit', desc: 'Our team verifies your degrees, certifications, background and previous school references.' },
+              { step: '03', title: 'Get Placed', desc: 'Your verified profile goes live on the CEC Network and school interview opportunities begin!' }
             ].map((s, i) => (
-              <div key={i} className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-2.5">
-                <span className="text-2xl sm:text-3xl font-heading font-extrabold text-[#2ac0db]/40">{s.step}</span>
-                <h3 className="font-heading font-bold text-slate-900 text-sm sm:text-base">{s.title}</h3>
-                <p className="text-slate-600 text-xs leading-relaxed">{s.desc}</p>
+              <div key={i} className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
+                <span className="text-3xl font-heading font-extrabold text-[#2ac0db]">{s.step}</span>
+                <h3 className="font-heading font-bold text-slate-900 text-base sm:text-lg">{s.title}</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* TEACHING, MENTORSHIP & ACTIVITIES IN ACTION PHOTO GALLERY */}
+      <section className="space-y-6 sm:space-y-8 pt-4">
+        <div className="text-center space-y-2 max-w-2xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2ac0db]/15 border border-[#2ac0db]/30 text-[#126373] text-xs font-bold uppercase tracking-wider">
+            <Camera className="w-3.5 h-3.5" />
+            <span>Real Life Classroom Moments</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-extrabold text-slate-900">
+            Teaching, Mentorship & Activities in Action
+          </h2>
+          <p className="text-slate-600 text-xs sm:text-sm md:text-base leading-relaxed">
+            See our teachers in action: hands-on early years apparatus training, synthetic phonics lessons, classroom setup simulations and inspiring peer mentorship.
+          </p>
+        </div>
+
+        {/* Polaroid Scrapbook Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 pt-2">
+          {activities.map((act) => (
+            <div
+              key={act.id}
+              onClick={() => setSelectedActivity(act)}
+              className={`bg-white p-2.5 sm:p-3.5 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 transform ${act.rotation} hover:rotate-0 hover:-translate-y-1.5 cursor-pointer group`}
+            >
+              <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-slate-900 border border-slate-100">
+                <img
+                  src={act.image}
+                  alt={act.title}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="pt-2 px-1 text-left space-y-0.5">
+                <span className="text-[10px] font-bold text-[#126373] uppercase tracking-wide">{act.tag}</span>
+                <p className="text-xs font-bold text-slate-900 truncate">{act.title}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* CTA FOOTER */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-4 sm:space-y-5">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-4 sm:space-y-5 pt-4">
         <h2 className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-slate-900">
           Ready to Take the Next Step in Your Teaching Journey?
         </h2>
@@ -170,6 +296,43 @@ export const JoinNetworkView: React.FC<JoinNetworkViewProps> = ({ onNavigate }) 
           Start Your Free Teacher Application Now
         </button>
       </section>
+
+      {/* PHOTO PREVIEW MODAL */}
+      {selectedActivity && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 text-left space-y-4">
+            <div className="relative aspect-16/10 bg-slate-950">
+              <img
+                src={selectedActivity.image}
+                alt={selectedActivity.title}
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover"
+              />
+              <button
+                onClick={() => setSelectedActivity(null)}
+                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-900/80 text-white flex items-center justify-center hover:bg-slate-900 transition-colors cursor-pointer text-xs font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-5 pt-0 space-y-2">
+              <span className="text-xs font-extrabold text-[#126373] uppercase tracking-wider">{selectedActivity.category}</span>
+              <h4 className="text-base font-bold text-slate-900 font-heading">{selectedActivity.title}</h4>
+              <p className="text-xs text-slate-600 leading-relaxed">{selectedActivity.description}</p>
+            </div>
+
+            <div className="p-4 flex justify-end border-t border-slate-100 bg-slate-50/50">
+              <button
+                onClick={() => setSelectedActivity(null)}
+                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

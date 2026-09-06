@@ -1,6 +1,7 @@
 export type ViewMode = 
   | 'home'
   | 'directory'
+  | 'schools'
   | 'teacher-profile'
   | 'join-network'
   | 'consultancy'
@@ -69,12 +70,12 @@ export interface Teacher {
   name: string;
   title: string;
   photo: string;
-  teachingLevel: 'Early Childhood (EYFS)' | 'Nursery' | 'Kindergarten' | 'Lower Primary' | 'Special Needs (SEN)';
+  teachingLevel: 'Early Childhood (EYFS)' | 'Nursery' | 'Kindergarten' | 'Lower Primary' | 'Special Needs (SEN)' | 'JHS (English)';
   location: string;
   experienceYears: number;
   salaryExpectation: string;
   availability: AvailabilityStatus;
-  qualification: 'B.Ed Early Childhood' | 'EYFS Certified' | 'Early Childhood Diploma' | 'PGDE' | 'Early Years Specialist';
+  qualification: 'B.Ed Early Childhood' | 'EYFS Certified' | 'Early Childhood Diploma' | 'PGDE' | 'Early Years Specialist' | 'B.Ed Early Childhood & Language Education';
   isVerified: boolean;
   verificationStatus?: VerificationStatus;
   rating: number;
@@ -133,7 +134,7 @@ export interface CECSpaceProject {
   title: string;
   schoolName: string;
   location: string;
-  type: 'Child-Friendly Classroom' | 'Early Childhood Sensory Room' | 'Outdoor Early Play Lab' | 'Complete School Layout';
+  type: 'Child-Friendly Classroom' | 'Early Childhood Sensory Room' | 'Outdoor Early Play Lab' | 'Complete School Layout' | 'Themed School & Classroom Setup' | 'Outdoor & Sensory Play Park';
   beforeImage: string;
   afterImage: string;
   description: string;
@@ -143,15 +144,18 @@ export interface CECSpaceProject {
 export interface LearningProduct {
   id: string;
   name: string;
-  category: 'Child-Friendly Tools' | 'Sensory & Play' | 'Phonics & Reading' | 'Early Math' | 'Classroom Decor';
+  category: 'Child-Friendly Furniture' | 'Outdoor & Play Equipment' | 'Educational Toys' | 'Sensory & Play' | 'Phonics & Reading' | 'Early Math' | 'Classroom Decor' | 'Tactile & Wood Tools' | string;
   price: number;
+  priceDisplay?: string;
   rating: number;
   reviews: number;
   image: string;
+  images?: string[];
   description: string;
   inStock: boolean;
   ageGroup: string;
   isFeatured: boolean;
+  specs?: string;
 }
 
 export interface PendingTeacherApproval {
@@ -213,3 +217,29 @@ export interface FAQItem {
   answer: string;
   category?: string;
 }
+
+export interface AdvertisedSchool {
+  id: string;
+  name: string;
+  tagline: string;
+  location: string;
+  area: string; // e.g., 'Airport Residential Area', 'East Legon', 'Cantonments', 'Tema', 'Kumasi'
+  city: string;
+  levels: string; // e.g. 'Creche, Nursery & Kindergarten', 'Early Years to Primary 6'
+  curriculum: string; // e.g. 'British EYFS & Cambridge Primary', 'Montessori & GES'
+  studentAges: string; // e.g. '6 months - 11 years'
+  image: string;
+  galleryImages?: string[];
+  badges: string[]; // e.g. ['CEC Setup Partner', 'CEC Audited Standard', 'EYFS Certified']
+  highlights: string[]; // key bullet highlights
+  description: string;
+  admissionStatus: 'Admissions Ongoing' | 'Limited Seats' | 'Open for Enquiries';
+  studentTeacherRatio?: string; // e.g. '1:8'
+  contactPhone: string;
+  contactWhatsapp: string;
+  contactEmail?: string;
+  website?: string;
+  tuitionTier?: 'Standard' | 'Mid-Range' | 'Premium';
+  isFeatured?: boolean;
+}
+

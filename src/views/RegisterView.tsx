@@ -287,7 +287,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Nursery & KG, Preschool (EYFS), Lower Primary (Grades 1 to 3), or Jolly Phonics Specialist"
+                  placeholder="e.g. Nursery & KG, Preschool (EYFS), Lower Primary (Grades 1 to 3), or JHS (English)"
                   value={formData.teachingLevel}
                   onChange={(e) => setFormData({ ...formData, teachingLevel: e.target.value })}
                   className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
@@ -301,8 +301,8 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                   'Preschool (EYFS)',
                   'Nursery & Kindergarten',
                   'Lower Primary (Grades 1 to 3)',
-                  'Special Needs (SEN)',
-                  'Synthetic Phonics Specialist'
+                  'JHS (English)',
+                  'Special Needs (SEN)'
                 ].map((lvl) => (
                   <button
                     key={lvl}
@@ -358,7 +358,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. B.Ed. Early Childhood Education, PGDE, Montessori Diploma, or Jolly Phonics Certified"
+                  placeholder="e.g. B.Ed. Early Childhood Education, PGDE, Montessori Diploma, or Certified Literacy Coach"
                   value={formData.qualification}
                   onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
                   className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
@@ -373,7 +373,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                   'Early Childhood Diploma',
                   'EYFS & Montessori Certified',
                   'PGDE (Early Years)',
-                  'Jolly Phonics Lead Trainer'
+                  'Certified Literacy Coach'
                 ].map((qual) => (
                   <button
                     key={qual}

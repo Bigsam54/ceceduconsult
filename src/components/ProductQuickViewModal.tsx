@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LearningProduct } from '../types';
 import { safeOpenUrl } from '../utils/safeWindow';
 import { useToast } from '../context/ToastContext';
-import { X, ArrowLeft, Star, Truck, Package, BookOpen, Sparkles, Shapes, Music, Puzzle } from 'lucide-react';
+import { X, ArrowLeft, Truck } from 'lucide-react';
 import { WhatsAppIcon } from './icons/WhatsAppIcon';
 
 interface ProductQuickViewModalProps {
@@ -14,11 +14,13 @@ interface ProductQuickViewModalProps {
 export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({ product, isOpen, onClose }) => {
   const toast = useToast();
   const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState<string>('');
 
-  // Reset quantity when modal opens with new product
+  // Reset quantity and selected image when modal opens with new product
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && product) {
       setQuantity(1);
+      setSelectedImage(product.image);
     }
   }, [isOpen, product]);
 
@@ -43,26 +45,15 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({ pr
 
   if (!isOpen || !product) return null;
 
-  const getProductIcon = (category: string) => {
-    switch (category.toLowerCase()) {
-      case 'phonics':
-        return <BookOpen className="w-14 h-14 text-[#2ac0db]" />;
-      case 'sensory':
-        return <Sparkles className="w-14 h-14 text-[#2ac0db]" />;
-      case 'mathematics':
-        return <Shapes className="w-14 h-14 text-[#2ac0db]" />;
-      case 'stem':
-        return <Puzzle className="w-14 h-14 text-[#2ac0db]" />;
-      case 'creative':
-        return <Music className="w-14 h-14 text-[#2ac0db]" />;
-      default:
-        return <Package className="w-14 h-14 text-[#2ac0db]" />;
-    }
-  };
+  const allImages = product.images && product.images.length > 0 
+    ? product.images 
+    : [product.image];
+
+  const currentImg = selectedImage || product.image;
 
   const handleInquiry = () => {
-    toast.info(`Preparing WhatsApp order for ${quantity}x ${product.name}...`, 'Opening WhatsApp');
-    const msg = `Hello CEC Learning Essentials (Ghana)!\n\nI would like to order ${quantity}x "${product.name}" (GH₵${product.price * quantity * 15} / $${product.price * quantity}).\n\nPlease let me know delivery availability in Accra/Ghana.`;
+    toast.info(`Preparing WhatsApp inquiry for ${quantity}x ${product.name}...`, 'Opening WhatsApp');
+    const msg = `Hello CEC Learning Essentials!\n\nI am interested in ordering:\n*Product:* ${product.name}\n*Quantity:* ${quantity}\n\nPlease share delivery details and availability in Ghana.`;
     safeOpenUrl(`https://wa.me/233540390029?text=${encodeURIComponent(msg)}`);
   };
 
@@ -104,52 +95,63 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({ pr
         <div className="overflow-y-auto flex-1">
           <div className="grid grid-cols-1 md:grid-cols-2">
             
-            {/* Product Visual Box */}
-            <div className="bg-slate-50 p-6 sm:p-8 flex flex-col items-center justify-center text-center space-y-3 border-b md:border-b-0 md:border-r border-slate-200">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-[#2ac0db]/10 border border-[#2ac0db]/20 flex items-center justify-center shadow-inner">
-                {getProductIcon(product.category)}
+            {/* Product Visual Box - Real Product Image */}
+            <div className="bg-slate-50 p-6 flex flex-col items-center justify-center text-center space-y-3 border-b md:border-b-0 md:border-r border-slate-200">
+              <div className="w-full h-56 sm:h-64 rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-sm">
+                <img
+                  src={currentImg}
+                  alt={product.name}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover"
+                />
               </div>
+
+              {/* Multi-image thumbnails */}
+              {allImages.length > 1 && (
+                <div className="flex items-center gap-2 overflow-x-auto py-1 max-w-full">
+                  {allImages.map((img, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedImage(img)}
+                      className={`w-12 h-12 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                        currentImg === img ? 'border-[#2ac0db] scale-105 shadow-xs' : 'border-slate-200 opacity-70 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={img} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
               <div className="space-y-1">
                 <span className="text-[11px] font-bold text-[#126373] uppercase tracking-wider bg-[#2ac0db]/15 px-2.5 py-1 rounded-full">
-                  {product.category} Material
+                  {product.category}
                 </span>
-                <p className="text-[11px] text-slate-500 font-medium">CEC Early Years Certified Standard</p>
               </div>
             </div>
 
             {/* Product Details */}
             <div className="p-5 sm:p-6 flex flex-col justify-between space-y-4 text-xs">
               <div>
-                <span className="px-2 py-0.5 bg-[#2ac0db]/15 text-[#126373] text-[10px] font-extrabold uppercase rounded-full">
-                  {product.category}
-                </span>
-
-                <h3 className="text-lg sm:text-xl font-heading font-extrabold text-slate-900 mt-1">
+                <h3 className="text-lg sm:text-xl font-heading font-extrabold text-slate-900">
                   {product.name}
                 </h3>
 
-                <div className="flex items-center gap-2 text-xs mt-1.5 text-slate-600">
-                  <div className="flex items-center text-[#fa7b2d] font-bold">
-                    <Star className="w-3.5 h-3.5 fill-[#fa7b2d] text-[#fa7b2d]" />
-                    <span className="ml-1 text-slate-800">{product.rating}</span>
-                  </div>
-                  <span className="text-slate-300">•</span>
-                  <span>{product.reviews} reviews</span>
-                  <span className="text-slate-300">•</span>
-                  <span className="font-semibold text-[#126373]">{product.ageGroup}</span>
-                </div>
-
                 <div className="mt-3 text-xl sm:text-2xl font-extrabold text-slate-900">
-                  ${product.price} <span className="text-xs text-slate-500 font-normal">/ unit</span>
+                  {product.priceDisplay || `GH₵ ${product.price.toLocaleString()}`}
+                  <span className="text-xs text-slate-500 font-normal"> / unit</span>
                 </div>
 
-                <p className="text-slate-600 leading-relaxed mt-2 text-xs">
-                  {product.description}
-                </p>
+                {product.specs && (
+                  <div className="mt-2 text-xs font-semibold text-[#126373] bg-[#2ac0db]/10 p-2 rounded-xl">
+                    {product.specs}
+                  </div>
+                )}
 
                 <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-2 text-[11px] text-slate-500">
                   <Truck className="w-4 h-4 text-[#2ac0db] shrink-0" />
-                  <span>Doorstep delivery available for schools across Accra & nationwide in Ghana</span>
+                  <span>Delivery available</span>
                 </div>
               </div>
 
@@ -182,7 +184,7 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({ pr
                   className="w-full py-3 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
                   <WhatsAppIcon className="w-4 h-4" />
-                  <span>Order on WhatsApp (${product.price * quantity})</span>
+                  <span>Enquire on WhatsApp</span>
                 </button>
               </div>
 

@@ -64,42 +64,42 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
           <div className="max-w-3xl space-y-5 sm:space-y-6 text-left">
-            
+
             {/* Main Headline */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-extrabold text-white tracking-tight leading-tight">
-              Inspiring Early Learners, <span className="text-[#2ac0db]">Empowering Schools</span>
+              Inspiring Early Learning, <span className="text-[#2ac0db]">School & Classroom Setup</span>
             </h1>
 
             {/* Short, direct CEC Brand Subtitle */}
-            <p className="text-sm sm:text-base md:text-lg text-slate-200 leading-relaxed max-w-xl font-medium">
-              We connect schools and families with vetted early years teachers, phonics programs, classroom setups and expert educational consultancy.
+            <p className="text-base sm:text-lg md:text-xl text-slate-200 leading-relaxed max-w-2xl font-medium">
+              We connect schools and families with vetted educators, educational consultancy, and signature school and classroom setups.
             </p>
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button
                 onClick={() => onNavigate('directory')}
-                className="px-5 sm:px-6 py-3 sm:py-3.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold rounded-xl shadow-lg transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+                className="px-5 sm:px-6 py-3.5 sm:py-4 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold rounded-xl shadow-lg transition-all text-sm sm:text-base flex items-center gap-2 cursor-pointer"
               >
                 <Search className="w-4 h-4" />
-                <span>Find a Teacher</span>
+                <span>Find an Educator</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
               <button
-                onClick={() => onNavigate('reading-club')}
-                className="px-4 sm:px-5 py-3 sm:py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/15 transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer backdrop-blur-sm"
+                onClick={() => onNavigate('consultancy')}
+                className="px-5 sm:px-6 py-3.5 sm:py-4 bg-white/15 hover:bg-white/25 text-white font-bold rounded-xl border border-white/20 transition-all text-sm sm:text-base flex items-center gap-2 cursor-pointer backdrop-blur-sm"
               >
-                <BookOpen className="w-4 h-4 text-[#2ac0db]" />
-                <span>The Reading Lounge</span>
+                <GraduationCap className="w-4 h-4 text-[#fa7b2d]" />
+                <span>Educational Consultancy</span>
               </button>
 
               <button
-                onClick={() => onNavigate('consultancy')}
-                className="px-4 sm:px-5 py-3 sm:py-3.5 bg-white/5 hover:bg-white/15 text-slate-200 hover:text-white font-semibold rounded-xl border border-white/10 transition-all text-xs sm:text-sm flex items-center gap-2 cursor-pointer backdrop-blur-sm"
+                onClick={() => onNavigate('reading-club')}
+                className="px-5 sm:px-6 py-3.5 sm:py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/15 transition-all text-sm sm:text-base flex items-center gap-2 cursor-pointer backdrop-blur-sm"
               >
-                <GraduationCap className="w-4 h-4 text-[#fa7b2d]" />
-                <span>School Consultancy</span>
+                <BookOpen className="w-4 h-4 text-[#2ac0db]" />
+                <span>The Reading Lounge</span>
               </button>
             </div>
 
@@ -107,132 +107,132 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
-      {/* SERVICES OVERVIEW SECTION (Including Reading Club) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+      {/* SERVICES OVERVIEW SECTION (What We Do at CEC) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
         
-        <div className="text-center space-y-1.5 max-w-xl mx-auto">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-slate-900">
+        <div className="text-center space-y-1.5 sm:space-y-2 max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-slate-900">
             What We Do at CEC
           </h2>
-          <p className="text-slate-600 text-xs sm:text-sm">
-            Tailored solutions for early childhood proprietors, teachers and young learners.
+          <p className="text-slate-600 text-xs sm:text-sm md:text-base font-medium">
+            Tailored solutions for early childhood education and more
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-4 lg:gap-5">
           
           {/* Service 1: Recruitment */}
           <div 
             onClick={() => onNavigate('directory')}
-            className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-3 flex flex-col justify-between"
+            className="bg-white p-3.5 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-2 sm:space-y-3 flex flex-col justify-between"
           >
-            <div className="space-y-2">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center">
-                <UserCheck className="w-5 h-5" />
+            <div className="space-y-1.5 sm:space-y-2.5">
+              <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center">
+                <UserCheck className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#126373]">
-                Teacher Recruitment
+              <h3 className="font-heading font-bold text-xs sm:text-base lg:text-lg text-slate-900 group-hover:text-[#126373] leading-snug">
+                Teacher Recruitment & Staff Placement
               </h3>
-              <p className="text-slate-600 text-xs leading-relaxed">
-                Screened, certified early childhood and EYFS teachers matched to your school.
+              <p className="text-slate-600 text-[11px] sm:text-xs lg:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+                Screened, certified teachers for all levels matched to your school.
               </p>
             </div>
-            <span className="text-xs font-bold text-[#126373] flex items-center gap-1 pt-2">
-              View Directory <ArrowRight className="w-3 h-3" />
+            <span className="text-[11px] sm:text-xs lg:text-sm font-bold text-[#126373] flex items-center gap-1 pt-1 sm:pt-2">
+              <span>View Directory</span> <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             </span>
           </div>
 
           {/* Service 2: Reading Club */}
           <div 
             onClick={() => onNavigate('reading-club')}
-            className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-3 flex flex-col justify-between"
+            className="bg-white p-3.5 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-2 sm:space-y-3 flex flex-col justify-between"
           >
-            <div className="space-y-2">
-              <div className="h-10 flex items-center">
+            <div className="space-y-1.5 sm:space-y-2.5">
+              <div className="h-8 sm:h-11 flex items-center">
                 <img
                   src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293997/The_Reading_Lounge_5.png"
                   alt="The Reading Lounge Logo"
                   referrerPolicy="no-referrer"
-                  className="h-8 w-auto object-contain"
+                  className="h-6 sm:h-9 w-auto object-contain"
                 />
               </div>
-              <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#126373]">
+              <h3 className="font-heading font-bold text-xs sm:text-base lg:text-lg text-slate-900 group-hover:text-[#126373] leading-snug">
                 The Reading Lounge
               </h3>
-              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                Inspiring lifelong love for reading in children ages 4 to 12 years through structured cohorts (Book Buddies, Book Champs, Booksmiths & Booked and Busy).
+              <p className="text-slate-600 text-[11px] sm:text-xs lg:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+                Inspiring lifelong love for reading in children ages 4 to 12 years through virtual interactions.
               </p>
             </div>
-            <span className="text-xs font-bold text-[#126373] flex items-center gap-1 pt-2">
-              Explore Club <ArrowRight className="w-3 h-3" />
+            <span className="text-[11px] sm:text-xs lg:text-sm font-bold text-[#126373] flex items-center gap-1 pt-1 sm:pt-2">
+              <span>Explore Club</span> <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             </span>
           </div>
 
           {/* Service 3: Consultancy */}
           <div 
             onClick={() => onNavigate('consultancy')}
-            className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-3 flex flex-col justify-between"
+            className="bg-white p-3.5 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-2 sm:space-y-3 flex flex-col justify-between"
           >
-            <div className="space-y-2">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center">
-                <BookOpenCheck className="w-5 h-5" />
+            <div className="space-y-1.5 sm:space-y-2.5">
+              <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center">
+                <BookOpenCheck className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#126373]">
-                Consultancy
+              <h3 className="font-heading font-bold text-xs sm:text-base lg:text-lg text-slate-900 group-hover:text-[#126373] leading-snug">
+                Educational Consultancy
               </h3>
-              <p className="text-slate-600 text-xs leading-relaxed">
-                Curriculum audits, EYFS alignment and school operational guidance.
+              <p className="text-slate-600 text-[11px] sm:text-xs lg:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+                School Setup, early years curriculum development international early years alignment and school operational guidance.
               </p>
             </div>
-            <span className="text-xs font-bold text-[#126373] flex items-center gap-1 pt-2">
-              Consultancy <ArrowRight className="w-3 h-3" />
+            <span className="text-[11px] sm:text-xs lg:text-sm font-bold text-[#126373] flex items-center gap-1 pt-1 sm:pt-2">
+              <span>Consultancy</span> <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             </span>
           </div>
 
-          {/* Service 4: CEC Spaces */}
+          {/* Service 4: CEC Inspire Spaces */}
           <div 
             onClick={() => onNavigate('cec-spaces')}
-            className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-3 flex flex-col justify-between"
+            className="bg-white p-3.5 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-2 sm:space-y-3 flex flex-col justify-between"
           >
-            <div className="space-y-2">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center">
-                <LayoutGrid className="w-5 h-5" />
+            <div className="space-y-1.5 sm:space-y-2.5">
+              <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center">
+                <LayoutGrid className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#126373]">
-                CEC Spaces
+              <h3 className="font-heading font-bold text-xs sm:text-base lg:text-lg text-slate-900 group-hover:text-[#126373] leading-snug">
+                CEC Inspire Spaces
               </h3>
-              <p className="text-slate-600 text-xs leading-relaxed">
-                Classroom setup, wooden furniture layout and sensory play nooks.
+              <p className="text-slate-600 text-[11px] sm:text-xs lg:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+                Themed school design, signature classroom setups. child friendly layout.
               </p>
             </div>
-            <span className="text-xs font-bold text-[#126373] flex items-center gap-1 pt-2">
-              Spaces <ArrowRight className="w-3 h-3" />
+            <span className="text-[11px] sm:text-xs lg:text-sm font-bold text-[#126373] flex items-center gap-1 pt-1 sm:pt-2">
+              <span>Spaces</span> <ArrowRight className="w-3.5 h-3.5" />
             </span>
           </div>
 
           {/* Service 5: Learning Essentials */}
           <div 
             onClick={() => onNavigate('learning-essentials')}
-            className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-3 flex flex-col justify-between"
+            className="col-span-2 sm:col-span-1 bg-white p-3.5 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl border border-slate-200 shadow-2xs hover:border-[#2ac0db] transition-all cursor-pointer group space-y-2 sm:space-y-3 flex flex-col justify-between"
           >
-            <div className="space-y-2">
-              <div className="h-10 flex items-center">
+            <div className="space-y-1.5 sm:space-y-2.5">
+              <div className="h-8 sm:h-11 flex items-center">
                 <img
                   src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1786994345/CEC_Learning_Essentials-removebg-preview.png"
                   alt="CEC Learning Essentials Logo"
                   referrerPolicy="no-referrer"
-                  className="h-8 w-auto object-contain"
+                  className="h-6 sm:h-9 w-auto object-contain"
                 />
               </div>
-              <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#126373]">
+              <h3 className="font-heading font-bold text-xs sm:text-base lg:text-lg text-slate-900 group-hover:text-[#126373] leading-snug">
                 Learning Essentials
               </h3>
-              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                Child-friendly wooden materials, Synthetic Phonics cards and sensory aids.
+              <p className="text-slate-600 text-[11px] sm:text-xs lg:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
+                Age appropriate learning resources and child friendly furniture.
               </p>
             </div>
-            <span className="text-xs font-bold text-[#126373] flex items-center gap-1 pt-2">
-              Essentials <ArrowRight className="w-3 h-3" />
+            <span className="text-[11px] sm:text-xs lg:text-sm font-bold text-[#126373] flex items-center gap-1 pt-1 sm:pt-2">
+              <span>Essentials</span> <ArrowRight className="w-3.5 h-3.5" />
             </span>
           </div>
 
@@ -249,7 +249,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
           <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
             
-            {/* Left Column: Featured Photo (Cropped shifted to show subject) */}
+            {/* Left Column: Featured Photo */}
             <div className="lg:col-span-5 space-y-2">
               <div className="relative rounded-2xl overflow-hidden border-2 border-white/15 shadow-2xl group bg-slate-950 aspect-4/3 sm:aspect-5/4 max-h-[400px]">
                 <img
@@ -264,17 +264,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
             {/* Right Column: Quote & Mission Message */}
             <div className="lg:col-span-7 space-y-5 text-left">
               
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#2ac0db]/15 border border-[#2ac0db]/30 text-[#2ac0db] text-xs font-bold">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#2ac0db]/15 border border-[#2ac0db]/30 text-[#2ac0db] text-xs sm:text-sm font-bold">
                 <Quote className="w-3.5 h-3.5" />
                 <span>Our Guiding Philosophy</span>
               </div>
 
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-white leading-snug">
-                “Every child deserves a teacher who understands early childhood development.”
+                “Every child deserves a teacher who understands child development and pedagogy”
               </h2>
 
-              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                CEC Educational Consult was established to solve the challenge school owners face in finding vetted early years teachers and to provide educators with mentorship and dignified compensation.
+              <p className="text-slate-300 text-sm sm:text-base md:text-lg leading-relaxed font-medium">
+                CEC Educational Consult solves the challenge school owners face in finding vetted educators, establishing inspiring school environments, and ensuring lasting academic excellence.
               </p>
 
             </div>

@@ -4,7 +4,6 @@ import { MOCK_LEARNING_PRODUCTS } from '../data/mockData';
 import { 
   ShoppingBag, 
   Search, 
-  Star, 
   Eye, 
   PackageCheck,
   Blocks,
@@ -22,18 +21,24 @@ export const LearningEssentialsView: React.FC<LearningEssentialsViewProps> = ({ 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  const categories = ['All', 'Tactile & Wood Tools', 'Sensory & Play', 'Phonics & Reading', 'Early Math', 'Classroom Decor'];
+  const categories = [
+    'All',
+    'Child-Friendly Furniture',
+    'Outdoor & Play Equipment',
+    'Educational Toys',
+    'Sensory & Play'
+  ];
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'Tactile & Wood Tools':
-        return <Blocks className="w-10 h-10 text-[#126373]" />;
-      case 'Phonics & Reading':
-        return <BookOpen className="w-10 h-10 text-[#126373]" />;
-      case 'Early Math':
-        return <Shapes className="w-10 h-10 text-[#126373]" />;
-      case 'Sensory & Play':
+      case 'Child-Friendly Furniture':
+        return <PackageCheck className="w-10 h-10 text-[#126373]" />;
+      case 'Outdoor & Play Equipment':
         return <Layers className="w-10 h-10 text-[#126373]" />;
+      case 'Educational Toys':
+        return <Blocks className="w-10 h-10 text-[#126373]" />;
+      case 'Sensory & Play':
+        return <Shapes className="w-10 h-10 text-[#126373]" />;
       default:
         return <PackageCheck className="w-10 h-10 text-[#126373]" />;
     }
@@ -62,11 +67,11 @@ export const LearningEssentialsView: React.FC<LearningEssentialsViewProps> = ({ 
         </div>
 
         <div className="relative z-10 space-y-3 sm:space-y-4 max-w-3xl">
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
-            CEC Learning Essentials
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white leading-tight">
+            Age-Appropriate Learning Resources & Child-Friendly Furniture
           </h1>
-          <p className="text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
-            Premium child-friendly trays, sensory play items, Synthetic Phonics card decks and early math concrete aids shipped directly to your school.
+          <p className="text-slate-200 text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed font-medium">
+            Age appropriate learning resources and child friendly furniture, sensory play materials, and concrete early literacy aids.
           </p>
 
           {/* Search */}
@@ -75,7 +80,7 @@ export const LearningEssentialsView: React.FC<LearningEssentialsViewProps> = ({ 
               <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search products (e.g., Phonics, Tracing Trays)..."
+                placeholder="Search products (e.g., Table, Trampoline, Blocks)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-white text-slate-900 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#2ac0db] shadow-xs"
@@ -103,26 +108,39 @@ export const LearningEssentialsView: React.FC<LearningEssentialsViewProps> = ({ 
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         {filteredProducts.map((product) => (
           <div
             key={product.id}
             className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-lg hover:border-[#2ac0db] transition-all overflow-hidden flex flex-col justify-between group"
           >
             <div>
-              {/* Product Visual Display */}
-              <div className="relative h-44 sm:h-48 bg-gradient-to-b from-slate-50 to-slate-100/60 p-6 flex flex-col items-center justify-center border-b border-slate-100">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white shadow-sm border border-[#2ac0db]/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  {getCategoryIcon(product.category)}
+              {/* Product Visual Display - Real Image */}
+              <div className="relative h-56 sm:h-64 bg-slate-100 overflow-hidden border-b border-slate-100">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    // Fallback to category placeholder if image fails to load
+                    const target = e.currentTarget;
+                    target.style.display = 'none';
+                    if (target.nextElementSibling) {
+                      (target.nextElementSibling as HTMLElement).style.display = 'flex';
+                    }
+                  }}
+                />
+                <div className="hidden w-full h-full flex-col items-center justify-center bg-slate-100 p-6">
+                  <div className="w-16 h-16 rounded-2xl bg-white shadow-sm border border-[#2ac0db]/20 flex items-center justify-center">
+                    {getCategoryIcon(product.category)}
+                  </div>
                 </div>
                 
-                <span className="absolute top-3 left-3 px-2.5 py-0.5 bg-[#2ac0db]/15 text-[#126373] text-[10px] font-extrabold uppercase rounded-full border border-[#2ac0db]/30">
-                  {product.category}
-                </span>
-
                 <button
+                  type="button"
                   onClick={() => onQuickView(product)}
-                  className="absolute bottom-3 right-3 px-3 py-1.5 bg-white/90 hover:bg-white text-slate-800 text-xs font-bold rounded-xl shadow-xs border border-slate-200 flex items-center gap-1 backdrop-blur-sm cursor-pointer"
+                  className="absolute bottom-3 right-3 px-3 py-1.5 bg-white/95 hover:bg-white text-slate-800 text-xs font-bold rounded-xl shadow-md border border-slate-200 flex items-center gap-1 backdrop-blur-sm cursor-pointer transition-transform active:scale-95"
                 >
                   <Eye className="w-3.5 h-3.5 text-[#126373]" />
                   <span>Quick View</span>
@@ -131,32 +149,24 @@ export const LearningEssentialsView: React.FC<LearningEssentialsViewProps> = ({ 
 
               {/* Product Info */}
               <div className="p-4 sm:p-5 space-y-2">
-                <div className="flex items-center gap-1 text-xs text-[#126373] font-bold">
-                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  <span className="text-slate-800">{product.rating}</span>
-                  <span className="text-slate-400 font-normal">({product.reviews})</span>
-                </div>
-
-                <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#126373] transition-colors">
+                <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900 group-hover:text-[#126373] transition-colors line-clamp-2">
                   {product.name}
                 </h3>
-
-                <p className="text-slate-600 text-xs line-clamp-2">
-                  {product.description}
-                </p>
               </div>
             </div>
 
             {/* Price & Action */}
-            <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-2 border-t border-slate-100 flex items-center justify-between">
-              <div>
+            <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+              <div className="min-w-0 flex-1">
                 <span className="text-[10px] text-slate-400 block font-medium">Price</span>
-                <span className="text-base sm:text-lg font-extrabold text-slate-900">${product.price}</span>
+                <span className="text-sm sm:text-base font-extrabold text-slate-900 truncate block">
+                  {product.priceDisplay || `GH₵ ${product.price.toLocaleString()}`}
+                </span>
               </div>
 
               <button
                 onClick={() => onQuickView(product)}
-                className="px-3.5 sm:px-4 py-2 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                className="shrink-0 px-3.5 sm:px-4 py-2 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 <ShoppingBag className="w-3.5 h-3.5" />
                 <span>Inquire</span>

@@ -7,11 +7,6 @@ export const DIRECTORY_FAQS: FAQItem[] = [
     answer: 'Every verified candidate undergoes a 4-tier audit: 1) Physical verification of degree certificates and early childhood diplomas; 2) Police background clearance and licensing validation; 3) A recorded 15-minute micro-teaching phonics/math demo; 4) Direct reference calls to at least two previous school heads.'
   },
   {
-    id: 'dir-faq-2',
-    question: 'What is the CEC 90-Day Placement Replacement Guarantee?',
-    answer: 'If a placed educator resigns, relocates or fails to meet the agreed early years teaching performance standards within their first 90 days, CEC will provide a priority replacement candidate from our verified talent pool at zero additional placement fee.'
-  },
-  {
     id: 'dir-faq-3',
     question: 'How quickly can an "Immediate Availability" candidate start at our school?',
     answer: 'Teachers tagged with "Immediate" have completed their previous notice periods, passed CEC compliance audits and can be interviewed, demoed and onboarded within 48 to 72 hours.'
@@ -31,8 +26,8 @@ export const DIRECTORY_FAQS: FAQItem[] = [
 export const READING_CLUB_FAQS: FAQItem[] = [
   {
     id: 'read-faq-1',
-    question: 'What age groups are supported in the CEC Reading & Phonics Club?',
-    answer: 'The club is organized into four structured age cohorts (Ages 4 to 12): Book Buddies (Ages 4 to 5, Beginner Readers), Book Champs (Ages 6 to 7, Early Readers), Booksmiths (Ages 8 to 9, Confident Readers) and Booked & Busy (Ages 10 to 12, Advanced Readers).'
+    question: 'What reading cohorts are supported in the CEC Reading & Phonics Club?',
+    answer: 'The club is organized into four structured cohorts: Book Buddies (Beginner Readers), Book Champs (Early Readers), Booksmiths (Confident Readers) and Booked & Busy (Advanced Readers).'
   },
   {
     id: 'read-faq-2',

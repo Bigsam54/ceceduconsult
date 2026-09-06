@@ -1,19 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ViewMode } from '../types';
 import { 
   Target, 
   Eye,
-  Award,
-  ShieldCheck,
-  CheckCircle2,
   CalendarCheck,
-  BookOpen,
-  Sparkles,
-  Heart,
-  Users,
-  Camera,
-  Layers,
-  GraduationCap
+  BookOpen
 } from 'lucide-react';
 
 interface AboutViewProps {
@@ -21,91 +12,19 @@ interface AboutViewProps {
   onOpenConsultationModal: () => void;
 }
 
-interface ActivityItem {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  image: string;
-  tag: string;
-  rotation: string;
-}
-
 export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsultationModal }) => {
-  const [selectedActivity, setSelectedActivity] = useState<ActivityItem | null>(null);
-
-  const activities: ActivityItem[] = [
+  const teamMembers = [
     {
-      id: 'act-1',
-      title: 'Sample 1',
-      category: 'Activity',
-      description: 'description',
-      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293993/IMG_4483.jpg',
-      tag: 'Sample 1',
-      rotation: '-rotate-2'
+      id: 'team-ops',
+      name: 'Mr. Emmanuel Agbavor',
+      position: 'Chief Operations Lead',
+      imageUrl: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788700036/4.png'
     },
     {
-      id: 'act-2',
-      title: 'Sample 2',
-      category: 'Activity',
-      description: 'description',
-      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293993/IMG_4476.jpg',
-      tag: 'Sample 2',
-      rotation: 'rotate-1'
-    },
-    {
-      id: 'act-3',
-      title: 'Sample 3',
-      category: 'Activity',
-      description: 'description',
-      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293995/IMG_4472.jpg',
-      tag: 'Sample 3',
-      rotation: '-rotate-1'
-    },
-    {
-      id: 'act-4',
-      title: 'Sample 4',
-      category: 'Activity',
-      description: 'description',
-      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293993/IMG_4480.jpg',
-      tag: 'Sample 4',
-      rotation: 'rotate-2'
-    },
-    {
-      id: 'act-5',
-      title: 'Sample 5',
-      category: 'Activity',
-      description: 'description',
-      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293993/IMG_4479.jpg',
-      tag: 'Sample 5',
-      rotation: '-rotate-2'
-    },
-    {
-      id: 'act-6',
-      title: 'Sample 6',
-      category: 'Activity',
-      description: 'description',
-      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/f_auto,q_auto/v1787294779/IMG_4128.jpg',
-      tag: 'Sample 6',
-      rotation: 'rotate-1'
-    },
-    {
-      id: 'act-7',
-      title: 'Sample 7',
-      category: 'Activity',
-      description: 'description',
-      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788008924/photo_2026-08-29_13-03-56.jpg',
-      tag: 'Sample 7',
-      rotation: '-rotate-1'
-    },
-    {
-      id: 'act-8',
-      title: 'Sample 8',
-      category: 'Activity',
-      description: 'description',
-      image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788008924/photo_2026-08-29_13-04-18.jpg',
-      tag: 'Sample 8',
-      rotation: 'rotate-2'
+      id: 'team-marketing',
+      name: 'Christopher Sam',
+      position: 'Digital and Marketing Lead',
+      imageUrl: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788700037/5.png'
     }
   ];
 
@@ -151,11 +70,15 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
             </h2>
 
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-              With over a decade of practical experience as an early childhood director, early years mentor and educator trainer, Miss Nancie established CEC Educational Consult to champion high-standard teacher placements, curriculum audits and reading initiatives.
+              With over a decade of practical experience as an early childhood director, early years mentor, Cambridge Educator and educator trainer, Miss Nancie established CEC Educational Consult to champion high-standard educator development, learner-centred pedagogy, innovative and future-ready learning environments that respond to the evolving needs of today’s learners.
             </p>
 
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-              At CEC, our passion lies in bridging the gap between school owners seeking reliable, pedagogically trained educators and dedicated teachers looking for mentorship, dignity and global career progression.
+              At CEC Educational Consult, we believe every great school begins with a great vision. Our goal is to turn educational dreams into realities through expert guidance, innovative solutions and timely execution.
+            </p>
+
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+              We are passionate about helping educators and children build strong foundations for early learning and lasting impact. Together, let us create, educate and cultivate a new education era to improve the whole child.
             </p>
 
             <div className="pt-3 flex flex-wrap gap-3">
@@ -179,35 +102,39 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
         </div>
       </section>
 
-      {/* FUN ACTIVITIES & TEACHING IN ACTION PHOTO GALLERY */}
-      <section className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-          <div className="space-y-1">
-            <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-slate-900">
-              Teaching, Mentorship & Activities in Action
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 max-w-2xl">
-              Moments from CEC Phonics workshops, classroom setup audits, teacher trainings and joyful child reading sessions.
-            </p>
-          </div>
+      {/* THE CEC TEAM - CLEAN, BOLD PICTURES WITH JUST NAME AND POSITION (2 COLUMNS SIDE BY SIDE ON MOBILE) */}
+      <section className="space-y-6 sm:space-y-8">
+        <div className="text-left space-y-1">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-extrabold text-slate-900">
+            Meet the Team
+          </h2>
         </div>
 
-        {/* Fun Scrapbook / Polaroid Tilted Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
-          {activities.map((act) => (
-            <div
-              key={act.id}
-              onClick={() => setSelectedActivity(act)}
-              className={`bg-white p-3 rounded-2xl border border-slate-200/90 shadow-md hover:shadow-xl transition-all duration-300 transform ${act.rotation} hover:rotate-0 hover:-translate-y-1.5 cursor-pointer group`}
+        {/* 2 TEAM CARDS SIDE BY SIDE ON MOBILE */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8 max-w-4xl">
+          {teamMembers.map((member) => (
+            <div 
+              key={member.id}
+              className="bg-white p-2.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-md hover:border-[#2ac0db]/40 transition-all flex flex-col space-y-2.5 sm:space-y-4 text-left group"
             >
-              {/* Clean Photo without overlays or captions */}
-              <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-slate-900 border border-slate-100">
-                <img
-                  src={act.image}
-                  alt={act.title}
+              {/* Bold Big Portrait Photo */}
+              <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-md border border-slate-200/80 bg-slate-950 aspect-[3/4] min-h-[190px] sm:min-h-[340px]">
+                <img 
+                  src={member.imageUrl} 
+                  alt={`${member.name} - ${member.position}`}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover object-top group-hover:scale-103 transition-transform duration-700"
                 />
+              </div>
+
+              {/* Just Name and Position */}
+              <div className="space-y-0.5 sm:space-y-1 px-1">
+                <h3 className="text-sm sm:text-2xl font-heading font-bold text-slate-900 leading-tight">
+                  {member.name}
+                </h3>
+                <p className="text-xs sm:text-base font-semibold text-[#126373]">
+                  {member.position}
+                </p>
               </div>
             </div>
           ))}
@@ -216,7 +143,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
 
       {/* MISSION & VISION */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-3 shadow-2xs text-left">
+        <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 space-y-3 shadow-2xs text-left">
           <div className="w-10 h-10 rounded-xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center">
             <Target className="w-5 h-5" />
           </div>
@@ -226,7 +153,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-3 shadow-2xs text-left">
+        <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 space-y-3 shadow-2xs text-left">
           <div className="w-10 h-10 rounded-xl bg-[#fa7b2d]/15 text-[#fa7b2d] flex items-center justify-center">
             <Eye className="w-5 h-5" />
           </div>
@@ -236,37 +163,6 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
           </p>
         </div>
       </section>
-
-      {/* ACTIVITY DETAIL MODAL */}
-      {selectedActivity && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 text-left space-y-4">
-            <div className="relative aspect-16/10 bg-slate-950">
-              <img
-                src={selectedActivity.image}
-                alt={selectedActivity.title}
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover"
-              />
-              <button
-                onClick={() => setSelectedActivity(null)}
-                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-900/80 text-white flex items-center justify-center hover:bg-slate-900 transition-colors cursor-pointer text-xs font-bold"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="p-4 flex justify-end border-t border-slate-100">
-              <button
-                onClick={() => setSelectedActivity(null)}
-                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );

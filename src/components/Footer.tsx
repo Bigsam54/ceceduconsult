@@ -79,112 +79,151 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
                 referrerPolicy="no-referrer"
               />
             </div>
-            <p className="text-slate-400 text-xs leading-relaxed max-w-sm">
-              Premier early childhood educational consult. We specialize in teacher recruitment, EYFS curriculum audits, Reading Club setups and classroom design.
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-sm font-medium">
+              Premium early childhood educational consult. specializing in school setup, teacher recruitment, curriculum development, academic audits, Reading Club, homeschooling, home tutoring and child-friendly learning spaces.
             </p>
             
-            <div className="flex items-center gap-4 text-xs text-slate-400 pt-1">
+            <div className="flex items-center gap-4 text-xs text-slate-300 pt-1">
               <div className="flex items-center gap-1 text-[#2ac0db] font-semibold">
-                <Award className="w-3.5 h-3.5" />
+                <Award className="w-4 h-4" />
                 <span>1,000+ Vetted Teachers</span>
               </div>
               <div className="flex items-center gap-1 text-[#fa7b2d] font-semibold">
-                <CheckCircle2 className="w-3.5 h-3.5" />
+                <CheckCircle2 className="w-4 h-4" />
                 <span>250+ Schools</span>
               </div>
             </div>
           </div>
 
           {/* Col 2: Services */}
-          <div className="space-y-2.5">
-            <h4 className="text-white font-heading font-bold text-xs tracking-wider uppercase">
+          <div className="space-y-3">
+            <h4 className="text-white font-heading font-bold text-xs sm:text-sm tracking-wider uppercase">
               Our Services
             </h4>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <button onClick={() => onNavigate('directory')} className="hover:text-[#2ac0db] transition-colors cursor-pointer">
-                  Teacher Recruitment
+                <button onClick={() => onNavigate('consultancy')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
+                  School Setup
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('reading-club')} className="hover:text-[#fa7b2d] transition-colors cursor-pointer">
-                  The Reading Lounge
+                <button onClick={() => onNavigate('directory')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
+                  Teacher Recruitment & Staff Placement
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('consultancy')} className="hover:text-[#2ac0db] transition-colors cursor-pointer">
-                  Educational Consultancy
+                <button onClick={() => onNavigate('consultancy')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
+                  Hometutoring & Homeschooling
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('cec-spaces')} className="hover:text-[#2ac0db] transition-colors cursor-pointer">
-                  CEC Spaces (Classroom Setup)
+                <button onClick={() => onNavigate('reading-club')} className="hover:text-[#fa7b2d] transition-colors cursor-pointer text-left">
+                  CEC Reading Club & Phonics Circles
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('learning-essentials')} className="hover:text-[#2ac0db] transition-colors cursor-pointer">
-                  CEC Learning Essentials Store
+                <button onClick={() => onNavigate('cec-spaces')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
+                  CEC Inspire Spaces (Classroom Setup)
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('workshops')} className="hover:text-[#2ac0db] transition-colors cursor-pointer">
-                  Workshops & Masterclasses
+                <button onClick={() => onNavigate('consultancy')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
+                  Early Childhood Curriculum Design
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('schools')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left flex items-center gap-1.5 text-[#2ac0db] font-semibold">
+                  <span>Schools to Consider</span>
+                  <span className="px-1.5 py-0.2 text-[9px] bg-[#2ac0db]/20 text-[#2ac0db] rounded-sm font-bold uppercase">Featured</span>
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('learning-essentials')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
+                  Learning Essentials Store
                 </button>
               </li>
             </ul>
           </div>
 
           {/* Col 3: Quick Navigation */}
-          <div className="space-y-2.5">
-            <h4 className="text-white font-heading font-bold text-xs tracking-wider uppercase">
+          <div className="space-y-3">
+            <h4 className="text-white font-heading font-bold text-xs sm:text-sm tracking-wider uppercase">
               Quick Links
             </h4>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2 text-xs sm:text-sm">
               <li>
-                <button onClick={() => onNavigate('join-network')} className="hover:text-[#2ac0db] transition-colors cursor-pointer">
+                <button onClick={() => onNavigate('join-network')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
                   Join Teacher Network
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('about')} className="hover:text-[#2ac0db] transition-colors cursor-pointer">
+                <button onClick={() => onNavigate('about')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
                   About CEC Educational Consult
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('register')} className="hover:text-[#2ac0db] transition-colors cursor-pointer">
+                <button onClick={() => onNavigate('register')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
                   Teacher Registration
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('teacher-dashboard')} className="hover:text-[#2ac0db] transition-colors text-[#2ac0db] font-medium cursor-pointer">
+                <button onClick={() => onNavigate('teacher-dashboard')} className="hover:text-[#2ac0db] transition-colors text-[#2ac0db] font-semibold cursor-pointer text-left">
                   Teacher Dashboard
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('admin-dashboard')} className="hover:text-[#2ac0db] transition-colors text-[#2ac0db] font-medium cursor-pointer">
+                <button onClick={() => onNavigate('admin-dashboard')} className="hover:text-[#2ac0db] transition-colors text-[#2ac0db] font-semibold cursor-pointer text-left">
                   Admin Dashboard
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Col 4: Contact Info */}
-          <div className="space-y-2.5">
-            <h4 className="text-white font-heading font-bold text-xs tracking-wider uppercase">
-              Get in Touch
+          {/* Col 4: Contact CEC Office */}
+          <div className="space-y-3">
+            <h4 className="text-white font-heading font-bold text-xs sm:text-sm tracking-wider uppercase">
+              Contact CEC Office
             </h4>
-            <ul className="space-y-2 text-xs text-slate-400">
-              <li className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-[#2ac0db] shrink-0" />
-                <span>+233 54 039 0029 / +233 20 685 5347</span>
+            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
+              <li className="flex items-start gap-2">
+                <Phone className="w-4 h-4 text-[#2ac0db] shrink-0 mt-0.5" />
+                <div>
+                  <a href="tel:+233540390029" className="hover:text-white transition-colors block">+233 54 039 0029</a>
+                  <a href="tel:+233249356337" className="hover:text-white transition-colors block">+233 24 935 6337</a>
+                  <a href="tel:+233206855347" className="hover:text-white transition-colors block">+233 20 685 5347</a>
+                </div>
               </li>
               <li className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-[#2ac0db] shrink-0" />
-                <span>contact@ceceduconsult.org</span>
+                <Mail className="w-4 h-4 text-[#2ac0db] shrink-0" />
+                <a href="mailto:contact@ceceduconsult.org" className="hover:text-white transition-colors">contact@ceceduconsult.org</a>
+              </li>
+              <li className="text-[11px] sm:text-xs text-slate-400 pt-1">
+                Accra, Ghana & Worldwide Virtual Consultations
               </li>
             </ul>
           </div>
 
+        </div>
+
+        {/* MASSIVE OUTLINE STROKE BRAND TAGLINE */}
+        <div className="pt-8 sm:pt-12 pb-4 border-t border-slate-900 overflow-hidden select-none pointer-events-none w-full">
+          <div className="w-full flex items-center justify-center overflow-hidden">
+            <p 
+              className="text-[12.5vw] sm:text-[10.5vw] font-heading font-black tracking-tighter uppercase whitespace-nowrap leading-none text-center stroke-text-huge"
+              style={{
+                WebkitTextStroke: '2px rgba(42, 192, 219, 0.45)',
+                textShadow: '0 0 30px rgba(42, 192, 219, 0.12)',
+                color: 'transparent'
+              }}
+            >
+              Create • Educate • Cultivate
+            </p>
+          </div>
+          <div className="flex items-center justify-center gap-3 mt-4 text-slate-500 text-[11px] sm:text-xs font-semibold tracking-widest uppercase">
+            <span className="w-10 sm:w-20 h-px bg-gradient-to-r from-transparent to-[#2ac0db]/50" />
+            <span className="text-[#2ac0db]/80 font-bold">CEC Brand Tagline</span>
+            <span className="w-10 sm:w-20 h-px bg-gradient-to-l from-transparent to-[#2ac0db]/50" />
+          </div>
         </div>
 
         {/* Bottom Bar */}

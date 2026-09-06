@@ -41,7 +41,7 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
   const [sortBy, setSortBy] = useState<'rating' | 'experience' | 'name'>('rating');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  const levelOptions = ['All', 'Early Childhood (EYFS)', 'Nursery', 'Kindergarten', 'Lower Primary', 'Special Needs (SEN)'];
+  const levelOptions = ['All', 'Early Childhood (EYFS)', 'Nursery', 'Kindergarten', 'Lower Primary', 'JHS (English)', 'Special Needs (SEN)'];
   const qualificationOptions = ['All', 'B.Ed Early Childhood', 'EYFS Certified', 'Early Childhood Diploma', 'PGDE', 'Early Years Specialist'];
   const availabilityOptions = ['All', 'Immediate', '2 Weeks Notice', 'Next Academic Term'];
   const locationOptions = ['All', 'East Legon', 'Airport Residential', 'Cantonments', 'Tema', 'Kumasi', 'Takoradi'];
@@ -113,10 +113,10 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
       {/* Search Header Banner */}
       <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-3 sm:space-y-4">
         <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
-          Find & Hire Verified Teachers
+          Search Top Educators
         </h1>
-        <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
-          Search top early childhood and primary educators. Filter by qualifications, experience, salary and instant availability.
+        <p className="text-slate-200 text-sm sm:text-base md:text-lg max-w-3xl leading-relaxed font-medium">
+          CEC Educational Consult believes that when the foundation of education is built right, the other level stands firms.
         </p>
 
         {/* Search Input Bar */}

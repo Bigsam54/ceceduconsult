@@ -18,7 +18,7 @@ export const MOCK_TEACHERS: Teacher[] = [
     teachingLevel: 'Early Childhood (EYFS)',
     location: 'Accra, Ghana & International Placement',
     experienceYears: 7,
-    salaryExpectation: 'GH₵ 8,500 - 12,000/mo ($1,200 - $1,500)',
+    salaryExpectation: 'GH₵ 8,500 - 12,000/mo',
     availability: 'Immediate',
     qualification: 'B.Ed Early Childhood',
     isVerified: true,
@@ -78,7 +78,7 @@ export const MOCK_TEACHERS: Teacher[] = [
     teachingLevel: 'Kindergarten',
     location: 'Accra, Ghana & Regional Schools',
     experienceYears: 5,
-    salaryExpectation: 'GH₵ 7,500 - 10,000/mo ($1,000 - $1,300)',
+    salaryExpectation: 'GH₵ 7,500 - 10,000/mo',
     availability: '2 Weeks Notice',
     qualification: 'EYFS Certified',
     isVerified: true,
@@ -122,7 +122,7 @@ export const MOCK_TEACHERS: Teacher[] = [
     teachingLevel: 'Early Childhood (EYFS)',
     location: 'Kumasi, Ghana & International Online',
     experienceYears: 9,
-    salaryExpectation: 'GH₵ 10,000 - 14,000/mo ($1,500 - $2,000)',
+    salaryExpectation: 'GH₵ 10,000 - 14,000/mo',
     availability: 'Immediate',
     qualification: 'Early Childhood Diploma',
     isVerified: true,
@@ -166,7 +166,7 @@ export const MOCK_TEACHERS: Teacher[] = [
     teachingLevel: 'Lower Primary',
     location: 'Accra, Ghana (Tema / Spintex)',
     experienceYears: 6,
-    salaryExpectation: 'GH₵ 8,000 - 10,500/mo ($1,100 - $1,400)',
+    salaryExpectation: 'GH₵ 8,000 - 10,500/mo',
     availability: 'Next Academic Term',
     qualification: 'PGDE',
     isVerified: true,
@@ -202,7 +202,7 @@ export const MOCK_TEACHERS: Teacher[] = [
     teachingLevel: 'Nursery',
     location: 'Accra, Ghana (Cantonments)',
     experienceYears: 8,
-    salaryExpectation: 'GH₵ 9,000 - 12,500/mo ($1,300 - $1,700)',
+    salaryExpectation: 'GH₵ 9,000 - 12,500/mo',
     availability: 'Immediate',
     qualification: 'Early Years Specialist',
     isVerified: true,
@@ -238,7 +238,7 @@ export const MOCK_TEACHERS: Teacher[] = [
     teachingLevel: 'Special Needs (SEN)',
     location: 'Accra / Takoradi, Ghana',
     experienceYears: 6,
-    salaryExpectation: 'GH₵ 8,500 - 11,500/mo ($1,200 - $1,600)',
+    salaryExpectation: 'GH₵ 8,500 - 11,500/mo',
     availability: '2 Weeks Notice',
     qualification: 'B.Ed Early Childhood',
     isVerified: true,
@@ -265,84 +265,264 @@ export const MOCK_TEACHERS: Teacher[] = [
     ],
     contactWhatsappNumber: '+233249356337',
     email: 'samuel.addo@cecteachers.org'
+  },
+  {
+    id: 'tch-007',
+    name: 'Evelyn Boateng',
+    title: 'JHS English & Language Arts Educator',
+    photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600&auto=format&fit=crop',
+    teachingLevel: 'JHS (English)',
+    location: 'Accra, Ghana (East Legon & Cantonments)',
+    experienceYears: 7,
+    salaryExpectation: 'GH₵ 9,000 - 13,000/mo',
+    availability: 'Immediate',
+    qualification: 'B.Ed Early Childhood & Language Education',
+    isVerified: true,
+    rating: 4.9,
+    reviewsCount: 24,
+    bio: 'Dynamic Junior High School English specialist dedicated to reading comprehension, creative essay writing, critical literature analysis and BECE excellence.',
+    aboutDetailed: 'Evelyn bridges foundational literacy with higher-level grammar, essay synthesis and public oratory. She equips JHS learners with analytical reading habits and confident English expression.',
+    skills: ['Grammar & Composition', 'Creative Writing', 'Literature in English', 'BECE & Cambridge Checkpoint Prep', 'Speech & Debate Coaching'],
+    subjects: ['English Language', 'Literature', 'Essay Writing', 'Reading Comprehension'],
+    employmentPreferences: {
+      type: 'Full-time',
+      preferredLocations: ['East Legon', 'Cantonments', 'Airport Residential', 'Tema'],
+      minSalary: 'GH₵ 9,000/mo'
+    },
+    timeline: [
+      {
+        id: 't-60',
+        role: 'Head of English Department',
+        institution: 'Legacy Girls College & International Preparatory',
+        period: '2021 - Present',
+        description: 'Coordinated JHS English curriculum, literature circles and academic debating society.',
+        type: 'experience'
+      },
+      {
+        id: 't-61',
+        role: 'B.Ed in English & Basic Education',
+        institution: 'University of Education, Winneba',
+        period: '2015 - 2019',
+        description: 'Specialized in Language Pedagogy and Adolescent Literacy.',
+        type: 'education'
+      }
+    ],
+    contactWhatsappNumber: '+233540390029',
+    email: 'evelyn.boateng@cecteachers.org'
   }
 ];
 
 export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   {
-    id: 'srv-1',
+    id: 'srv-setup',
+    title: 'School Setup',
+    shortDesc: 'Support individuals and organizations in planning, establishing and developing quality schools.',
+    fullDesc: 'Comprehensive advisory and operational guidance for school owners starting or structuring world-class early learning centers and schools.',
+    iconName: 'LayoutGrid',
+    features: [
+      'Early years feasibility and operational layout planning',
+      'Regulatory compliance, policies and licensing guidance',
+      'Leadership structuring and strategic staffing frameworks',
+      'Classroom setup and learning zone zoning'
+    ],
+    recommendedFor: 'Entrepreneurs, proprietors and organizations founding new schools',
+    pricingTag: 'Custom School Package'
+  },
+  {
+    id: 'srv-recruitment',
     title: 'Teacher Recruitment & Staff Placement',
-    shortDesc: 'End-to-end recruitment of vetted, qualified early childhood and primary educators tailored to your school culture.',
+    shortDesc: 'End-to-end recruitment of vetted, qualified educators tailored to your school need.',
     fullDesc: 'We handle candidate sourcing, credentials verification, practical classroom observation, background checks and matching with your school values across regional and international institutions.',
     iconName: 'UserCheck',
     features: [
       'Comprehensive candidate screening and professional licensing alignment',
       'Classroom simulation and teaching demonstration evaluation',
-      'Customized salary and contract structure guidance',
-      '90-day replacement guarantee for school peace of mind'
+      'Customized salary and contract structure guidance'
     ],
     recommendedFor: 'New and established early childhood institutions seeking top-tier educators',
-    pricingTag: 'Custom School Package'
+    pricingTag: 'Tailored Placement'
   },
   {
-    id: 'srv-2',
-    title: 'Early Childhood Curriculum Design & Audit',
-    shortDesc: 'Custom EYFS, child-friendly and blended curriculum frameworks designed for maximum child engagement.',
+    id: 'srv-hometutoring',
+    title: 'Hometutoring',
+    shortDesc: 'A Structured topup academic programme to support a child\'s education.',
+    fullDesc: 'Dedicated in-home or virtual personal educators who provide diagnostic assessments, structured academic top-up and foundational reinforcement.',
+    iconName: 'GraduationCap',
+    features: [
+      'Personalized one-on-one academic reinforcement',
+      'Foundational phonics, reading, mathematics and science coaching',
+      'Flexible scheduling aligned with your child\'s learning rhythm'
+    ],
+    recommendedFor: 'Parents seeking structured academic reinforcement for their children',
+    pricingTag: 'Flexible Monthly Packages'
+  },
+  {
+    id: 'srv-homeschooling',
+    title: 'Homeschooling',
+    shortDesc: 'Structured curriculum with flexible child led approaches done from home across all level.',
+    fullDesc: 'End-to-end homeschooling guidance including curriculum design, daily schedules, learning materials and milestone assessments tailored to your child.',
+    iconName: 'BookOpenCheck',
+    features: [
+      'Child-led experiential pacing and comprehensive learning milestones',
+      'Structured international and local curriculum frameworks across all levels',
+      'Regular progress monitoring, assessments and parent mentorship'
+    ],
+    recommendedFor: 'Families committed to full or blended home-based education',
+    pricingTag: 'Term & Annual Support'
+  },
+  {
+    id: 'srv-curriculum',
+    title: 'Early Childhood Curriculum Design & Migration',
+    shortDesc: 'Customized Early childhood curriculum, blended curriculum and international curriculums designed for maximum child engagement for children ages 3months to 6 six.',
     fullDesc: 'Our curriculum experts review your existing scheme of work or design a bespoke child-centric curriculum aligned with global early childhood standards.',
     iconName: 'BookOpenCheck',
     features: [
-      'Scope and sequence development for ages 1 - 6',
-      'Integration of Synthetic Phonics and Singapore Math',
-      'Teacher lesson plan templates and assessment rubrics',
-      'Hands-on learning material recommendations'
+      'CEC Customised Early childhood curriculum for ages 3 months to 6 years',
+      'Hybrid and international curriculums available (Cambridge, Oxford and Pearson)',
+      'Teacher lesson plan templates, schemes of work and assessment rubrics'
     ],
-    recommendedFor: 'Schools upgrading their academic standards or transitioning to EYFS',
+    recommendedFor: 'Schools upgrading their academic standards or migrating to international frameworks',
     pricingTag: 'Popular for School Owners'
   },
   {
-    id: 'srv-3',
-    title: 'CEC Spaces: Classroom Setup & Transformation',
-    shortDesc: 'Complete spatial design and equipment planning for modern, child-friendly early learning environments.',
+    id: 'srv-spaces',
+    title: 'CEC Spaces: School designs, Classroom Setup & Transformation',
+    shortDesc: 'Themed school designs, signature classroom décor and equipment planning for modern, child-friendly learning environments.',
     fullDesc: 'We turn plain rooms into vibrant, ergonomically designed learning sanctuaries with safety-tested furniture, sensory learning zones and outdoor play areas.',
     iconName: 'LayoutGrid',
     features: [
-      '3D spatial floorplan and zoning layout design',
-      'Ergonomic wooden furniture sourcing and placement',
-      'Sensory learning corner and reading nook creation',
-      'Safety and sanitation audit'
+      'Complete school and classroom makeover',
+      'Age appropriate furniture sourcing and equipment',
+      'Themed school design, signature classroom setups and child-friendly layout'
     ],
     recommendedFor: 'Proprietors starting new early learning branches or renovating existing rooms',
     pricingTag: 'Turnkey Project'
   },
   {
-    id: 'srv-4',
-    title: 'Teacher Development & In-House Workshops',
-    shortDesc: 'Practical early years training modules for your teaching faculty.',
-    fullDesc: 'Equip your teachers with modern classroom management, positive discipline, phonics mastery and parent communication methods.',
+    id: 'srv-pd',
+    title: 'Professional Development workshops for teacher and school leaders',
+    shortDesc: 'Practical training modules delivered in person or online to boost educator competency and innovation.',
+    fullDesc: 'Equip your teachers and leaders with modern classroom management, positive discipline, phonics mastery and parent communication methods.',
     iconName: 'GraduationCap',
     features: [
-      'On-site workshops or international virtual modules',
+      'On-site workshops or international virtual interactive modules',
       'Classroom demonstrations with real-time feedback',
-      'Certificates of completion for all attendees',
-      'Post-training mentor follow-ups'
+      'Certificates of completion for all participating educators and leaders'
     ],
-    recommendedFor: 'Schools boosting teacher productivity and retention',
-    pricingTag: 'Flexible Group Rate'
+    recommendedFor: 'Schools boosting educator competency, leadership and retention',
+    pricingTag: 'Group & School Rates'
   },
   {
-    id: 'srv-5',
+    id: 'srv-reading-club',
     title: 'CEC Reading Club & Phonics Circles (Online)',
-    shortDesc: 'Weekly live virtual phonics, guided storytelling and online book clubs for children ages 2 to 8.',
+    shortDesc: 'Weekly live virtual phonics, guided storytelling and online book clubs for children ages 4 to 12.',
     fullDesc: 'A joyful 100% online literacy program helping young learners build phonemic awareness, expressive reading fluency and an enduring love for books through structured virtual reading circles.',
     iconName: 'BookOpen',
     features: [
-      'Weekly live virtual online reading and phonics sessions (Ages 2 to 8)',
-      'Curated monthly book boxes delivered and digital reading logs',
-      'Phonics blending games and vocabulary building',
-      'Live online reading club cohort for children worldwide'
+      'Weekly live virtual reading and phonics sessions for children ages 4 to 12',
+      'Certificate for various reading challenges',
+      'Curated Weekly online and audio books and digital reading logs'
     ],
     recommendedFor: 'Parents and families seeking engaging live online literacy coaching',
     pricingTag: 'Term & Monthly Subscriptions'
+  },
+  {
+    id: 'srv-audit',
+    title: 'Academic Audit Services',
+    shortDesc: 'A comprehensive review of a schools teaching, learning, curriculum, assessment and academic practices.',
+    fullDesc: 'In-depth institutional evaluations providing actionable diagnostic reports to optimize teaching standards, curriculum fidelity and student learning outcomes.',
+    iconName: 'CheckCircle2',
+    features: [
+      'Holistic classroom teaching observations and diagnostic feedback',
+      'Curriculum pacing, assessment methods and academic fidelity review',
+      'Executive improvement roadmap presented to school leadership'
+    ],
+    recommendedFor: 'Schools seeking accreditation readiness and academic excellence',
+    pricingTag: 'Comprehensive Audit'
+  },
+  {
+    id: 'srv-branding',
+    title: 'School branding Services',
+    shortDesc: 'Branding solutions designed to help schools to build a strong, distintive and memorable identity.',
+    fullDesc: 'Comprehensive identity design and positioning for educational institutions seeking to stand out, attract discerning families and inspire trust.',
+    iconName: 'Sparkles',
+    features: [
+      'Visual identity, emblem, prospectus and school collateral design',
+      'School culture, values and parent communication messaging',
+      'Campus signage, uniform design and spatial brand coherence'
+    ],
+    recommendedFor: 'New school founders and institutions repositioning their brand',
+    pricingTag: 'Custom Branding Package'
+  },
+  {
+    id: 'srv-library',
+    title: 'Library setup',
+    shortDesc: 'School and Home and library setup with curated age-appropriate book selections.',
+    fullDesc: 'Designing captivating reading sanctuaries in schools and homes with ergonomic display shelving, cozy reading nooks and cataloged literature collections.',
+    iconName: 'BookOpen',
+    features: [
+      'Physical library architecture, display shelving and cozy reading nooks',
+      'Curated cataloging of decodable books, fiction and reference materials',
+      'Lending management systems and reading challenge logs'
+    ],
+    recommendedFor: 'Schools and families establishing modern reading environments',
+    pricingTag: 'Custom Setup'
+  },
+  {
+    id: 'srv-parents',
+    title: 'Parents Workshop',
+    shortDesc: 'A programme designed to equip parent with practical knowledge and strategies to better understand and support their children.',
+    fullDesc: 'Interactive workshops helping parents navigate early childhood developmental phases, positive guidance, early literacy and learning at home.',
+    iconName: 'UserCheck',
+    features: [
+      'Practical child development and positive discipline strategies',
+      'Guidance on supporting early literacy, phonics and math at home',
+      'Direct Q&A with experienced early childhood specialists'
+    ],
+    recommendedFor: 'Parent associations, churches, school communities and families',
+    pricingTag: 'Community Workshop'
+  },
+  {
+    id: 'srv-booksale',
+    title: 'Book Recommendation and sale',
+    shortDesc: 'A Curated book recommendation service that helps parents and educators select age appropriate books to support children\'s overall development and progress.',
+    fullDesc: 'Carefully evaluated literature recommendations and direct supply of premium children\'s books that build strong vocabulary, moral character and reading stamina.',
+    iconName: 'BookOpen',
+    features: [
+      'Curated age-appropriate book recommendations across genres and reading levels',
+      'Direct sourcing and sales of high-quality early childhood books',
+      'Reading guides and companion discussion prompts for parents'
+    ],
+    recommendedFor: 'Schools, parents and community literacy initiatives',
+    pricingTag: 'Catalog Orders'
+  },
+  {
+    id: 'srv-sms',
+    title: 'School Management system',
+    shortDesc: 'Modern digital platforms to streamline school administrative processes, records and communications.',
+    fullDesc: 'Integrated school software solutions for attendance tracking, student progress reports, parent messaging and administrative efficiency.',
+    iconName: 'LayoutGrid',
+    features: [
+      'Digital attendance, student recordkeeping and grade reporting',
+      'Parent portal and real-time announcement messaging',
+      'Tuition and administrative workflow coordination'
+    ],
+    recommendedFor: 'Schools seeking digital efficiency and enhanced parent communication',
+    pricingTag: 'Software Setup & Support'
+  },
+  {
+    id: 'srv-advisory',
+    title: 'General education consultancy advise',
+    shortDesc: 'Professional education guidance and advisory services for parents, teachers, school owners and educational instituation.',
+    fullDesc: 'Confidential strategic advisory on school governance, teacher retention, parent dispute resolution and educational investment decisions.',
+    iconName: 'UserCheck',
+    features: [
+      'Direct consultation for school owners, directors and school boards',
+      'Parent educational path guidance and school selection advice',
+      'Policy design, code of conduct and staff handbook formulation'
+    ],
+    recommendedFor: 'Proprietors, institutional leaders and parents',
+    pricingTag: 'Advisory Session'
   }
 ];
 
@@ -371,6 +551,7 @@ export const MOCK_VIDEO_TESTIMONIALS: VideoTestimonial[] = [
     coverImage: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788091210/WhatsApp_Image_2026-08-30_at_11.57.37_AM.jpg',
     headline: 'Teacher Mentorship & Career Growth Feedback',
     videoUrl: 'https://res.cloudinary.com/qg0w6ewi/video/upload/vc_h264,q_auto,w_720/v1788066406/review_2.mp4',
+    embedFallbackUrl: 'https://player.cloudinary.com/embed/?cloud_name=qg0w6ewi&public_id=review_2&autoplay=true&controls=true',
     videoTopic: 'Teacher Mentorship & Career Placement',
     verifiedSchool: true
   },
@@ -383,7 +564,8 @@ export const MOCK_VIDEO_TESTIMONIALS: VideoTestimonial[] = [
     duration: 'Video Review',
     coverImage: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop',
     headline: 'CEC Spaces Classroom Setup & Renovation',
-    videoUrl: 'https://www.dropbox.com/scl/fi/01i55sxr4yw5ac8a9ppn1/review-2.MP4?rlkey=li1z2b5y5rsptn8tlfdu7unqq&st=p3w0vhk3&raw=1',
+    videoUrl: 'https://res.cloudinary.com/qg0w6ewi/video/upload/vc_h264,q_auto,w_720/v1788066406/review_2.mp4',
+    embedFallbackUrl: 'https://player.cloudinary.com/embed/?cloud_name=qg0w6ewi&public_id=review_2&autoplay=true&controls=true',
     videoTopic: 'CEC Spaces Classroom Renovation & Setup',
     verifiedSchool: true
   },
@@ -411,7 +593,7 @@ export const MOCK_WORKSHOPS: Workshop[] = [
     date: 'Saturday, August 15, 2026',
     time: '10:00 AM - 2:00 PM GMT',
     venue: 'CEC Training Center & Global Zoom Live',
-    price: '$45 / GH₵ 600',
+    price: 'GH₵ 600',
     availableSeats: 8,
     totalSeats: 40,
     description: 'Learn proven non-punitive strategies to manage toddler tantrums, promote self-regulation and create a calm, cooperative early learning environment.',
@@ -424,7 +606,7 @@ export const MOCK_WORKSHOPS: Workshop[] = [
     date: 'Saturday, August 22, 2026',
     time: '09:00 AM - 1:00 PM GMT',
     venue: 'CEC Learning Hub & Virtual Masterclass',
-    price: '$50 / GH₵ 680',
+    price: 'GH₵ 680',
     availableSeats: 5,
     totalSeats: 35,
     description: 'Master letter-sound correspondence, blending strategies, tricky words and kinesthetic games that get 3-year-olds reading fluently within months.',
@@ -437,7 +619,7 @@ export const MOCK_WORKSHOPS: Workshop[] = [
     date: 'Saturday, September 5, 2026',
     time: '10:00 AM - 3:00 PM GMT',
     venue: 'Virtual Interactive Masterclass via Zoom (International)',
-    price: '$35 / GH₵ 480',
+    price: 'GH₵ 480',
     availableSeats: 14,
     totalSeats: 50,
     description: 'Transform abstract numbers into tangible experiences using tactile number rods, bead counters and sensorial concrete aids.',
@@ -450,7 +632,7 @@ export const MOCK_WORKSHOPS: Workshop[] = [
     date: 'Saturday, September 19, 2026',
     time: '11:00 AM - 3:00 PM GMT',
     venue: 'CEC Executive Suite & International Hybrid Stream',
-    price: '$95 / GH₵ 1,300',
+    price: 'GH₵ 1,300',
     availableSeats: 6,
     totalSeats: 25,
     description: 'Strategic roadmap for early childhood center directors: fee pricing, parent satisfaction, teacher retention and brand positioning.',
@@ -461,103 +643,350 @@ export const MOCK_WORKSHOPS: Workshop[] = [
 export const MOCK_CEC_SPACES: CECSpaceProject[] = [
   {
     id: 'sp-1',
-    title: 'The Haven Early Learning Child-Friendly Wing',
-    schoolName: 'The Haven International Academy',
+    title: 'Mastering Education Excellence: Signature Learning Sanctuary',
+    schoolName: 'CEC Flagship Early Learning Center',
     location: 'Accra & Global Consultations',
-    type: 'Child-Friendly Classroom',
+    type: 'Themed School & Classroom Setup',
     beforeImage: 'https://images.unsplash.com/photo-1588072432836-e10032774350?q=80&w=1200&auto=format&fit=crop',
     afterImage: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=85&w=1400&auto=format&fit=crop',
-    description: 'Converted a standard classroom into an open, warm, natural-wood child-friendly learning laboratory with accessible low shelves and cozy reading corners.',
+    description: 'Mastering education excellence: Complete school and classroom makeover featuring ergonomic child-friendly furniture, interactive educational toys, and outdoor playing equipment.',
     keyUpgrades: [
-      'Child-height solid oak wooden shelving',
-      'Soft washable neutral carpet and cushion reading nook',
-      'Tactile sensory math and child-friendly practical stations',
-      'Natural light optimization and LED warm fixtures'
+      'Child-friendly ergonomic furniture & low shelving',
+      'Outdoor playing equipment & gross motor adventure areas',
+      'Educational toys replacing traditional rigid tools',
+      'Themed sensory zones & reading nooks'
     ]
   },
   {
     id: 'sp-2',
-    title: 'Little Wonders Toddler Sensory Play Studio',
-    schoolName: 'Little Wonders Early Years Center',
+    title: 'Outdoor Playing Equipment & Adventure Play Zone',
+    schoolName: 'CEC Partner Campus Play Park',
     location: 'International Campus',
-    type: 'Early Childhood Sensory Room',
+    type: 'Outdoor & Sensory Play Park',
     beforeImage: 'https://images.unsplash.com/photo-1588072432836-e10032774350?q=80&w=800&auto=format&fit=crop',
-    afterImage: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?q=80&w=800&auto=format&fit=crop',
-    description: 'Designed a dedicated sensory motor exploration room with indoor soft climb blocks, water play tables and calming visual walls.',
+    afterImage: 'https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=1200&auto=format&fit=crop',
+    description: 'Designed an expansive early childhood active play environment with safety impact surfaces, climbing structures and collaborative exploration stations.',
     keyUpgrades: [
-      'Padded impact safety flooring',
-      'Interactive tactile texture wall panels',
-      'Modular soft play foam blocks',
-      'Soothing acoustic panels and gentle lighting'
+      'Safety certified outdoor playing equipment & climbing frames',
+      'Shock-absorbing rubber play surfacing',
+      'Sensory water & sandbox interactive play tables',
+      'Ergonomic outdoor rest benches and shaded gathering pavilions'
     ]
   }
 ];
 
 export const MOCK_LEARNING_PRODUCTS: LearningProduct[] = [
   {
-    id: 'prod-1',
-    name: 'Tactile Wooden Alphabet Tracing Trays',
-    category: 'Child-Friendly Tools',
-    price: 32,
+    id: 'prod-moon-arc-table',
+    name: 'Moon Arc Adjustment Table with a Chair',
+    category: 'Child-Friendly Furniture',
+    price: 950,
+    priceDisplay: 'GH₵ 950',
     rating: 4.9,
-    reviews: 47,
-    image: 'https://images.unsplash.com/photo-1618842676088-c4d48a6a7c9d?q=80&w=600&auto=format&fit=crop',
-    description: 'Premium natural beechwood carved letter trays with wooden stylus for fine motor writing preparation.',
+    reviews: 32,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701034/WhatsApp_Image_2026-09-03_at_3.48.29_PM_2.jpg',
+    description: 'Ergonomic crescent moon adjustable-height activity table with a matching child posture support chair. Ideal for collaborative early years learning and individual focus.',
     inStock: true,
-    ageGroup: 'Ages 2.5 - 5',
+    ageGroup: 'Preschool & Kindergarten',
     isFeatured: true
   },
   {
-    id: 'prod-2',
-    name: 'Multisensory Phonics Flashcard Box Set',
-    category: 'Phonics & Reading',
-    price: 28,
-    rating: 5.0,
-    reviews: 83,
-    image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=600&auto=format&fit=crop',
-    description: 'Complete foundational sound card deck with textured letters, tactile illustrations and word blending prompts.',
-    inStock: true,
-    ageGroup: 'Ages 3 - 6',
-    isFeatured: true
-  },
-  {
-    id: 'prod-3',
-    name: 'Sensory Counting Peg Board & Color Sorting Set',
-    category: 'Early Math',
-    price: 45,
-    rating: 4.8,
-    reviews: 29,
-    image: 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?q=80&w=600&auto=format&fit=crop',
-    description: 'Smooth wooden number board with colorful silicone stacking pegs for 1-10 quantity matching.',
-    inStock: true,
-    ageGroup: 'Ages 2 - 5',
-    isFeatured: true
-  },
-  {
-    id: 'prod-4',
-    name: 'Modular Foam Sensory Play Cushion Set (6 Pcs)',
+    id: 'prod-mini-shop',
+    name: 'Mini Shop',
     category: 'Sensory & Play',
-    price: 110,
-    rating: 4.9,
-    reviews: 14,
-    image: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?q=80&w=600&auto=format&fit=crop',
-    description: 'Heavy duty, easy-to-clean vegan leather soft climbing and seating blocks for early learning play corners.',
+    price: 946,
+    priceDisplay: 'GH₵ 946',
+    rating: 5.0,
+    reviews: 44,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701034/WhatsApp_Image_2026-09-03_at_3.48.33_PM_1.jpg',
+    images: [
+      'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701034/WhatsApp_Image_2026-09-03_at_3.48.33_PM_1.jpg',
+      'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701034/WhatsApp_Image_2026-09-03_at_3.48.33_PM_2.jpg',
+      'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701031/WhatsApp_Image_2026-09-03_at_3.48.33_PM_3.jpg'
+    ],
+    description: 'Interactive child-sized storefront kiosk for imaginative dramatic play, early social commerce, counting practice, and language development.',
     inStock: true,
-    ageGroup: 'Ages 1 - 4',
+    ageGroup: 'Ages 3 - 8',
+    isFeatured: true
+  },
+  {
+    id: 'prod-preschool-adj-table-set',
+    name: 'Preschool Adjustable Table Set with Chairs',
+    category: 'Child-Friendly Furniture',
+    price: 2268,
+    priceDisplay: 'GH₵ 2,268',
+    rating: 4.9,
+    reviews: 27,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701034/WhatsApp_Image_2026-09-03_at_3.48.31_PM_3.jpg',
+    description: 'Heavy-duty adjustable classroom table complete with sturdy ergonomic preschool chairs designed for active group activities, crafts, and meal times.',
+    inStock: true,
+    ageGroup: 'Preschool & Early Primary',
+    isFeatured: true
+  },
+  {
+    id: 'prod-preschool-chairs',
+    name: 'Preschool Chairs',
+    category: 'Child-Friendly Furniture',
+    price: 180,
+    priceDisplay: 'Contact for Quote / Bulk',
+    rating: 4.8,
+    reviews: 35,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701033/WhatsApp_Image_2026-09-03_at_3.48.31_PM_1.jpg',
+    description: 'Stackable, child-safe ergonomic preschool chairs with non-slip footpads. Durable, easy to clean, and contoured for healthy posture.',
+    inStock: true,
+    ageGroup: 'Preschool (Ages 2 - 6)',
     isFeatured: false
   },
   {
-    id: 'prod-5',
-    name: 'EYFS Classroom Emotion & Feeling Weather Charts',
-    category: 'Classroom Decor',
-    price: 18,
+    id: 'prod-trampoline-safety-net',
+    name: 'Trampoline with Safety Net',
+    category: 'Outdoor & Play Equipment',
+    price: 7000,
+    priceDisplay: '14ft: GH₵ 7,000 | 16ft: GH₵ 8,700',
+    rating: 5.0,
+    reviews: 19,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701031/WhatsApp_Image_2026-09-03_at_3.48.31_PM.jpg',
+    description: 'Commercial-grade outdoor trampoline equipped with heavy-duty galvanized steel springs, UV-resistant jumping mat, and complete 360-degree protective enclosure net.',
+    inStock: true,
+    ageGroup: 'Ages 3 - 12+',
+    isFeatured: true,
+    specs: 'Available sizes: 14ft (GH₵ 7,000) and 16ft (GH₵ 8,700)'
+  },
+  {
+    id: 'prod-magnetic-rods',
+    name: "Large Strong Magnet Versatile Educational Magnetic Rods - Children's Toy, 2nd Generation Upgraded Magnetic Safety Design for Early Education Development",
+    category: 'Educational Toys',
+    price: 200,
+    priceDisplay: 'GH₵ 200 - 700+ (Based on pcs)',
+    rating: 4.9,
+    reviews: 62,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701031/WhatsApp_Image_2026-09-03_at_3.48.29_PM_1.jpg',
+    description: '2nd generation upgraded safety magnetic rods and balls. Empowers children to build 3D geometric shapes, architectural structures, and explore magnetism safely.',
+    inStock: true,
+    ageGroup: 'Ages 3 - 8',
+    isFeatured: true,
+    specs: 'Range from GH₵ 200 to GH₵ 700+ depending on piece count'
+  },
+  {
+    id: 'prod-elem-study-desk',
+    name: "Children's Desk, Study Table for Elementary School Students - Adjustable Height Writing Desk with Chair Set for Kids",
+    category: 'Child-Friendly Furniture',
+    price: 2900,
+    priceDisplay: 'GH₵ 2,900',
+    rating: 4.9,
+    reviews: 21,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701031/WhatsApp_Image_2026-09-03_at_3.48.29_PM.jpg',
+    description: 'Adjustable-height study desk and chair set with tiltable desktop for writing, reading, and drawing. Includes book rack, pen holder groove, and bag hook.',
+    inStock: true,
+    ageGroup: 'Elementary / Primary Students',
+    isFeatured: true
+  },
+  {
+    id: 'prod-elem-learning-desk-complete',
+    name: "Children's Learning Desk, Adjustable Height Writing Desk and Chair Set for Elementary School Students, Complete Furniture Set",
+    category: 'Child-Friendly Furniture',
+    price: 2900,
+    priceDisplay: 'GH₵ 2,900',
+    rating: 4.8,
+    reviews: 18,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701030/WhatsApp_Image_2026-09-03_at_3.45.57_PM.jpg',
+    description: 'Complete elementary writing and learning workstation engineered for spine support and comfortable study sessions as learners grow.',
+    inStock: true,
+    ageGroup: 'Elementary School Students',
+    isFeatured: false
+  },
+  {
+    id: 'prod-toy-shelves',
+    name: 'Children Shelve Toy Holders',
+    category: 'Child-Friendly Furniture',
+    price: 600,
+    priceDisplay: 'GH₵ 600 - 1,200',
     rating: 4.7,
+    reviews: 29,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701031/WhatsApp_Image_2026-09-03_at_3.48.32_PM_2.jpg',
+    description: 'Accessible, child-height multi-bin storage organizer shelf. Promotes classroom independence, self-cleaning routines, and neat categorization of toys and learning aids.',
+    inStock: true,
+    ageGroup: 'All Early Years',
+    isFeatured: true,
+    specs: 'Available in multiple tier configurations: GH₵ 600 - GH₵ 1,200'
+  },
+  {
+    id: 'prod-nursery-play-mat',
+    name: 'Nursery Children Play Mat',
+    category: 'Sensory & Play',
+    price: 350,
+    priceDisplay: 'Contact for Sizing & Price',
+    rating: 4.9,
     reviews: 38,
-    image: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=600&auto=format&fit=crop',
-    description: 'Laminated interactive daily weather and emotion check-in board with velcro student tokens.',
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701030/WhatsApp_Image_2026-09-03_at_3.48.30_PM_4.jpg',
+    images: [
+      'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701030/WhatsApp_Image_2026-09-03_at_3.48.30_PM_4.jpg',
+      'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701028/WhatsApp_Image_2026-09-03_at_3.48.30_PM_3.jpg'
+    ],
+    description: 'Cushioned, non-toxic waterproof play mat designed for safe crawling, sensory activities, and floor play in infant and toddler rooms.',
+    inStock: true,
+    ageGroup: 'Infant, Toddler & Nursery',
+    isFeatured: false
+  },
+  {
+    id: 'prod-outdoor-slide',
+    name: 'Outdoor Slide for Children',
+    category: 'Outdoor & Play Equipment',
+    price: 12023,
+    priceDisplay: 'GH₵ 12,023',
+    rating: 5.0,
+    reviews: 15,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701025/WhatsApp_Image_2026-09-03_at_3.48.30_PM_5.jpg',
+    description: 'Durable, weather-resistant outdoor playground slide unit with wide safety steps, sturdy handrails, and smooth landing zone for gross motor fun.',
+    inStock: true,
+    ageGroup: 'Ages 2 - 8',
+    isFeatured: true
+  },
+  {
+    id: 'prod-plastic-assembly-toy',
+    name: 'Children Plastic Assembly Educational Toy',
+    category: 'Educational Toys',
+    price: 135,
+    priceDisplay: 'GH₵ 135',
+    rating: 4.8,
+    reviews: 41,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701026/WhatsApp_Image_2026-09-03_at_3.48.32_PM_5.jpg',
+    description: 'Colorful interlocking plastic parts encouraging mechanical creativity, spatial planning, and fine-motor dexterity in young builders.',
+    inStock: true,
+    ageGroup: 'Ages 3 - 7',
+    isFeatured: false
+  },
+  {
+    id: 'prod-tetris-puzzle',
+    name: 'Tetris Building Block Puzzle Toy',
+    category: 'Educational Toys',
+    price: 200,
+    priceDisplay: 'GH₵ 200',
+    rating: 4.9,
+    reviews: 53,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701025/WhatsApp_Image_2026-09-03_at_3.48.32_PM_1.jpg',
+    description: 'Classic brain-teaser puzzle board with colorful geometric blocks. Enhances logical reasoning, pattern recognition, and problem-solving skills.',
+    inStock: true,
+    ageGroup: 'Ages 3 - 8',
+    isFeatured: true
+  },
+  {
+    id: 'prod-shape-foam-set',
+    name: 'Shape Foam Building Set for Preschool, Baby Cognitive Development with Matching and Anti-Collision Design',
+    category: 'Sensory & Play',
+    price: 105,
+    priceDisplay: 'GH₵ 105',
+    rating: 4.8,
+    reviews: 26,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701025/WhatsApp_Image_2026-09-03_at_3.48.33_PM.jpg',
+    description: 'Soft, anti-collision foam geometric matching blocks for safe infant and preschool stacking, shape identification, and tactile development.',
+    inStock: true,
+    ageGroup: 'Baby & Preschool',
+    isFeatured: false
+  },
+  {
+    id: 'prod-traffic-carpet',
+    name: "Customized Parking Lot Children's Crawling Game Track with Road Traffic Theme - Cartoon Early Education Carpet for Kindergarten",
+    category: 'Sensory & Play',
+    price: 480,
+    priceDisplay: 'Contact for Sizing & Price',
+    rating: 4.9,
+    reviews: 31,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701025/WhatsApp_Image_2026-09-03_at_3.48.30_PM_1.jpg',
+    description: 'Illustrated road map traffic carpet for kindergarten floors. Inspires imaginative role play with toy vehicles and teaches traffic safety awareness.',
+    inStock: true,
+    ageGroup: 'Ages 2 - 7',
+    isFeatured: false
+  },
+  {
+    id: 'prod-large-plastic-blocks',
+    name: 'Large Plastic Building Blocks for Kids',
+    category: 'Educational Toys',
+    price: 450,
+    priceDisplay: 'GH₵ 450 - 850 (Based on pcs)',
+    rating: 4.9,
+    reviews: 48,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701024/WhatsApp_Image_2026-09-03_at_3.48.32_PM_4.jpg',
+    description: 'Oversized, easy-to-grip colorful construction blocks perfect for preschool hands to engineer towers, bridges, and imaginative structures.',
+    inStock: true,
+    ageGroup: 'Ages 2 - 8',
+    isFeatured: true,
+    specs: 'Range: GH₵ 450 - GH₵ 850 based on number of pieces'
+  },
+  {
+    id: 'prod-wooden-3d-puzzle',
+    name: 'Wooden 3D Puzzle for Early Education',
+    category: 'Educational Toys',
+    price: 50,
+    priceDisplay: 'GH₵ 50',
+    rating: 4.7,
+    reviews: 59,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701024/WhatsApp_Image_2026-09-03_at_3.48.31_PM_5.jpg',
+    images: [
+      'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701024/WhatsApp_Image_2026-09-03_at_3.48.31_PM_5.jpg',
+      'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701024/WhatsApp_Image_2026-09-03_at_3.48.31_PM_4.jpg'
+    ],
+    description: 'Natural wood 3D puzzle with smooth rounded edges. Fosters hand-eye coordination, spatial awareness, and animal/object recognition.',
     inStock: true,
     ageGroup: 'Ages 2 - 6',
     isFeatured: false
+  },
+  {
+    id: 'prod-seesaw',
+    name: 'Seesaw',
+    category: 'Outdoor & Play Equipment',
+    price: 2701.26,
+    priceDisplay: 'GH₵ 2,701.26',
+    rating: 4.9,
+    reviews: 12,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701024/WhatsApp_Image_2026-09-03_at_3.48.32_PM.jpg',
+    description: 'Child-safe ergonomic seesaw with padded shock absorbers and comfort-grip handles for cooperative vestibular and balance play.',
+    inStock: true,
+    ageGroup: 'Ages 3 - 10',
+    isFeatured: true
+  },
+  {
+    id: 'prod-artificial-grass',
+    name: 'Artificial Carpet Grass',
+    category: 'Outdoor & Play Equipment',
+    price: 1020,
+    priceDisplay: 'GH₵ 1,020',
+    rating: 5.0,
+    reviews: 37,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701024/WhatsApp_Image_2026-09-03_at_3.48.32_PM_3.jpg',
+    description: 'Premium realistic artificial turf for playground surfacing, sensory corners, and outdoor activity zones. Clean, non-allergenic, and weatherproof.',
+    inStock: true,
+    ageGroup: 'School & Playground Setup',
+    isFeatured: true,
+    specs: 'Thickness: 2.5 cm | Width: 2m | Length: 10m'
+  },
+  {
+    id: 'prod-drill-toolbox',
+    name: "Assembled Toy - Children's Screw-Tightening Electric Drill Educational Repair Toolbox Set, 3-in-1 for Boys & Girls, Age 6+",
+    category: 'Educational Toys',
+    price: 260,
+    priceDisplay: 'Contact for Quote',
+    rating: 4.9,
+    reviews: 43,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701024/WhatsApp_Image_2026-09-03_at_3.48.30_PM_2.jpg',
+    description: 'Realistic kid-safe battery-powered electric drill and tool set with bolts, nuts, and activity plates for hands-on STEM engineering play.',
+    inStock: true,
+    ageGroup: 'Age 6+',
+    isFeatured: true
+  },
+  {
+    id: 'prod-rect-adj-table',
+    name: 'Rectangular Preschool Adjustable Table',
+    category: 'Child-Friendly Furniture',
+    price: 650,
+    priceDisplay: 'GH₵ 650',
+    rating: 4.8,
+    reviews: 34,
+    image: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788701023/WhatsApp_Image_2026-09-03_at_3.48.31_PM_2.jpg',
+    description: 'High-durability rectangular preschool activity table with height-adjustable steel legs and stain-resistant easy-wipe surface.',
+    inStock: true,
+    ageGroup: 'Preschool & Kindergarten',
+    isFeatured: true
   }
 ];
 

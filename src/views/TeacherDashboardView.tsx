@@ -571,13 +571,13 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                         type="text"
                         value={teachingLevel}
                         onChange={(e) => setTeachingLevel(e.target.value)}
-                        placeholder="e.g. Nursery & KG, Preschool (EYFS), Lower Primary (Grades 1 to 3), or Jolly Phonics Specialist"
+                        placeholder="e.g. Nursery & KG, Preschool (EYFS), Lower Primary (Grades 1 to 3), or JHS (English)"
                         className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
                         required
                       />
                     </div>
                     <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                      {['Preschool (EYFS)', 'Nursery & Kindergarten', 'Lower Primary (Grades 1 to 3)', 'Special Needs (SEN)'].map((lvl) => (
+                      {['Preschool (EYFS)', 'Nursery & Kindergarten', 'Lower Primary (Grades 1 to 3)', 'JHS (English)', 'Special Needs (SEN)'].map((lvl) => (
                         <button
                           key={lvl}
                           type="button"
@@ -604,13 +604,13 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                         type="text"
                         value={qualification}
                         onChange={(e) => setQualification(e.target.value)}
-                        placeholder="e.g. B.Ed. Early Childhood Education, PGDE, Montessori Diploma, or Jolly Phonics Certified"
+                        placeholder="e.g. B.Ed. Early Childhood Education, PGDE, Montessori Diploma, or Certified Literacy Coach"
                         className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
                         required
                       />
                     </div>
                     <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                      {['B.Ed Early Childhood', 'EYFS & Montessori Diploma', 'PGDE (Early Years)', 'Jolly Phonics Lead Trainer'].map((q) => (
+                      {['B.Ed Early Childhood', 'EYFS & Montessori Diploma', 'PGDE (Early Years)', 'Certified Literacy Specialist'].map((q) => (
                         <button
                           key={q}
                           type="button"

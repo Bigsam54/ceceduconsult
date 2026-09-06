@@ -64,7 +64,7 @@ export const adminService = {
         pendingAuditsCount: MOCK_PENDING_APPROVALS.filter(p => p.status === 'Pending Review').length,
         activeSchoolLeadsCount: 14,
         completedPlacementsYTD: 284,
-        estimatedRevenue: '$48,250'
+        estimatedRevenue: 'GH₵ 48,250'
       };
     }
   },

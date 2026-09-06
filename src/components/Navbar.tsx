@@ -132,10 +132,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
               </button>
 
               {servicesDropdownOpen && (
-                <div className="absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 py-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="px-3.5 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                    School & Literacy Services
-                  </div>
+                <div className="absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   
                   {/* Reading Club inside dropdown */}
                   <button
@@ -353,7 +350,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
 
       {/* Structured Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-4 animate-in fade-in slide-in-from-top-2 duration-150">
+        <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-12 space-y-4 animate-in fade-in slide-in-from-top-2 duration-150 max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain shadow-2xl">
           
           <div className="space-y-1">
             <button

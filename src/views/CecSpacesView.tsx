@@ -39,19 +39,25 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
       
       {/* Hero */}
       <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-4">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#2ac0db]/20 border border-[#2ac0db]/40 text-[#2ac0db] text-xs sm:text-sm font-extrabold uppercase tracking-wide backdrop-blur-md">
+          <Sparkles className="w-4 h-4 text-[#fa7b2d]" />
+          <span>CEC Inspire Spaces</span>
+        </div>
         <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white leading-tight">
-          Transform Rooms into Inspiring Learning Sanctuaries
+          Themed School Design & Signature Classroom Setups
         </h1>
-        <p className="text-slate-300 text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed">
-          We design ergonomic, child-friendly, safety-audited early childhood environments that ignite children's natural curiosity.
+        <p className="text-slate-200 text-sm sm:text-base md:text-lg max-w-3xl leading-relaxed font-medium">
+          Themed school design, signature classroom setups, and child-friendly layouts with age-appropriate furniture sourcing for a complete school and classroom makeover.
         </p>
-        <button
-          onClick={() => onOpenConsultationModal()}
-          className="w-full sm:w-auto px-6 py-3.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold rounded-xl shadow-xl transition-all text-sm inline-flex items-center justify-center gap-2 cursor-pointer"
-        >
-          <MessageCircle className="w-4 h-4" />
-          <span>Book School Setup Consultation</span>
-        </button>
+        <div className="pt-2">
+          <button
+            onClick={() => onOpenConsultationModal()}
+            className="w-full sm:w-auto px-6 py-3.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold rounded-xl shadow-xl transition-all text-sm sm:text-base inline-flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <MessageCircle className="w-4 h-4" />
+            <span>Book School Setup Consultation</span>
+          </button>
+        </div>
       </div>
 
       {/* Interactive Blueprint & Modern Classroom Showcase */}
