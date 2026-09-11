@@ -554,6 +554,17 @@ export const MOCK_VIDEO_TESTIMONIALS: VideoTestimonial[] = [
     embedFallbackUrl: 'https://player.cloudinary.com/embed/?cloud_name=qg0w6ewi&public_id=review_2&autoplay=true&controls=true',
     videoTopic: 'Teacher Mentorship & Career Placement',
     verifiedSchool: true
+  },
+  {
+    id: 'vid-3',
+    author: '',
+    role: '',
+    school: '',
+    location: '',
+    coverImage: 'https://res.cloudinary.com/qg0w6ewi/video/upload/so_0/v1789155756/revvvv.jpg',
+    headline: 'Video Review',
+    videoUrl: 'https://res.cloudinary.com/qg0w6ewi/video/upload/v1789155756/revvvv.mp4',
+    embedFallbackUrl: 'https://player.cloudinary.com/embed/?cloud_name=qg0w6ewi&public_id=revvvv&autoplay=true&controls=true'
   }
 ];
 

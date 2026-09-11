@@ -156,13 +156,9 @@ const VideoCardItem: React.FC<VideoCardItemProps> = ({ video, isPlaying, onPlay 
         )}
       </div>
 
-      {/* Card Body - Heading Only */}
-      <div className="p-4 sm:p-4.5 flex-1 flex flex-col justify-between">
-        <h4 className="text-sm font-semibold text-slate-100 leading-snug">
-          {video.headline}
-        </h4>
-
-        <div className="pt-3 mt-2 border-t border-slate-700/60 flex items-center justify-between text-xs text-[#2ac0db] font-bold">
+      {/* Card Body */}
+      <div className="p-4 sm:p-4.5 flex-1 flex flex-col justify-end">
+        <div className="flex items-center justify-between text-xs text-[#2ac0db] font-bold">
           {!isPlaying ? (
             <button
               type="button"
