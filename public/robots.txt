@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin-login
+Disallow: /admin-dashboard
+Disallow: /teacher-dashboard
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://ceceduconsult.com/sitemap.xml

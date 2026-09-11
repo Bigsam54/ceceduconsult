@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { LearningProduct } from '../types';
-import { MOCK_LEARNING_PRODUCTS } from '../data/mockData';
-import { 
+import { useStoreProducts } from '../hooks/useStoreProducts';
+import {
   ShoppingBag, 
   Search, 
   Eye, 
@@ -18,6 +18,7 @@ interface LearningEssentialsViewProps {
 }
 
 export const LearningEssentialsView: React.FC<LearningEssentialsViewProps> = ({ onQuickView }) => {
+  const { products, loading } = useStoreProducts();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
@@ -44,7 +45,7 @@ export const LearningEssentialsView: React.FC<LearningEssentialsViewProps> = ({ 
     }
   };
 
-  const filteredProducts = MOCK_LEARNING_PRODUCTS.filter((prod) => {
+  const filteredProducts = products.filter((prod) => {
     if (searchQuery.trim() && !prod.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     if (selectedCategory !== 'All' && prod.category !== selectedCategory) return false;
     return true;
@@ -54,7 +55,17 @@ export const LearningEssentialsView: React.FC<LearningEssentialsViewProps> = ({ 
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 sm:space-y-10">
       
       {/* Banner */}
-      <div className="relative bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl overflow-hidden">
+      <div className="relative bg-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl overflow-hidden">
+        <div className="absolute inset-0 z-0 select-none pointer-events-none">
+          <img
+            src="https://images.unsplash.com/photo-1786667395574-8121327f52c8?auto=format&fit=crop&w=2000&q=80"
+            alt="Classroom shelf fully stocked with early learning kits and educational toys"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover object-center filter brightness-50 contrast-110"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/85 to-slate-950/50" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-slate-950/50" />
+        </div>
 
         <div className="relative z-10 space-y-3 sm:space-y-4 max-w-3xl">
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white leading-tight">
@@ -96,6 +107,14 @@ export const LearningEssentialsView: React.FC<LearningEssentialsViewProps> = ({ 
           </button>
         ))}
       </div>
+
+      {loading && (
+        <p className="text-center text-sm text-slate-500 font-semibold py-8">Loading products...</p>
+      )}
+
+      {!loading && filteredProducts.length === 0 && (
+        <p className="text-center text-sm text-slate-500 font-semibold py-8">No products match your search yet.</p>
+      )}
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">

@@ -104,7 +104,7 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
           </div>
           <h3 className="font-heading font-bold text-lg text-slate-900">Accessible Worldwide</h3>
           <p className="text-slate-600 text-sm leading-relaxed">
-            No commuting required. Families across Ghana and beyond and globally connect weekly to boost their children's reading fluency.
+            No commuting required. Families across Ghana and beyond globally connect weekly to boost their children's reading fluency.
           </p>
         </div>
 
@@ -114,7 +114,7 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
           </div>
           <h3 className="font-heading font-bold text-lg text-slate-900">Weekly Book Box & Worksheets</h3>
           <p className="text-slate-600 text-sm leading-relaxed">
-            Access to Online books, audio books, educational games and decodable phonics packs.
+            Access to online books, audio books, educational games and decodable phonics packs.
           </p>
         </div>
       </div>
@@ -127,7 +127,7 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
             <span>Child-Centered Reading Circles</span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-slate-900">
-            Programs Tailored to Every Section
+            Programmes Tailored to Every Section
           </h2>
           <p className="text-slate-600 text-sm sm:text-base">
             Child-centered live virtual cohorts designed for each developmental milestone from beginner readers to advanced leaders.
@@ -231,7 +231,7 @@ export const ReadingClubView: React.FC<ReadingClubViewProps> = ({ onOpenConsulta
                 </span>
               </div>
               <p className="text-slate-600 text-sm leading-relaxed">
-                Developing analytical thinkers focusing on inference, discussion, debates and creative review journals.
+                Developing analytical thinkers focusing on inferencing, discussion, debates and creative review journals.
               </p>
             </div>
             <ul className="space-y-2 text-sm text-slate-700 pt-3 border-t border-slate-100">

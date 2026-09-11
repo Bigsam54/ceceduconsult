@@ -315,9 +315,9 @@ export const MOCK_TEACHERS: Teacher[] = [
 export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   {
     id: 'srv-setup',
-    title: 'School Setup',
+    title: 'School setup',
     shortDesc: 'Support individuals and organizations in planning, establishing and developing quality schools.',
-    fullDesc: 'Comprehensive advisory and operational guidance for school owners starting or structuring world-class early learning centers and schools.',
+    fullDesc: 'Comprehensive advisory and operational guidance for school owners starting or structuring world-class early learning centres and schools.',
     iconName: 'LayoutGrid',
     features: [
       'Early years feasibility and operational layout planning',
@@ -331,7 +331,7 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   {
     id: 'srv-recruitment',
     title: 'Teacher Recruitment & Staff Placement',
-    shortDesc: 'End-to-end recruitment of vetted, qualified educators tailored to your school need.',
+    shortDesc: 'End-to-end recruitment of vetted, qualified educators tailored to your school needs.',
     fullDesc: 'We handle candidate sourcing, credentials verification, practical classroom observation, background checks and matching with your school values across regional and international institutions.',
     iconName: 'UserCheck',
     features: [
@@ -339,19 +339,19 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
       'Classroom simulation and teaching demonstration evaluation',
       'Customized salary and contract structure guidance'
     ],
-    recommendedFor: 'New and established early childhood institutions seeking top-tier educators',
+    recommendedFor: 'New and established schools seeking top-tier educators',
     pricingTag: 'Tailored Placement'
   },
   {
     id: 'srv-hometutoring',
-    title: 'Hometutoring',
-    shortDesc: 'A Structured topup academic programme to support a child\'s education.',
+    title: 'Home tutoring',
+    shortDesc: 'A structured topup academic programme to support a child\'s education.',
     fullDesc: 'Dedicated in-home or virtual personal educators who provide diagnostic assessments, structured academic top-up and foundational reinforcement.',
     iconName: 'GraduationCap',
     features: [
       'Personalized one-on-one academic reinforcement',
-      'Foundational phonics, reading, mathematics and science coaching',
-      'Flexible scheduling aligned with your child\'s learning rhythm'
+      'All subjects for all levels',
+      'Flexible scheduling aligned with your child\'s learning needs'
     ],
     recommendedFor: 'Parents seeking structured academic reinforcement for their children',
     pricingTag: 'Flexible Monthly Packages'
@@ -359,11 +359,11 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   {
     id: 'srv-homeschooling',
     title: 'Homeschooling',
-    shortDesc: 'Structured curriculum with flexible child led approaches done from home across all level.',
+    shortDesc: 'Structured curriculum with flexible child led approaches done from home across all levels.',
     fullDesc: 'End-to-end homeschooling guidance including curriculum design, daily schedules, learning materials and milestone assessments tailored to your child.',
     iconName: 'BookOpenCheck',
     features: [
-      'Child-led experiential pacing and comprehensive learning milestones',
+      'Child led experiential pacing and comprehensive learning milestones',
       'Structured international and local curriculum frameworks across all levels',
       'Regular progress monitoring, assessments and parent mentorship'
     ],
@@ -429,7 +429,7 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   {
     id: 'srv-audit',
     title: 'Academic Audit Services',
-    shortDesc: 'A comprehensive review of a schools teaching, learning, curriculum, assessment and academic practices.',
+    shortDesc: 'A comprehensive review of a school\'s teaching, learning, curriculum, assessment and academic practices.',
     fullDesc: 'In-depth institutional evaluations providing actionable diagnostic reports to optimize teaching standards, curriculum fidelity and student learning outcomes.',
     iconName: 'CheckCircle2',
     features: [
@@ -442,7 +442,7 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   },
   {
     id: 'srv-branding',
-    title: 'School branding Services',
+    title: 'School Branding Services',
     shortDesc: 'Branding solutions designed to help schools to build a strong, distintive and memorable identity.',
     fullDesc: 'Comprehensive identity design and positioning for educational institutions seeking to stand out, attract discerning families and inspire trust.',
     iconName: 'Sparkles',
@@ -457,8 +457,8 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   {
     id: 'srv-library',
     title: 'Library setup',
-    shortDesc: 'School and Home and library setup with curated age-appropriate book selections.',
-    fullDesc: 'Designing captivating reading sanctuaries in schools and homes with ergonomic display shelving, cozy reading nooks and cataloged literature collections.',
+    shortDesc: 'School and home and library setup with curated age-appropriate book selections.',
+    fullDesc: 'Designing captivating reading sanctuaries in schools and homes with ergonomic display shelving, cozy reading nooks and catalogue literature collections.',
     iconName: 'BookOpen',
     features: [
       'Physical library architecture, display shelving and cozy reading nooks',
@@ -484,13 +484,13 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   },
   {
     id: 'srv-booksale',
-    title: 'Book Recommendation and sale',
-    shortDesc: 'A Curated book recommendation service that helps parents and educators select age appropriate books to support children\'s overall development and progress.',
-    fullDesc: 'Carefully evaluated literature recommendations and direct supply of premium children\'s books that build strong vocabulary, moral character and reading stamina.',
+    title: 'Book Recommendation and Sale',
+    shortDesc: 'A curated book recommendation service that helps parents and educators select age appropriate books to support children\'s overall development and progress.',
+    fullDesc: 'Carefully evaluated recommendations and direct supply of premium children\'s books that build strong vocabulary, moral character and reading stamina.',
     iconName: 'BookOpen',
     features: [
       'Curated age-appropriate book recommendations across genres and reading levels',
-      'Direct sourcing and sales of high-quality early childhood books',
+      'Direct sourcing and sales of high-quality books',
       'Reading guides and companion discussion prompts for parents'
     ],
     recommendedFor: 'Schools, parents and community literacy initiatives',
@@ -512,7 +512,7 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   },
   {
     id: 'srv-advisory',
-    title: 'General education consultancy advise',
+    title: 'General Education Consultancy Advice',
     shortDesc: 'Professional education guidance and advisory services for parents, teachers, school owners and educational instituation.',
     fullDesc: 'Confidential strategic advisory on school governance, teacher retention, parent dispute resolution and educational investment decisions.',
     iconName: 'UserCheck',

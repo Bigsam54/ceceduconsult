@@ -67,7 +67,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
             {/* Main Headline */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-extrabold text-white tracking-tight leading-tight">
-              Inspiring Early Learning, <span className="text-[#2ac0db]">School & Classroom Setup</span>
+              Inspiring Early Learning
             </h1>
 
             {/* Short, direct CEC Brand Subtitle */}
@@ -139,7 +139,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 Teacher Recruitment & Staff Placement
               </h3>
               <p className="text-slate-600 text-[11px] sm:text-xs lg:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
-                Screened, certified teachers for all levels matched to your school.
+                Screened, certified teachers for all levels matched to your school needs.
               </p>
             </div>
             <span className="text-[11px] sm:text-xs lg:text-sm font-bold text-[#126373] flex items-center gap-1 pt-1 sm:pt-2">
@@ -191,7 +191,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 Educational Consultancy
               </h3>
               <p className="text-slate-600 text-[11px] sm:text-xs lg:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">
-                School Setup, early years curriculum development international early years alignment and school operational guidance.
+                School setup, early years curriculum development, international early years alignment and school operational guidance.
               </p>
             </div>
             <span className="text-[11px] sm:text-xs lg:text-sm font-bold text-[#126373] flex items-center gap-1 pt-1 sm:pt-2">
@@ -267,7 +267,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               Schools to Consider
             </h2>
             <p className="text-slate-600 text-xs sm:text-sm md:text-base font-medium max-w-xl">
-              A hand-picked selection of CEC-audited early years academies with admissions currently open.
+              A hand-picked selection of CEC-audited schools with admissions currently in progress.
             </p>
           </div>
           <button
@@ -353,7 +353,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </h2>
 
               <p className="text-slate-300 text-sm sm:text-base md:text-lg leading-relaxed font-medium">
-                CEC Educational Consult solves the challenge school owners face in finding vetted educators, establishing inspiring school environments, and ensuring lasting academic excellence.
+                CEC Educational Consult solves the challenges school owners face in finding vetted educators, establishing inspiring school environments and ensuring lasting academic excellence.
               </p>
 
             </div>

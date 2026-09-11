@@ -111,12 +111,24 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 sm:space-y-12">
       
       {/* Search Header Banner */}
-      <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-3 sm:space-y-4">
+      <div className="relative bg-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-3 sm:space-y-4 overflow-hidden">
+        <div className="absolute inset-0 z-0 select-none pointer-events-none">
+          <img
+            src="https://images.unsplash.com/photo-1632215861513-130b66fe97f4?auto=format&fit=crop&w=2000&q=80"
+            alt="Certified early childhood teacher with a classroom of students"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/55 to-slate-950/15" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+        </div>
+
+        <div className="relative z-10 space-y-3 sm:space-y-4">
         <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
           Search Top Educators
         </h1>
         <p className="text-slate-200 text-sm sm:text-base md:text-lg max-w-3xl leading-relaxed font-medium">
-          CEC Educational Consult believes that when the foundation of education is built right, the other level stands firms.
+          CEC Educational Consult believes that when the foundation of education is built right, the other levels stand firm.
         </p>
 
         {/* Search Input Bar */}
@@ -139,6 +151,7 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
               </button>
             )}
           </div>
+        </div>
         </div>
       </div>
 

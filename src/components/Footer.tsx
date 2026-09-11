@@ -80,7 +80,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               />
             </div>
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-sm font-medium">
-              Premium early childhood educational consult. specializing in school setup, teacher recruitment, curriculum development, academic audits, Reading Club, homeschooling, home tutoring and child-friendly learning spaces.
+              Premium early childhood educational consult. specializing in school setup, teacher recruitment, curriculum development, academic audits, reading club, homeschooling, home tutoring and child-friendly learning spaces.
             </p>
             
             <div className="flex items-center gap-4 text-xs text-slate-300 pt-1">
@@ -113,7 +113,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               </li>
               <li>
                 <button onClick={() => onNavigate('consultancy')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
-                  Hometutoring & Homeschooling
+                  Home tutoring & Homeschooling
                 </button>
               </li>
               <li>
@@ -176,16 +176,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
                   Contact Us
                 </button>
               </li>
-              <li>
-                <button onClick={() => onNavigate('teacher-dashboard')} className="hover:text-[#2ac0db] transition-colors text-[#2ac0db] font-semibold cursor-pointer text-left">
-                  Teacher Dashboard
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('admin-dashboard')} className="hover:text-[#2ac0db] transition-colors text-[#2ac0db] font-semibold cursor-pointer text-left">
-                  Admin Dashboard
-                </button>
-              </li>
             </ul>
           </div>
 
@@ -199,7 +189,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
                 <Phone className="w-4 h-4 text-[#2ac0db] shrink-0 mt-0.5" />
                 <div>
                   <a href="tel:+233540390029" className="hover:text-white transition-colors block">+233 54 039 0029</a>
-                  <a href="tel:+233249356337" className="hover:text-white transition-colors block">+233 24 935 6337</a>
                   <a href="tel:+233206855347" className="hover:text-white transition-colors block">+233 20 685 5347</a>
                 </div>
               </li>

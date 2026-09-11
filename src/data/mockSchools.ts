@@ -83,7 +83,7 @@ export const MOCK_ADVERTISED_SCHOOLS: AdvertisedSchool[] = [
     badges: ['Montessori Certified', 'CEC Setup Partner', 'Eco-Friendly Campus'],
     highlights: [
       'Original imported wooden sensorial apparatus & tactile math materials',
-      'Natural botanical garden, composting, and practical life centers',
+      'Natural botanical garden, composting, and practical life centres',
       'Small collaborative cohorts with individualized learning pace',
       'Full-day and flexible half-day enrollment options'
     ],

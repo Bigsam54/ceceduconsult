@@ -72,23 +72,36 @@ export const ConsultancyView: React.FC<ConsultancyViewProps> = ({ onOpenConsulta
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 sm:space-y-12">
       
       {/* Banner */}
-      <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-4">
-        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white leading-tight">
-          Educational Consultancy by <span className="text-[#2ac0db]">CEC</span>
-        </h1>
+      <div className="relative bg-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-4 overflow-hidden">
+        <div className="absolute inset-0 z-0 select-none pointer-events-none">
+          <img
+            src="https://images.unsplash.com/photo-1573164574572-cb89e39749b4?auto=format&fit=crop&w=2000&q=80"
+            alt="CEC advisory team in a strategy meeting"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/55 to-slate-950/15" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+        </div>
 
-        <p className="text-slate-200 text-sm sm:text-base md:text-lg max-w-3xl leading-relaxed font-medium">
-          School Setup, early years curriculum development, international early years alignment, teacher recruitment and school operational guidance.
-        </p>
+        <div className="relative z-10 space-y-4">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white leading-tight">
+            Educational Consultancy by <span className="text-[#2ac0db]">CEC</span>
+          </h1>
 
-        <div className="pt-2">
-          <button
-            onClick={() => onOpenConsultationModal()}
-            className="w-full sm:w-auto px-6 py-3.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold rounded-xl shadow-lg transition-all text-sm inline-flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <CalendarCheck className="w-4 h-4" />
-            <span>Schedule Consultation</span>
-          </button>
+          <p className="text-slate-200 text-sm sm:text-base md:text-lg max-w-3xl leading-relaxed font-medium">
+            School setup, early years curriculum development, international early years alignment, school policies, teacher recruitment and school operational guidance.
+          </p>
+
+          <div className="pt-2">
+            <button
+              onClick={() => onOpenConsultationModal()}
+              className="w-full sm:w-auto px-6 py-3.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold rounded-xl shadow-lg transition-all text-sm inline-flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <CalendarCheck className="w-4 h-4" />
+              <span>Schedule Consultation</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -223,7 +236,7 @@ export const ConsultancyView: React.FC<ConsultancyViewProps> = ({ onOpenConsulta
                 className="flex-1 py-3 px-5 bg-slate-900 hover:bg-[#2ac0db] hover:text-slate-950 text-white font-bold rounded-xl transition-all text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md"
               >
                 <CalendarCheck className="w-4 h-4" />
-                <span>Book This Service</span>
+                <span>Book this service</span>
               </button>
 
               <button
@@ -247,7 +260,7 @@ export const ConsultancyView: React.FC<ConsultancyViewProps> = ({ onOpenConsulta
               The Consultation Roadmap
             </h2>
             <p className="text-slate-600 text-xs">
-              A structured four-phase engagement to elevate your early childhood center.
+              A structured four-phase engagement to elevate your early childhood centre.
             </p>
           </div>
 

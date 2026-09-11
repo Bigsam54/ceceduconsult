@@ -31,7 +31,7 @@ export const SchoolsView: React.FC<SchoolsViewProps> = ({ onOpenConsultationModa
           </h1>
 
           <p className="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed font-medium">
-            Helping parents make informed educational decisions. Explore accredited early childhood academies, Montessori preschools, and international primary schools audited and supported by CEC Educational Consult.
+            Helping parents make informed educational decisions. Explore accredited schools audited and supported by CEC Educational Consult.
           </p>
         </div>
       </section>

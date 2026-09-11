@@ -37,7 +37,7 @@ export const SchoolsToConsiderSection: React.FC<SchoolsToConsiderSectionProps> =
   onSelectSchool,
   onOpenConsultationModal,
   title = "Schools to Consider",
-  subtitle = "Looking for the right school for your child? Discover reputable early years and primary institutions in Ghana partnered with CEC for excellence in pedagogy, safety, and classroom environment.",
+  subtitle = "Looking for the right school for your child? Discover reputable schools and institutions in Ghana partnered with CEC for excellence in pedagogy, safety and classroom environment.",
   showAdvertiseBanner = true
 }) => {
   const toast = useToast();
@@ -171,10 +171,10 @@ export const SchoolsToConsiderSection: React.FC<SchoolsToConsiderSectionProps> =
               <span>School Placement & Advertising Network</span>
             </div>
             <h3 className="text-xl sm:text-2xl font-heading font-extrabold text-white">
-              Do You Run a School or Early Years Centre in Ghana?
+              Do You Run a School?
             </h3>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Advertise your institution directly to 15,000+ parents actively seeking trusted preschools, kindergartens, and primary schools. Partner with CEC for curriculum audits, teacher recruitment, and verified visibility.
+              Advertise your institution directly to 15,000+ parents actively seeking trusted schools.
             </p>
           </div>
 
