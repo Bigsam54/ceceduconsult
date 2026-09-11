@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 import { 
   ViewMode, 
   PendingTeacherApproval, 
@@ -8,16 +9,19 @@ import {
   AvailabilityStatus,
   AvailabilityMovementLog 
 } from '../types';
-import { 
-  MOCK_PENDING_APPROVALS, 
-  MOCK_CONSULTATION_BOOKINGS, 
+import {
+  MOCK_PENDING_APPROVALS,
+  MOCK_CONSULTATION_BOOKINGS,
   MOCK_ADMIN_ANALYTICS,
-  MOCK_TEACHERS,
-  MOCK_WORKSHOPS,
-  MOCK_LEARNING_PRODUCTS
+  MOCK_TEACHERS
 } from '../data/mockData';
 import { INITIAL_MOVEMENT_LOGS } from '../data/movementLogs';
 import { TeacherDetailDrawer } from '../components/admin/TeacherDetailDrawer';
+import { WorkshopFormModal } from '../components/admin/WorkshopFormModal';
+import { ProductFormModal } from '../components/admin/ProductFormModal';
+import { useWorkshops } from '../hooks/useWorkshops';
+import { useStoreProducts } from '../hooks/useStoreProducts';
+import { Workshop, LearningProduct } from '../types';
 import { 
   UserCheck, 
   CheckCircle2, 
@@ -112,9 +116,18 @@ interface BroadcastMessage {
 
 export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNavigate }) => {
   const toast = useToast();
+  const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<
     'dashboard' | 'movements' | 'candidates' | 'calendar' | 'approvals' | 'consultations' | 'placements' | 'workshops' | 'store' | 'broadcasts'
   >('dashboard');
+
+  // Real workshops & store content, editable from this dashboard
+  const { workshops, createWorkshop, updateWorkshop, deleteWorkshop } = useWorkshops();
+  const { products, createProduct, updateProduct, deleteProduct } = useStoreProducts();
+  const [workshopModalOpen, setWorkshopModalOpen] = useState(false);
+  const [editingWorkshop, setEditingWorkshop] = useState<Workshop | null>(null);
+  const [productModalOpen, setProductModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<LearningProduct | null>(null);
 
   // State Management
   const [teachersList, setTeachersList] = useState<Teacher[]>(MOCK_TEACHERS);
@@ -296,7 +309,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
     }, 3500);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signOut();
     toast.success('Logged out successfully from Admin Center.', 'Logged Out');
     onNavigate('home');
   };
@@ -742,7 +756,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
               <span>Workshops & CPD</span>
             </div>
             <span className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-full">
-              {MOCK_WORKSHOPS.length}
+              {workshops.length}
             </span>
           </button>
 
@@ -759,7 +773,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
               <span>Store Orders & Stock</span>
             </div>
             <span className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-full">
-              {MOCK_LEARNING_PRODUCTS.length}
+              {products.length}
             </span>
           </button>
 
@@ -1609,10 +1623,10 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     <Ticket className="w-5 h-5 text-[#2ac0db]" />
                     Workshops & Teacher Training Master
                   </h3>
-                  <p className="text-xs text-slate-500">Schedule certified training, download attendee rosters and track CPD credentials</p>
+                  <p className="text-xs text-slate-500">Create and edit the workshops shown on the public Workshops page</p>
                 </div>
                 <button
-                  onClick={() => triggerToast('New workshop created and listed on public site.')}
+                  onClick={() => { setEditingWorkshop(null); setWorkshopModalOpen(true); }}
                   className="px-4 py-2.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl shadow-xs cursor-pointer"
                 >
                   + Create Workshop
@@ -1620,7 +1634,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {MOCK_WORKSHOPS.map((ws) => (
+                {workshops.map((ws) => (
                   <div key={ws.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
                     <div className="flex items-start justify-between gap-2">
                       <div>
@@ -1640,15 +1654,29 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
 
                     <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
                       <button
-                        onClick={() => triggerToast(`Exported registered attendees roster for ${ws.title}`)}
+                        onClick={() => { setEditingWorkshop(ws); setWorkshopModalOpen(true); }}
                         className="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl flex items-center justify-center gap-1 cursor-pointer"
                       >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Roster CSV</span>
+                        <Edit className="w-3.5 h-3.5" />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (!window.confirm(`Delete "${ws.title}"? This can't be undone.`)) return;
+                          const { error } = await deleteWorkshop(ws.id);
+                          if (error) toast.error(error, 'Delete Failed');
+                          else toast.success('Workshop removed.', 'Deleted');
+                        }}
+                        className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl flex items-center justify-center gap-1 cursor-pointer border border-rose-200"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
                 ))}
+                {workshops.length === 0 && (
+                  <p className="text-xs text-slate-500 font-semibold py-6 text-center col-span-2">No workshops yet - click "Create Workshop" to add the first one.</p>
+                )}
               </div>
             </div>
           )}
@@ -1662,10 +1690,10 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                     <ShoppingBag className="w-5 h-5 text-[#2ac0db]" />
                     Learning Essentials & Orders Manager
                   </h3>
-                  <p className="text-xs text-slate-500">Manage physical shipments of Curated Book Boxes, Synthetic Phonics kits and sensory resources</p>
+                  <p className="text-xs text-slate-500">Create and edit the products shown on the public Learning Essentials store</p>
                 </div>
                 <button
-                  onClick={() => triggerToast('New store product added to catalog.')}
+                  onClick={() => { setEditingProduct(null); setProductModalOpen(true); }}
                   className="px-4 py-2.5 bg-slate-900 hover:bg-[#126373] text-white font-bold text-xs rounded-xl cursor-pointer"
                 >
                   + Add Product Item
@@ -1673,24 +1701,46 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
               </div>
 
               <div className="space-y-3">
-                {MOCK_LEARNING_PRODUCTS.map((prod) => (
+                {products.map((prod) => (
                   <div key={prod.id} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <img src={prod.image} alt={prod.name} className="w-12 h-12 rounded-xl object-cover border border-slate-200" />
-                      <div>
-                        <h4 className="font-bold text-slate-900 text-xs sm:text-sm">{prod.name}</h4>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <img src={prod.image} alt={prod.name} className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0" />
+                      <div className="min-w-0">
+                        <h4 className="font-bold text-slate-900 text-xs sm:text-sm truncate">{prod.name}</h4>
                         <p className="text-[11px] text-[#126373] font-semibold">{prod.category} • {prod.ageGroup}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4 text-xs">
-                      <span className="font-extrabold text-slate-900 text-sm">${prod.price}</span>
-                      <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded border border-emerald-200">
-                        In Stock
+                    <div className="flex items-center gap-3 text-xs shrink-0">
+                      <span className="font-extrabold text-slate-900 text-sm">GH₵ {prod.price}</span>
+                      <span className={`px-2 py-0.5 font-bold rounded border ${prod.inStock ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'}`}>
+                        {prod.inStock ? 'In Stock' : 'Out of Stock'}
                       </span>
+                      <button
+                        onClick={() => { setEditingProduct(prod); setProductModalOpen(true); }}
+                        className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl cursor-pointer"
+                        title="Edit product"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (!window.confirm(`Delete "${prod.name}"? This can't be undone.`)) return;
+                          const { error } = await deleteProduct(prod.id);
+                          if (error) toast.error(error, 'Delete Failed');
+                          else toast.success('Product removed.', 'Deleted');
+                        }}
+                        className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl cursor-pointer border border-rose-200"
+                        title="Delete product"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
                 ))}
+                {products.length === 0 && (
+                  <p className="text-xs text-slate-500 font-semibold py-6 text-center">No products yet - click "Add Product Item" to add the first one.</p>
+                )}
               </div>
             </div>
           )}
@@ -1800,6 +1850,34 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
           setSelectedTeacherForDrawer(null);
         }}
         onUpdateStatus={handleUpdateTeacherFromDrawer}
+      />
+
+      <WorkshopFormModal
+        isOpen={workshopModalOpen}
+        onClose={() => setWorkshopModalOpen(false)}
+        editing={editingWorkshop}
+        onSave={async (input) => {
+          const { error } = editingWorkshop
+            ? await updateWorkshop(editingWorkshop.id, input)
+            : await createWorkshop(input);
+          if (error) toast.error(error, 'Save Failed');
+          else toast.success(editingWorkshop ? 'Workshop updated.' : 'Workshop created and listed on public site.', 'Saved');
+          return { error };
+        }}
+      />
+
+      <ProductFormModal
+        isOpen={productModalOpen}
+        onClose={() => setProductModalOpen(false)}
+        editing={editingProduct}
+        onSave={async (input) => {
+          const { error } = editingProduct
+            ? await updateProduct(editingProduct.id, input)
+            : await createProduct(input);
+          if (error) toast.error(error, 'Save Failed');
+          else toast.success(editingProduct ? 'Product updated.' : 'Product added to catalog.', 'Saved');
+          return { error };
+        }}
       />
 
       {/* Manual Movement Logger Modal */}

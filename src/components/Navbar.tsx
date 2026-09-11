@@ -7,8 +7,6 @@ import {
   X,
   Search,
   UserCheck,
-  LayoutDashboard,
-  ShieldAlert,
   ChevronDown,
   Info,
   PhoneCall,
@@ -27,11 +25,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
-  const [portalDropdownOpen, setPortalDropdownOpen] = useState(false);
 
   const servicesRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
-  const portalRef = useRef<HTMLDivElement>(null);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -41,9 +37,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
       }
       if (aboutRef.current && !aboutRef.current.contains(event.target as Node)) {
         setAboutDropdownOpen(false);
-      }
-      if (portalRef.current && !portalRef.current.contains(event.target as Node)) {
-        setPortalDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -55,7 +48,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
     setMobileMenuOpen(false);
     setServicesDropdownOpen(false);
     setAboutDropdownOpen(false);
-    setPortalDropdownOpen(false);
     safeScrollToTop();
   };
 
@@ -162,7 +154,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                 onClick={() => {
                   setServicesDropdownOpen(!servicesDropdownOpen);
                   setAboutDropdownOpen(false);
-                  setPortalDropdownOpen(false);
                 }}
                 className={`px-3.5 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
                   isServicesActive && currentView !== 'reading-club'
@@ -284,7 +275,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                 onClick={() => {
                   setAboutDropdownOpen(!aboutDropdownOpen);
                   setServicesDropdownOpen(false);
-                  setPortalDropdownOpen(false);
                 }}
                 className={`px-3.5 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
                   isAboutActive
@@ -335,43 +325,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
 
           {/* Desktop Right Action Area */}
           <div className="hidden lg:flex items-center gap-3">
-            
-            {/* Quick Portals Dropdown */}
-            <div className="relative" ref={portalRef}>
-              <button
-                onClick={() => {
-                  setPortalDropdownOpen(!portalDropdownOpen);
-                  setServicesDropdownOpen(false);
-                  setAboutDropdownOpen(false);
-                }}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-100 rounded-xl border border-slate-200 transition-colors cursor-pointer"
-              >
-                <span>Portals</span>
-                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${portalDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {portalDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                    SaaS Portals
-                  </div>
-                  <button
-                    onClick={() => handleNav('teacher-dashboard')}
-                    className="w-full text-left px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-[#2ac0db]/10 flex items-center gap-2"
-                  >
-                    <LayoutDashboard className="w-4 h-4 text-[#126373]" />
-                    <span>Teacher Dashboard</span>
-                  </button>
-                  <button
-                    onClick={() => handleNav('admin-dashboard')}
-                    className="w-full text-left px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-[#2ac0db]/10 flex items-center gap-2"
-                  >
-                    <ShieldAlert className="w-4 h-4 text-[#fa7b2d]" />
-                    <span>Admin Dashboard</span>
-                  </button>
-                </div>
-              )}
-            </div>
 
             <button
               onClick={() => onOpenLogin()}

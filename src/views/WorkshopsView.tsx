@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Workshop } from '../types';
-import { MOCK_WORKSHOPS } from '../data/mockData';
-import { 
-  Calendar, 
-  MapPin, 
-  Ticket, 
-  Sparkles, 
-  GraduationCap, 
+import { useWorkshops } from '../hooks/useWorkshops';
+import {
+  Calendar,
+  MapPin,
+  Ticket,
+  Sparkles,
+  GraduationCap,
   ArrowRight,
   Award,
   BookOpenCheck
@@ -17,28 +17,43 @@ interface WorkshopsViewProps {
 }
 
 export const WorkshopsView: React.FC<WorkshopsViewProps> = ({ onRegisterWorkshop }) => {
+  const { workshops, loading } = useWorkshops();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
   const categories = ['All', 'Classroom Management', 'Early Literacy & Phonics', 'Early STEM & Math', 'Early Childhood Leadership'];
 
   const filteredWorkshops = selectedCategory === 'All'
-    ? MOCK_WORKSHOPS
-    : MOCK_WORKSHOPS.filter(w => w.category === selectedCategory);
+    ? workshops
+    : workshops.filter(w => w.category === selectedCategory);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 sm:space-y-12">
       
       {/* Banner */}
-      <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-3 sm:space-y-4">
-        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
-          Upcoming Early Childhood Teacher Workshops
-        </h1>
-        <p className="text-slate-300 text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed">
-          Interactive masterclasses for educators and school leaders. Earn CEC Professional Development certificates and master modern early childhood methods.
-        </p>
+      <div className="relative bg-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-3 sm:space-y-4 overflow-hidden">
+        <div className="absolute inset-0 z-0 select-none pointer-events-none">
+          <img
+            src="https://images.unsplash.com/photo-1573164574397-dd250bc8a598?auto=format&fit=crop&w=2000&q=80"
+            alt="Educators collaborating at a CEC professional development workshop"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/55 to-slate-950/15" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+        </div>
+
+        <div className="relative z-10 space-y-3 sm:space-y-4">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
+            Educators Workshops
+          </h1>
+          <p className="text-slate-300 text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed">
+            Interactive workshops and masterclasses for educators and school leaders. Earn CEC Professional Development certificates and master modern early childhood methods.
+          </p>
+        </div>
       </div>
 
       {/* Category Chips */}
+      <p className="text-slate-500 text-xs sm:text-sm font-bold uppercase tracking-wide">Workshops you can choose from</p>
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
         {categories.map((cat) => (
           <button
@@ -54,6 +69,14 @@ export const WorkshopsView: React.FC<WorkshopsViewProps> = ({ onRegisterWorkshop
           </button>
         ))}
       </div>
+
+      {loading && (
+        <p className="text-center text-sm text-slate-500 font-semibold py-8">Loading workshops...</p>
+      )}
+
+      {!loading && filteredWorkshops.length === 0 && (
+        <p className="text-center text-sm text-slate-500 font-semibold py-8">No workshops scheduled right now - check back soon.</p>
+      )}
 
       {/* Workshop Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">

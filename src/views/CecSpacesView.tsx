@@ -270,7 +270,7 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
           <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
             <Ruler className="w-7 h-7 sm:w-8 sm:h-8 text-[#2ac0db]" />
             <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">3D Spatial & Zoning Layout</h3>
-            <p className="text-xs text-slate-600">Custom floorplan mapping for sensory play, reading nooks and practical life centers.</p>
+            <p className="text-xs text-slate-600">Custom floorplan mapping for sensory play, reading nooks and practical life centres.</p>
           </div>
           <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
             <Palette className="w-7 h-7 sm:w-8 sm:h-8 text-[#fa7b2d]" />

@@ -1,6 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ViewMode } from '../types';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
+import { useTeacherProfile } from '../hooks/useTeacherProfile';
 import { 
   LayoutDashboard, 
   Eye, 
@@ -40,24 +42,39 @@ const viewsData = [
 
 export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNavigate }) => {
   const toast = useToast();
+  const { signOut } = useAuth();
+  const { profile, loading: profileLoading, error: profileError, saveProfile } = useTeacherProfile();
   const [activeTab, setActiveTab] = useState<'overview' | 'opportunities' | 'settings'>('overview');
   const [availability, setAvailability] = useState<'Immediate' | '2 Weeks Notice' | 'Not Available'>('Immediate');
-  
-  // Teacher profile state with direct image upload support
-  const [profileImage, setProfileImage] = useState<string>('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80');
-  const [fullName, setFullName] = useState<string>('Akosua Mensah');
-  const [headline, setHeadline] = useState<string>('Lead EYFS & Early Childhood Educator');
-  const [teachingLevel, setTeachingLevel] = useState<string>('Preschool (EYFS) & Kindergarten');
-  const [location, setLocation] = useState<string>('Osu, Accra');
-  const [qualification, setQualification] = useState<string>('B.Ed Early Childhood + Early Years Diploma');
-  const [salaryExpectation, setSalaryExpectation] = useState<string>('GH₵ 8,000 - 12,000 / month');
-  const [bio, setBio] = useState<string>('Dedicated early childhood specialist with 6+ years of classroom experience. Certified in EYFS curriculum delivery, Synthetic Phonics multi-sensory reading and child-friendly math sensorial methods in Accra.');
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([
-    'Synthetic Phonics', 'EYFS Framework', 'Child-Friendly Pedagogy', 'Sensory Play', 'Early Literacy', 'Classroom Management'
-  ]);
+
+  // Teacher profile state - seeded from the real Supabase row once it loads
+  const [profileImage, setProfileImage] = useState<string>('');
+  const [fullName, setFullName] = useState<string>('');
+  const [headline, setHeadline] = useState<string>('');
+  const [teachingLevel, setTeachingLevel] = useState<string>('');
+  const [location, setLocation] = useState<string>('');
+  const [qualification, setQualification] = useState<string>('');
+  const [salaryExpectation, setSalaryExpectation] = useState<string>('');
+  const [bio, setBio] = useState<string>('');
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [newSkillInput, setNewSkillInput] = useState<string>('');
-  
+  const [saving, setSaving] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Populate the editable fields once the real profile row has loaded
+  useEffect(() => {
+    if (!profile) return;
+    setFullName(profile.full_name);
+    setHeadline(profile.headline);
+    setTeachingLevel(profile.teaching_level);
+    setLocation(profile.location);
+    setQualification(profile.qualification);
+    setSalaryExpectation(profile.salary_expectation);
+    setBio(profile.bio);
+    setSelectedSkills(profile.skills);
+    setAvailability(profile.availability as 'Immediate' | '2 Weeks Notice' | 'Not Available');
+  }, [profile]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -117,26 +134,59 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
     toast.info(`Removed "${skillToRemove}" from skills list.`);
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaving(true);
+    const { error } = await saveProfile({
+      full_name: fullName,
+      headline,
+      teaching_level: teachingLevel,
+      location,
+      qualification,
+      salary_expectation: salaryExpectation,
+      bio,
+      skills: selectedSkills
+    });
+    setSaving(false);
+
+    if (error) {
+      toast.error(error, 'Save Failed');
+      return;
+    }
     toast.success('Candidate profile, qualifications and teaching level saved successfully!', 'Profile Updated');
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signOut();
     toast.success('Logged out successfully from Teacher Portal.', 'Logged Out');
     onNavigate('home');
   };
 
-  const initials = fullName
+  const initials = (fullName || 'T')
     .split(' ')
     .map(n => n[0])
     .join('')
     .substring(0, 2)
     .toUpperCase();
 
+  if (profileLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 flex items-center justify-center">
+        <p className="text-sm text-slate-500 font-semibold">Loading your profile...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      
+
+      {profileError && (
+        <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold rounded-2xl p-4">
+          Couldn't load your profile from the database: {profileError}. If this is your first time here, make sure the
+          teacher_profiles table has been created in Supabase (see supabase/migrations/0001_teacher_profiles.sql).
+        </div>
+      )}
+
       {/* Top Welcome Bar */}
       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4 sm:gap-6">
@@ -182,10 +232,15 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
             <span className="text-xs font-bold text-slate-700">Placement:</span>
             <select
               value={availability}
-              onChange={(e) => {
+              onChange={async (e) => {
                 const val = e.target.value as any;
                 setAvailability(val);
-                toast.info(`Placement status updated to "${val}".`, 'Status Updated');
+                const { error } = await saveProfile({ availability: val });
+                if (error) {
+                  toast.error(error, 'Status Update Failed');
+                } else {
+                  toast.info(`Placement status updated to "${val}".`, 'Status Updated');
+                }
               }}
               className="bg-white border border-slate-200 rounded-xl px-3 py-1 text-xs font-bold text-slate-800 outline-none cursor-pointer focus:ring-2 focus:ring-[#2ac0db]"
             >
@@ -689,10 +744,11 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                 <div className="pt-4 flex items-center gap-3">
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold rounded-2xl shadow-md transition-all text-xs flex items-center gap-2 cursor-pointer"
+                    disabled={saving}
+                    className="px-6 py-3 bg-[#2ac0db] hover:bg-[#22a8c0] disabled:opacity-60 disabled:cursor-not-allowed text-slate-950 font-bold rounded-2xl shadow-md transition-all text-xs flex items-center gap-2 cursor-pointer"
                   >
                     <Save className="w-4 h-4" />
-                    <span>Save All Changes</span>
+                    <span>{saving ? 'Saving...' : 'Save All Changes'}</span>
                   </button>
                 </div>
 

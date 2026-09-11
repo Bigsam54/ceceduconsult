@@ -129,7 +129,7 @@ export const JOIN_NETWORK_FAQS: FAQItem[] = [
   {
     id: 'join-faq-2',
     question: 'What qualifications give educators priority verification and top school matches?',
-    answer: 'Candidates with a B.Ed or PGDE in Early Childhood Education, NCE, certified early childhood diplomas, foundational phonics accreditation and a demonstrated track record of 2+ years in registered early childhood centers receive priority placement matching.'
+    answer: 'Candidates with a B.Ed or PGDE in Early Childhood Education, NCE, certified early childhood diplomas, foundational phonics accreditation and a demonstrated track record of 2+ years in registered early childhood centres receive priority placement matching.'
   },
   {
     id: 'join-faq-3',

@@ -48,13 +48,26 @@ export const ContactView: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 sm:space-y-12">
       
       {/* Banner */}
-      <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-3 sm:space-y-4">
-        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
-          Contact CEC Educational Consult
-        </h1>
-        <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
-          Have questions about teacher recruitment, school setup, reading clubs or consulting with CEC? We are here to assist you.
-        </p>
+      <div className="relative bg-slate-950 text-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#2ac0db]/20 shadow-2xl space-y-3 sm:space-y-4 overflow-hidden">
+        <div className="absolute inset-0 z-0 select-none pointer-events-none">
+          <img
+            src="https://images.unsplash.com/photo-1655720357872-ce227e4164ba?auto=format&fit=crop&w=2000&q=80"
+            alt="CEC Educational Consult team ready to assist"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/55 to-slate-950/15" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+        </div>
+
+        <div className="relative z-10 space-y-3 sm:space-y-4">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white">
+            Contact CEC Educational Consult
+          </h1>
+          <p className="text-slate-300 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed">
+            Have questions about teacher recruitment, school setup, reading clubs or consulting with CEC? We are here to assist you.
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
@@ -186,7 +199,6 @@ export const ContactView: React.FC = () => {
                       <span>+233 54 039 0029 (Primary / WhatsApp)</span>
                     </p>
                     <p>+233 20 685 5347</p>
-                    <p>+233 24 935 6337</p>
                   </div>
                 </div>
               </div>

@@ -44,7 +44,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
           </h1>
 
           <p className="text-slate-200 text-xs sm:text-sm md:text-base leading-relaxed">
-            Connecting early childhood institutions with exceptional vetted early years educators, spatial design and child literacy programs.
+            Connecting early childhood institutions with exceptional vetted early years educators, spatial design and early learning programmes.
           </p>
         </div>
       </div>
@@ -66,7 +66,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
           {/* Profile Bio & Leadership Information */}
           <div className="lg:col-span-7 space-y-4 text-left">
             <h2 className="text-2xl sm:text-3xl font-heading font-bold text-slate-900">
-              Miss Nancie <span className="text-[#126373]">(Founder & Lead Education Consultant)</span>
+              Miss Nancie <span className="text-[#126373]">(Founder & Lead Educational Consultant)</span>
             </h2>
 
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed">

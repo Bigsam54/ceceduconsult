@@ -14,6 +14,7 @@ export type ViewMode =
   | 'login'
   | 'register'
   | 'teacher-dashboard'
+  | 'admin-login'
   | 'admin-dashboard';
 
 export type AvailabilityStatus = 

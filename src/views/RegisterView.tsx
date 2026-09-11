@@ -2,22 +2,24 @@ import React, { useState, useRef } from 'react';
 import { ViewMode } from '../types';
 import { safeScrollToTop } from '../utils/safeWindow';
 import { useToast } from '../context/ToastContext';
-import { 
-  CheckCircle2, 
-  ArrowRight, 
-  ArrowLeft, 
-  User, 
-  Briefcase, 
-  GraduationCap, 
-  Clock, 
-  Sparkles, 
-  Upload, 
-  ShieldCheck, 
-  Check, 
-  Camera, 
+import { supabase } from '../lib/supabaseClient';
+import {
+  CheckCircle2,
+  ArrowRight,
+  ArrowLeft,
+  User,
+  Briefcase,
+  GraduationCap,
+  Clock,
+  Sparkles,
+  Upload,
+  ShieldCheck,
+  Check,
+  Camera,
   Trash2,
   MapPin,
-  BookOpen
+  BookOpen,
+  Lock
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -35,6 +37,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    password: '',
     phone: '',
     location: '',
     teachingLevel: '',
@@ -44,6 +47,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
     availability: 'Immediate',
     bio: ''
   });
+  const [submitting, setSubmitting] = useState(false);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -66,23 +70,63 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < 5) {
       setStep(step + 1);
       safeScrollToTop();
-    } else {
-      // Complete
-      try {
-        confetti({ particleCount: 100, spread: 80, origin: { y: 0.5 } });
-      } catch {
-        // ignore
-      }
-      toast.success(
-        'Your teacher profile has been received. Miss Nancie and the CEC team will contact you shortly!',
-        'Application Submitted'
-      );
-      setStep(6);
+      return;
     }
+
+    if (!formData.email || !formData.password) {
+      toast.error('Please enter an email and password to create your account.', 'Missing Account Details');
+      setStep(1);
+      return;
+    }
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters.', 'Weak Password');
+      setStep(1);
+      return;
+    }
+
+    if (!supabase) {
+      toast.error('Backend not connected yet. Add your Supabase URL and key to enable real registration.', 'Registration Failed');
+      return;
+    }
+
+    setSubmitting(true);
+    const { error: signUpError } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        data: {
+          full_name: formData.fullName,
+          headline: formData.teachingLevel,
+          teaching_level: formData.teachingLevel,
+          location: formData.location,
+          qualification: formData.qualification,
+          salary_expectation: formData.salaryExpectation,
+          bio: formData.bio,
+          availability: formData.availability
+        }
+      }
+    });
+
+    setSubmitting(false);
+
+    if (signUpError) {
+      toast.error(signUpError.message, 'Registration Failed');
+      return;
+    }
+    try {
+      confetti({ particleCount: 100, spread: 80, origin: { y: 0.5 } });
+    } catch {
+      // ignore
+    }
+    toast.success(
+      'Your teacher profile has been received. Miss Nancie and the CEC team will contact you shortly!',
+      'Application Submitted'
+    );
+    setStep(6);
   };
 
   const handlePrev = () => {
@@ -228,6 +272,22 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                   className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Create a Password *</label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                <input
+                  type="password"
+                  required
+                  placeholder="At least 6 characters"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
+                />
+              </div>
+              <p className="text-[11px] text-slate-400 mt-1">This is what you'll use to log in to your Teacher Dashboard.</p>
             </div>
 
             {/* Custom Location Field with Pre-filled Example & Suggestions */}
@@ -494,10 +554,11 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
             <button
               type="button"
               onClick={handleNext}
-              className="px-6 py-2.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer"
+              disabled={submitting}
+              className="px-6 py-2.5 bg-[#2ac0db] hover:bg-[#22a8c0] disabled:opacity-60 disabled:cursor-not-allowed text-slate-950 font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer"
             >
-              <span>{step === 5 ? 'Submit Application' : 'Next Step'}</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>{submitting ? 'Creating Account...' : step === 5 ? 'Submit Application' : 'Next Step'}</span>
+              {!submitting && <ArrowRight className="w-4 h-4" />}
             </button>
           </div>
         )}

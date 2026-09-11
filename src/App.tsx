@@ -30,10 +30,53 @@ import { ContactView } from './views/ContactView';
 import { LoginView } from './views/LoginView';
 import { RegisterView } from './views/RegisterView';
 import { TeacherDashboardView } from './views/TeacherDashboardView';
+import { AdminLoginView } from './views/AdminLoginView';
 import { AdminDashboardView } from './views/AdminDashboardView';
+import { useAuth, INTENDED_PORTAL_KEY, AccountRole } from './context/AuthContext';
+import { getPathFromView, getViewFromPath } from './utils/routes';
+import { applyViewSeo } from './utils/seoMeta';
+
+// The admin login isn't linked anywhere in the public site - it's reached
+// directly via its real URL (e.g. https://yoursite.com/admin-login) and is
+// excluded from the sitemap and disallowed in robots.txt.
+const getInitialView = (): ViewMode => getViewFromPath(window.location.pathname);
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<ViewMode>('home');
+  const { session, role, loading: authLoading, roleLoading } = useAuth();
+  const [currentView, setCurrentView] = useState<ViewMode>(getInitialView);
+
+  // Sets app state and syncs the real URL bar (so every page is a distinct,
+  // shareable, crawlable link rather than one static "/" for the whole app).
+  const navigateTo = (view: ViewMode) => {
+    setCurrentView(view);
+    const path = getPathFromView(view);
+    if (window.location.pathname !== path) {
+      window.history.pushState({}, '', path);
+    }
+  };
+
+  // Keep the browser's Back/Forward buttons working with the view state.
+  React.useEffect(() => {
+    const onPopState = () => setCurrentView(getViewFromPath(window.location.pathname));
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  // Give each view its own <title>, meta description and canonical tag.
+  React.useEffect(() => {
+    applyViewSeo(currentView, getPathFromView(currentView));
+  }, [currentView]);
+
+  // Land Google-OAuth logins on the dashboard the user picked before redirecting to Google.
+  React.useEffect(() => {
+    if (!session) return;
+    const intendedPortal = localStorage.getItem(INTENDED_PORTAL_KEY) as AccountRole | null;
+    if (intendedPortal) {
+      localStorage.removeItem(INTENDED_PORTAL_KEY);
+      navigateTo(intendedPortal === 'admin' ? 'admin-dashboard' : 'teacher-dashboard');
+    }
+  }, [session]);
+
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   
   // Modals state
@@ -52,7 +95,7 @@ export default function App() {
   // Navigation Handler
   const handleNavigate = (view: ViewMode) => {
     if (typeof view === 'string') {
-      setCurrentView(view);
+      navigateTo(view);
     }
     safeScrollToTop();
   };
@@ -61,7 +104,7 @@ export default function App() {
   const handleSelectTeacher = (teacher: Teacher) => {
     if (teacher && typeof teacher === 'object' && 'id' in teacher) {
       setSelectedTeacher(teacher);
-      setCurrentView('teacher-profile');
+      navigateTo('teacher-profile');
       safeScrollToTop();
     }
   };
@@ -101,11 +144,7 @@ export default function App() {
 
   // Login Success Handler
   const handleLoginSuccess = (portal: 'teacher' | 'admin') => {
-    if (portal === 'teacher') {
-      setCurrentView('teacher-dashboard');
-    } else {
-      setCurrentView('admin-dashboard');
-    }
+    navigateTo(portal === 'teacher' ? 'teacher-dashboard' : 'admin-dashboard');
     safeScrollToTop();
   };
 
@@ -197,11 +236,29 @@ export default function App() {
         )}
 
         {currentView === 'teacher-dashboard' && (
-          <TeacherDashboardView onNavigate={handleNavigate} />
+          authLoading ? null : session ? (
+            <TeacherDashboardView onNavigate={handleNavigate} />
+          ) : (
+            <LoginView onNavigate={handleNavigate} onLoginSuccess={handleLoginSuccess} />
+          )
+        )}
+
+        {currentView === 'admin-login' && (
+          <AdminLoginView
+            onNavigate={handleNavigate}
+            onLoginSuccess={() => handleNavigate('admin-dashboard')}
+          />
         )}
 
         {currentView === 'admin-dashboard' && (
-          <AdminDashboardView onNavigate={handleNavigate} />
+          authLoading || (session && roleLoading) ? null : session && role === 'admin' ? (
+            <AdminDashboardView onNavigate={handleNavigate} />
+          ) : (
+            <AdminLoginView
+              onNavigate={handleNavigate}
+              onLoginSuccess={() => handleNavigate('admin-dashboard')}
+            />
+          )
         )}
       </main>
 
