@@ -11,6 +11,7 @@ import {
   Award,
   BookOpen
 } from 'lucide-react';
+import { WhatsAppIcon } from './icons/WhatsAppIcon';
 
 interface FooterProps {
   onNavigate: (view: ViewMode) => void;
@@ -185,11 +186,26 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               Contact CEC Office
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
-              <li className="flex items-start gap-2">
-                <Phone className="w-4 h-4 text-[#2ac0db] shrink-0 mt-0.5" />
-                <div>
-                  <a href="tel:+233540390029" className="hover:text-white transition-colors block">+233 54 039 0029</a>
-                  <a href="tel:+233206855347" className="hover:text-white transition-colors block">+233 20 685 5347</a>
+              <li className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-[#2ac0db] shrink-0" />
+                  <a href="tel:+233543633161" className="hover:text-white transition-colors">+233 54 363 3161</a>
+                  <a href="https://wa.me/233543633161" target="_blank" rel="noreferrer" aria-label="Chat on WhatsApp" className="text-emerald-400 hover:text-emerald-300 transition-colors">
+                    <WhatsAppIcon className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <WhatsAppIcon className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <a href="https://wa.me/233540390029" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
+                    +233 54 039 0029 <span className="text-slate-500 text-[10px]">(WhatsApp only)</span>
+                  </a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-[#2ac0db] shrink-0" />
+                  <a href="tel:+233206855347" className="hover:text-white transition-colors">+233 20 685 5347</a>
+                  <a href="https://wa.me/233206855347" target="_blank" rel="noreferrer" aria-label="Chat on WhatsApp" className="text-emerald-400 hover:text-emerald-300 transition-colors">
+                    <WhatsAppIcon className="w-3.5 h-3.5" />
+                  </a>
                 </div>
               </li>
               <li className="flex items-center gap-2">

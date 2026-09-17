@@ -14,6 +14,7 @@ import {
   Mail,
   Building2
 } from 'lucide-react';
+import { WhatsAppIcon } from './icons/WhatsAppIcon';
 
 interface NavbarProps {
   currentView: ViewMode;
@@ -60,8 +61,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
       <div className="hidden lg:block bg-slate-950 text-slate-300 text-[11px] font-semibold">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-9 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <a href="tel:+233540390029" className="flex items-center gap-1.5 hover:text-white transition-colors">
+            <a href="tel:+233543633161" className="flex items-center gap-1.5 hover:text-white transition-colors">
               <PhoneCall className="w-3 h-3 text-[#2ac0db]" />
+              <span>+233 54 363 3161</span>
+            </a>
+            <a href="https://wa.me/233540390029" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:text-white transition-colors">
+              <WhatsAppIcon className="w-3 h-3 text-[#2ac0db]" />
               <span>+233 54 039 0029</span>
             </a>
             <a href="mailto:contact@ceceduconsult.org" className="flex items-center gap-1.5 hover:text-white transition-colors">
