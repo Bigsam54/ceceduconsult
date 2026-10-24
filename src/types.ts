@@ -145,6 +145,8 @@ export interface CECSpaceProject {
   keyUpgrades: string[];
 }
 
+export type StoreSection = 'school-resources' | 'books';
+
 export interface LearningProduct {
   id: string;
   name: string;
@@ -160,6 +162,10 @@ export interface LearningProduct {
   ageGroup: string;
   isFeatured: boolean;
   specs?: string;
+  /** Which half of Learning Essentials the item belongs to (defaults to school resources) */
+  section?: StoreSection;
+  /** Books only */
+  author?: string;
 }
 
 export interface PendingTeacherApproval {

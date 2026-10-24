@@ -3,6 +3,8 @@ import { ViewMode } from '../types';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { useTeacherProfile } from '../hooks/useTeacherProfile';
+import { useTeacherInsights } from '../hooks/useTeacherInsights';
+import { useBroadcasts } from '../hooks/useAdminData';
 import { uploadToCloudinary, CLOUDINARY_FOLDERS } from '../lib/cloudinary';
 import { GhanaCardCapture, GhanaCardState, emptyGhanaCard, isGhanaCardComplete } from '../components/GhanaCardCapture';
 import {
@@ -11,7 +13,6 @@ import {
   Briefcase,
   Award,
   TrendingUp,
-  ArrowUpRight,
   ArrowRight,
   Upload,
   Camera,
@@ -29,7 +30,8 @@ import {
   ShieldCheck,
   Clock,
   XCircle,
-  IdCard
+  IdCard,
+  Megaphone
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 
@@ -38,16 +40,6 @@ interface TeacherDashboardViewProps {
 }
 
 type PlacementStatus = 'Immediate' | 'Next Academic Term' | 'Not Available';
-
-const viewsData = [
-  { day: 'Mon', views: 12 },
-  { day: 'Tue', views: 24 },
-  { day: 'Wed', views: 38 },
-  { day: 'Thu', views: 29 },
-  { day: 'Fri', views: 52 },
-  { day: 'Sat', views: 41 },
-  { day: 'Sun', views: 65 }
-];
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -69,7 +61,9 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
     avatarUrl,
     initials
   } = useTeacherProfile();
-  const [activeTab, setActiveTab] = useState<'overview' | 'opportunities' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'updates' | 'settings'>('overview');
+  const insights = useTeacherInsights();
+  const { broadcasts } = useBroadcasts();
   const [availability, setAvailability] = useState<PlacementStatus>('Immediate');
 
   // Teacher profile state - seeded from the real Supabase row once it loads
@@ -418,20 +412,22 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
             <span>Overview & Stats</span>
           </button>
           <button
-            onClick={() => setActiveTab('opportunities')}
+            onClick={() => setActiveTab('updates')}
             className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
-              activeTab === 'opportunities'
+              activeTab === 'updates'
                 ? 'bg-slate-900 text-white shadow-xs'
                 : 'text-slate-700 hover:bg-slate-100'
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <Briefcase className="w-4 h-4 text-[#2ac0db]" />
-              <span>Matching School Jobs</span>
+              <Megaphone className="w-4 h-4 text-[#2ac0db]" />
+              <span>Updates from CEC</span>
             </div>
-            <span className="px-2 py-0.5 bg-[#2ac0db] text-slate-950 font-extrabold text-[10px] rounded-full">
-              3 New
-            </span>
+            {broadcasts.length > 0 && (
+              <span className="px-2 py-0.5 bg-[#2ac0db] text-slate-950 font-extrabold text-[10px] rounded-full">
+                {broadcasts.length}
+              </span>
+            )}
           </button>
           <button
             onClick={() => setActiveTab('settings')}
@@ -464,22 +460,22 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
                   <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-xs font-bold text-slate-700">Profile Views</span>
+                    <span className="text-xs font-bold text-slate-700">Profile Views (30 days)</span>
                     <Eye className="w-4 h-4 text-[#126373]" />
                   </div>
-                  <div className="text-2xl font-extrabold text-slate-900">261</div>
+                  <div className="text-2xl font-extrabold text-slate-900">{insights.views30Days}</div>
                   <p className="text-[11px] text-[#126373] font-bold flex items-center gap-1">
-                    <TrendingUp className="w-3 h-3" /> +34% this week from School Owners
+                    <TrendingUp className="w-3 h-3" /> {insights.views7Days} in the last 7 days
                   </p>
                 </div>
 
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
                   <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-xs font-bold text-slate-700">Interview Requests</span>
+                    <span className="text-xs font-bold text-slate-700">School Requests</span>
                     <Briefcase className="w-4 h-4 text-[#fa7b2d]" />
                   </div>
-                  <div className="text-2xl font-extrabold text-slate-900">4</div>
-                  <p className="text-[11px] text-slate-500 font-medium">Pending Miss Nancie's schedule</p>
+                  <div className="text-2xl font-extrabold text-slate-900">{insights.requestCount ?? '—'}</div>
+                  <p className="text-[11px] text-slate-500 font-medium">Schools that asked CEC about you</p>
                 </div>
 
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
@@ -540,14 +536,18 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
               <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-heading font-bold text-slate-900 text-sm">School Owner Search Views</h3>
-                    <p className="text-xs text-slate-500">Impressions when school owners filter by EYFS & Early Childhood credentials</p>
+                    <h3 className="font-heading font-bold text-slate-900 text-sm">Profile Views</h3>
+                    <p className="text-xs text-slate-500">
+                      {verificationStatus === 'approved'
+                        ? 'How often schools opened your profile on Find a Teacher'
+                        : 'Your profile appears on Find a Teacher once CEC verifies you'}
+                    </p>
                   </div>
                   <span className="text-xs text-slate-400 font-semibold">Last 7 Days</span>
                 </div>
                 <div className="h-60 w-full">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={viewsData}>
+                    <AreaChart data={insights.dailyViews}>
                       <defs>
                         <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#2ac0db" stopOpacity={0.4}/>
@@ -555,7 +555,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                         </linearGradient>
                       </defs>
                       <XAxis dataKey="day" stroke="#94a3b8" fontSize={12} />
-                      <YAxis stroke="#94a3b8" fontSize={12} />
+                      <YAxis stroke="#94a3b8" fontSize={12} allowDecimals={false} />
                       <Tooltip />
                       <Area type="monotone" dataKey="views" stroke="#126373" strokeWidth={3} fillOpacity={1} fill="url(#colorViews)" />
                     </AreaChart>
@@ -566,47 +566,33 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
             </div>
           )}
 
-          {/* TAB 2: OPPORTUNITIES */}
-          {activeTab === 'opportunities' && (
+          {/* TAB 2: UPDATES FROM CEC */}
+          {activeTab === 'updates' && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-heading font-bold text-slate-900 text-base">Recommended Early Childhood Opportunities</h3>
-                  <p className="text-xs text-slate-500">Matched to your EYFS and early childhood qualifications</p>
-                </div>
-                <span className="text-xs font-bold text-[#126373] bg-[#2ac0db]/15 px-3 py-1 rounded-full border border-[#2ac0db]/30">
-                  3 Open Vacancies
-                </span>
+              <div>
+                <h3 className="font-heading font-bold text-slate-900 text-base">Updates from CEC</h3>
+                <p className="text-xs text-slate-500">Announcements, placement news and opportunities from the CEC team</p>
               </div>
-              
-              {[
-                { school: 'Morning Star Early Years Academy', role: 'Head Nursery Educator', location: 'East Legon, Accra', salary: 'GH₵ 9,000 - 12,000 / mo', requirements: 'EYFS + 4+ Years Experience' },
-                { school: 'Lincoln Community Early Childhood', role: 'EYFS Phonics Specialist', location: 'Airport Residential, Accra', salary: 'GH₵ 10,000 - 13,500 / mo', requirements: 'Synthetic Phonics Certified' },
-                { school: 'Al-Rayan International Early Learning', role: 'Senior Kindergarten Lead', location: 'Cantonments, Accra', salary: 'GH₵ 8,500 - 11,000 / mo', requirements: 'Early Childhood Diploma' }
-              ].map((job, i) => (
-                <div key={i} className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-bold text-slate-900 text-sm">{job.role}</h4>
-                      <span className="px-2 py-0.2 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded border border-emerald-200">Verified School</span>
-                    </div>
-                    <p className="text-xs font-semibold text-[#126373]">{job.school} • {job.location}</p>
-                    <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-500 pt-1">
-                      <span>Salary: <strong className="text-slate-800">{job.salary}</strong></span>
-                      <span>•</span>
-                      <span>Requires: {job.requirements}</span>
-                    </div>
-                  </div>
 
-                  <button 
-                    onClick={() => toast.success(`Interest registered for ${job.role} at ${job.school}. Miss Nancie's placement team notified!`, 'Application Sent')}
-                    className="px-4 py-2.5 bg-slate-900 hover:bg-[#126373] text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer shrink-0 transition-colors"
-                  >
-                    <span>Express Interest</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-[#2ac0db]" />
-                  </button>
+              {broadcasts.length === 0 ? (
+                <div className="bg-white p-10 rounded-2xl border border-dashed border-slate-300 text-center space-y-1.5">
+                  <Megaphone className="w-8 h-8 text-slate-300 mx-auto" />
+                  <p className="text-sm font-bold text-slate-700">No updates yet</p>
+                  <p className="text-xs text-slate-500">When CEC shares news or new opportunities, you will see them here.</p>
                 </div>
-              ))}
+              ) : (
+                broadcasts.map((b) => (
+                  <div key={b.id} className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-2xs space-y-1.5">
+                    <div className="flex items-center justify-between gap-3">
+                      <h4 className="font-bold text-slate-900 text-sm">{b.title}</h4>
+                      <span className="text-[11px] text-slate-400 shrink-0">
+                        {new Date(b.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-line">{b.body}</p>
+                  </div>
+                ))
+              )}
             </div>
           )}
 

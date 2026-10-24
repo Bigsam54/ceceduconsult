@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Teacher } from '../types';
 import { safeOpenUrl } from '../utils/safeWindow';
 import { useToast } from '../context/ToastContext';
+import { submitInquiry } from '../services/inquiryService';
 import { 
   X, 
   ArrowLeft,
@@ -78,6 +79,16 @@ export const ContactTeacherModal: React.FC<ContactTeacherModalProps> = ({ teache
       toast.error('Please write a short message before sending your request.', 'Message Empty');
       return;
     }
+    submitInquiry({
+      kind: 'teacher_request',
+      name: contactPerson,
+      phone,
+      organization: schoolName,
+      subject: teacher.name,
+      message,
+      preferredDate: requestedDate,
+      referenceId: teacher.id
+    });
     const encoded = encodeURIComponent(message);
     toast.info(`Sending your request for ${teacher.name} to the CEC team on WhatsApp...`, 'Opening WhatsApp');
     safeOpenUrl(`https://wa.me/233540390029?text=${encoded}`);

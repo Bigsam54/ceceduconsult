@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { LearningProduct } from '../types';
+import { LearningProduct, StoreSection } from '../types';
 
 interface ProductRow {
   id: string;
@@ -17,6 +17,8 @@ interface ProductRow {
   age_group: string;
   is_featured: boolean;
   specs: string | null;
+  section?: StoreSection | null;
+  author?: string | null;
 }
 
 const rowToProduct = (r: ProductRow): LearningProduct => ({
@@ -33,7 +35,9 @@ const rowToProduct = (r: ProductRow): LearningProduct => ({
   inStock: r.in_stock,
   ageGroup: r.age_group,
   isFeatured: r.is_featured,
-  specs: r.specs ?? undefined
+  specs: r.specs ?? undefined,
+  section: r.section ?? 'school-resources',
+  author: r.author || undefined
 });
 
 export type ProductInput = Omit<LearningProduct, 'id'>;
@@ -51,7 +55,9 @@ const toRow = (p: ProductInput) => ({
   in_stock: p.inStock,
   age_group: p.ageGroup,
   is_featured: p.isFeatured,
-  specs: p.specs ?? null
+  specs: p.specs ?? null,
+  section: p.section ?? 'school-resources',
+  author: p.author ?? ''
 });
 
 export const useStoreProducts = () => {

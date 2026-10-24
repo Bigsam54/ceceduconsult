@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { safeOpenUrl } from '../utils/safeWindow';
 import { useToast } from '../context/ToastContext';
+import { submitInquiry } from '../services/inquiryService';
 import { 
   Mail, 
   Phone, 
@@ -27,8 +28,19 @@ export const ContactView: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
+    submitInquiry({
+      kind: 'contact',
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      organization: formData.schoolName,
+      subject: 'Website contact form',
+      message: formData.message
+    }).then(({ error }) => {
+          if (error) toast.error('We could not save your request online. Please also reach us on WhatsApp so nothing is missed.', 'Not Saved');
+    });
     toast.success(
-      `Thank you ${formData.name}! Your message has been sent to Miss Nancie and the CEC team.`,
+      `Thank you ${formData.name}! Your message has been sent to the CEC team.`,
       'Message Dispatched'
     );
     try {

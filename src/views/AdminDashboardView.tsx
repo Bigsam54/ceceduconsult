@@ -1,1787 +1,380 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
-import { 
-  ViewMode, 
-  ConsultationBooking, 
-  Teacher, 
-  AvailabilityStatus,
-  AvailabilityMovementLog 
-} from '../types';
-import {
-  MOCK_CONSULTATION_BOOKINGS,
-  MOCK_ADMIN_ANALYTICS,
-  MOCK_TEACHERS
-} from '../data/mockData';
-import { INITIAL_MOVEMENT_LOGS } from '../data/movementLogs';
-import { TeacherDetailDrawer } from '../components/admin/TeacherDetailDrawer';
+import { useTeacherProfile } from '../context/TeacherProfileContext';
+import { ViewMode, Workshop, LearningProduct, StoreSection } from '../types';
 import { WorkshopFormModal } from '../components/admin/WorkshopFormModal';
 import { ProductFormModal } from '../components/admin/ProductFormModal';
+import { StoreManagerPanel } from '../components/admin/StoreManagerPanel';
+import { TeacherApplicationsPanel } from '../components/admin/TeacherApplicationsPanel';
+import { AdminOverviewPanel, AdminTab } from '../components/admin/AdminOverviewPanel';
+import { ActivityStreamPanel } from '../components/admin/ActivityStreamPanel';
+import { TalentPoolPanel } from '../components/admin/TalentPoolPanel';
+import { InquiriesPanel } from '../components/admin/InquiriesPanel';
+import { CalendarPanel, blankAppointment } from '../components/admin/CalendarPanel';
+import { BroadcastsPanel } from '../components/admin/BroadcastsPanel';
+import { AdminProfilePanel } from '../components/admin/AdminProfilePanel';
+import { WorkshopsAdminPanel } from '../components/admin/WorkshopsAdminPanel';
 import { useWorkshops } from '../hooks/useWorkshops';
 import { useStoreProducts } from '../hooks/useStoreProducts';
 import { useTeacherApplications } from '../hooks/useTeacherApplications';
-import { TeacherApplicationsPanel } from '../components/admin/TeacherApplicationsPanel';
-import { rowToTeacher } from '../utils/teacherMapping';
-import { Workshop, LearningProduct } from '../types';
-import { 
-  UserCheck, 
-  CheckCircle2, 
-  XCircle, 
-  BookOpenCheck, 
-  TrendingUp, 
-  BarChart3, 
-  Building2,
-  Calendar,
-  Clock,
-  Plus,
-  Search,
-  Filter,
-  Trash2,
-  Edit,
-  ExternalLink,
-  ChevronLeft,
-  ChevronRight,
-  Video,
-  MapPin,
-  Phone,
-  Mail,
-  ShieldCheck,
-  Award,
-  Sparkles,
-  ShoppingBag,
-  Ticket,
-  Send,
-  Bell,
-  Download,
-  Eye,
-  Check,
-  AlertCircle,
+import {
+  useInquiries,
+  useActivityLog,
+  useAppointments,
+  useBroadcasts,
+  useProfileViewTotal,
+  AppointmentInput
+} from '../hooks/useAdminData';
+import type { InquiryRow } from '../services/inquiryService';
+import {
+  LayoutDashboard,
   Activity,
-  ArrowRight,
   Users,
-  Briefcase,
-  FileText
+  UserCheck,
+  Inbox,
+  CalendarDays,
+  Ticket,
+  ShoppingBag,
+  Send,
+  UserCircle2,
+  LogOut,
+  Globe,
+  Plus,
+  Camera
 } from 'lucide-react';
-import { 
-  ResponsiveContainer, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  PieChart, 
-  Pie, 
-  Cell 
-} from 'recharts';
 
 interface AdminDashboardViewProps {
   onNavigate: (view: ViewMode) => void;
 }
 
-interface CalendarAppointment {
-  id: string;
-  title: string;
-  clientName: string;
-  schoolName: string;
-  date: string;
-  time: string;
-  type: 'EYFS Audit' | 'Proprietor Consultation' | 'Teacher Screening' | 'CEC Space Walkthrough';
-  format: 'Google Meet / Zoom' | 'In-Person (Lekki Office)' | 'On-Site School Visit';
-  meetingLink?: string;
-  status: 'Confirmed' | 'Pending Review' | 'Completed' | 'Cancelled';
-  notes?: string;
+interface NavItem {
+  key: AdminTab;
+  label: string;
+  icon: React.ElementType;
+  badge?: number;
 }
 
-interface SchoolPipelineLead {
-  id: string;
-  schoolName: string;
-  contactPerson: string;
-  contactPhone: string;
-  requestedRole: string;
-  location: string;
-  stage: 'Discovery' | 'Shortlisting' | 'Interviews' | 'Placed' | 'Active Placement';
-  assignedTeacher?: string;
-  budget: string;
-  date: string;
-}
-
-interface BroadcastMessage {
-  id: string;
-  target: 'All Teachers' | 'School Owners' | 'All Platform Users';
-  title: string;
-  body: string;
-  date: string;
-  status: 'Sent' | 'Scheduled';
-  readsCount: number;
-}
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+};
 
 export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNavigate }) => {
   const toast = useToast();
   const { signOut } = useAuth();
-  const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'movements' | 'candidates' | 'calendar' | 'approvals' | 'consultations' | 'placements' | 'workshops' | 'store' | 'broadcasts'
-  >('dashboard');
+  const { firstName, avatarUrl, initials } = useTeacherProfile();
+  const [activeTab, setActiveTab] = useState<AdminTab>('overview');
 
-  // Real workshops & store content, editable from this dashboard
+  // Real data, all from Supabase
+  const teacherApplications = useTeacherApplications();
   const { workshops, createWorkshop, updateWorkshop, deleteWorkshop } = useWorkshops();
   const { products, createProduct, updateProduct, deleteProduct } = useStoreProducts();
+  const inquiriesData = useInquiries();
+  const activityData = useActivityLog();
+  const appointmentsData = useAppointments();
+  const broadcastsData = useBroadcasts();
+  const profileViews = useProfileViewTotal();
+
   const [workshopModalOpen, setWorkshopModalOpen] = useState(false);
   const [editingWorkshop, setEditingWorkshop] = useState<Workshop | null>(null);
   const [productModalOpen, setProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<LearningProduct | null>(null);
+  const [newProductSection, setNewProductSection] = useState<StoreSection>('books');
+  const [appointmentDraft, setAppointmentDraft] = useState<AppointmentInput | null>(null);
+  const [approvalsFocus, setApprovalsFocus] = useState<string | undefined>(undefined);
 
-  // State Management
-  const teacherApplications = useTeacherApplications();
-  const [teachersList, setTeachersList] = useState<Teacher[]>(MOCK_TEACHERS);
+  const teachers = teacherApplications.applications;
+  const today = new Date().toISOString().slice(0, 10);
 
-  // Approved registrations join the talent pool ahead of the sample profiles
-  useEffect(() => {
-    const approved = teacherApplications.applications
-      .filter((a) => a.verification_status === 'approved')
-      .map(rowToTeacher);
-    setTeachersList((prev) => [...approved, ...prev.filter((t) => !t.isRegistered)]);
-  }, [teacherApplications.applications]);
-  const [consultationsList, setConsultationsList] = useState<ConsultationBooking[]>(MOCK_CONSULTATION_BOOKINGS);
-  const [movementLogs, setMovementLogs] = useState<AvailabilityMovementLog[]>(INITIAL_MOVEMENT_LOGS);
-  const [movementFilter, setMovementFilter] = useState<'All' | 'Immediate' | 'Placed / Employed' | '2 Weeks Notice'>('All');
-  
-  // Teacher Profile Drawer / Modal State
-  const [selectedTeacherForDrawer, setSelectedTeacherForDrawer] = useState<Teacher | null>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-  
-  // Candidates directory search/filter in admin
-  const [candidateSearch, setCandidateSearch] = useState<string>('');
-  const [candidateAvailabilityFilter, setCandidateAvailabilityFilter] = useState<string>('All');
-  const [candidateVerifiedFilter, setCandidateVerifiedFilter] = useState<string>('All');
+  const counts = useMemo(() => ({
+    pending: teachers.filter((t) => t.verification_status === 'pending').length,
+    newInquiries: inquiriesData.inquiries.filter((i) => i.status === 'new').length,
+    upcoming: appointmentsData.appointments.filter((a) => a.status === 'confirmed' && a.appointment_date >= today).length
+  }), [teachers, inquiriesData.inquiries, appointmentsData.appointments, today]);
 
-  const [toastMessage, setToastMessage] = useState<string>('');
-
-  // Manual Movement Modal
-  const [showLogMovementModal, setShowLogMovementModal] = useState<boolean>(false);
-  const [manualLogTeacherName, setManualLogTeacherName] = useState<string>('Amina Bello');
-  const [manualLogPrevStatus, setManualLogPrevStatus] = useState<AvailabilityStatus>('2 Weeks Notice');
-  const [manualLogNewStatus, setManualLogNewStatus] = useState<AvailabilityStatus>('Immediate');
-  const [manualLogReason, setManualLogReason] = useState<string>('');
-  const [manualLogSchool, setManualLogSchool] = useState<string>('');
-
-  // Calendar State
-  const [selectedCalendarDate, setSelectedCalendarDate] = useState<string>('2026-08-18');
-  const [appointments, setAppointments] = useState<CalendarAppointment[]>([
-    {
-      id: 'apt-1',
-      title: 'Full EYFS Curriculum Audit Review',
-      clientName: 'Dr. Elizabeth Taylor',
-      schoolName: 'Oakwood International Academy',
-      date: '2026-08-18',
-      time: '10:00 AM - 11:30 AM',
-      type: 'EYFS Audit',
-      format: 'Google Meet / Zoom',
-      meetingLink: 'https://meet.google.com/cec-audit-missnancie',
-      status: 'Confirmed',
-      notes: 'Reviewing Nursery 1 & 2 phonics progress and lesson plan alignment.'
-    },
-    {
-      id: 'apt-2',
-      title: 'Teacher Placement Discovery Call',
-      clientName: 'Chief Rotimi Adeyemi',
-      schoolName: 'Royal Tots Nursery School',
-      date: '2026-08-18',
-      time: '02:00 PM - 03:00 PM',
-      type: 'Proprietor Consultation',
-      format: 'Google Meet / Zoom',
-      meetingLink: 'https://meet.google.com/cec-proprietor-nancie',
-      status: 'Confirmed',
-      notes: 'Needs 2 EYFS early childhood specialists for September term start.'
-    },
-    {
-      id: 'apt-3',
-      title: 'Candidate Vetting: Senior Phonics Lead',
-      clientName: 'Blessing Okon',
-      schoolName: 'Candidate Ref: T-902',
-      date: '2026-08-19',
-      time: '11:00 AM - 11:45 AM',
-      type: 'Teacher Screening',
-      format: 'Google Meet / Zoom',
-      status: 'Pending Review',
-      notes: 'Evaluate Synthetic Phonics accent neutral delivery and micro-teaching video.'
-    },
-    {
-      id: 'apt-4',
-      title: 'CEC Space Floorplan & Sensory Nook Inspection',
-      clientName: 'Mrs. Folashade Adeleke',
-      schoolName: 'Meadowland International Early Learning',
-      date: '2026-08-20',
-      time: '01:30 PM - 03:30 PM',
-      type: 'CEC Space Walkthrough',
-      format: 'On-Site School Visit',
-      status: 'Confirmed',
-      notes: 'Site visit in Ikoyi for early childhood reading hub installation.'
-    }
-  ]);
-
-  const [showNewAptModal, setShowNewAptModal] = useState<boolean>(false);
-  const [newApt, setNewApt] = useState<Partial<CalendarAppointment>>({
-    title: '',
-    clientName: '',
-    schoolName: '',
-    date: '2026-08-18',
-    time: '10:00 AM - 11:00 AM',
-    type: 'Proprietor Consultation',
-    format: 'Google Meet / Zoom',
-    meetingLink: '',
-    notes: ''
-  });
-
-  // School Placement Pipeline State
-  const [pipelineLeads, setPipelineLeads] = useState<SchoolPipelineLead[]>([
-    {
-      id: 'lead-1',
-      schoolName: 'Meadow Hall International',
-      contactPerson: 'Mrs. Cynthia Cole',
-      contactPhone: '+234 803 222 1199',
-      requestedRole: 'Head Nursery Educator (EYFS)',
-      location: 'Lekki Phase 1, Lagos',
-      stage: 'Interviews',
-      assignedTeacher: 'Amina Bello (Vetted)',
-      budget: 'GH₵ 18,000 - 22,000/mo',
-      date: 'Aug 14, 2026'
-    },
-    {
-      id: 'lead-2',
-      schoolName: 'Corona Early Years Academy',
-      contactPerson: 'Mr. Femi Badmus',
-      contactPhone: '+234 802 444 8833',
-      requestedRole: 'EYFS Phonics Specialist',
-      location: 'Ikoyi, Lagos',
-      stage: 'Shortlisting',
-      assignedTeacher: 'Grace Nwosu (Shortlisted)',
-      budget: 'GH₵ 16,000 - 20,000/mo',
-      date: 'Aug 15, 2026'
-    },
-    {
-      id: 'lead-3',
-      schoolName: 'Grange School Early Years',
-      contactPerson: 'Mrs. Judith Rowland',
-      contactPhone: '+234 809 555 7711',
-      requestedRole: 'Early STEM Educator',
-      location: 'Ikeja GRA, Lagos',
-      stage: 'Placed',
-      assignedTeacher: 'David Osei (Placed)',
-      budget: 'GH₵ 19,000/mo',
-      date: 'Aug 10, 2026'
-    },
-    {
-      id: 'lead-4',
-      schoolName: 'Heritage Early Years Academy',
-      contactPerson: 'Dr. Patrick Danladi',
-      contactPhone: '+234 805 111 4455',
-      requestedRole: '2x Early Childhood Kindergarten Teachers',
-      location: 'Maitama, Abuja',
-      stage: 'Discovery',
-      budget: 'GH₵ 15,000 - 18,000/mo',
-      date: 'Aug 16, 2026'
-    }
-  ]);
-
-  // Broadcasts State
-  const [broadcasts, setBroadcasts] = useState<BroadcastMessage[]>([
-    {
-      id: 'bc-1',
-      target: 'All Teachers',
-      title: 'Term 1 Job Matching Window Now Open',
-      body: 'Top tier British and international early childhood schools in Lagos, Abuja, Accra and worldwide are actively screening for September appointments. Ensure your credentials are fully updated on your candidate dashboard.',
-      date: 'Aug 15, 2026',
-      status: 'Sent',
-      readsCount: 842
-    },
-    {
-      id: 'bc-2',
-      target: 'School Owners',
-      title: 'Pre-Term EYFS Classroom Audits with Miss Nancie',
-      body: 'Schedule your pre-resumption curriculum and teacher readiness review before classes resume. Limited slots available this month.',
-      date: 'Aug 12, 2026',
-      status: 'Sent',
-      readsCount: 198
-    }
-  ]);
-
-  const [newBroadcastTitle, setNewBroadcastTitle] = useState('');
-  const [newBroadcastBody, setNewBroadcastBody] = useState('');
-  const [newBroadcastTarget, setNewBroadcastTarget] = useState<'All Teachers' | 'School Owners' | 'All Platform Users'>('All Teachers');
-
-  // Helper feedback toast
-  const triggerToast = (msg: string) => {
-    setToastMessage(msg);
-    toast.success(msg, 'Admin Action');
-    setTimeout(() => {
-      setToastMessage('');
-    }, 3500);
+  const openTab = (tab: AdminTab) => {
+    if (tab !== 'approvals') setApprovalsFocus(undefined);
+    setActiveTab(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLogout = async () => {
     await signOut();
-    toast.success('Logged out successfully from Admin Center.', 'Logged Out');
+    toast.success('Logged out of the Admin Centre.', 'Logged Out');
     onNavigate('home');
   };
 
-  // Open Profile Modal for any Teacher
-  const handleOpenTeacherProfile = (teacher: Teacher) => {
-    setSelectedTeacherForDrawer(teacher);
-    setIsDrawerOpen(true);
-  };
-
-  // Handle updates from the Teacher Profile Modal
-  const handleUpdateTeacherFromDrawer = (
-    teacherId: string, 
-    newAvailability: AvailabilityStatus, 
-    newIsVerified: boolean, 
-    newNotes?: string
-  ) => {
-    setTeachersList(prev => prev.map(t => {
-      if (t.id === teacherId) {
-        // Record movement if availability changed
-        if (t.availability !== newAvailability) {
-          const newLog: AvailabilityMovementLog = {
-            id: `mov-${Date.now()}`,
-            teacherId: t.id,
-            teacherName: t.name,
-            avatar: t.photo,
-            previousStatus: t.availability,
-            newStatus: newAvailability,
-            changedBy: 'CEC Admin',
-            reason: `Status changed from ${t.availability} to ${newAvailability}`,
-            timestamp: 'Just Now'
-          };
-          setMovementLogs(prevLogs => [newLog, ...prevLogs]);
-        }
-        return {
-          ...t,
-          availability: newAvailability,
-          isVerified: newIsVerified,
-          adminNotes: newNotes
-        };
-      }
-      return t;
-    }));
-
-    triggerToast('Teacher profile and availability updated successfully!');
-  };
-
-  // Fast One-Click Teacher Status Changes in Candidate Table
-  const handleQuickAvailabilityChange = (teacherId: string, newAvail: AvailabilityStatus) => {
-    setTeachersList(prev => prev.map(t => {
-      if (t.id === teacherId) {
-        const newLog: AvailabilityMovementLog = {
-          id: `mov-${Date.now()}`,
-          teacherId: t.id,
-          teacherName: t.name,
-          avatar: t.photo,
-          previousStatus: t.availability,
-          newStatus: newAvail,
-          changedBy: 'CEC Admin',
-          reason: `Availability changed to ${newAvail}`,
-          timestamp: 'Just Now'
-        };
-        setMovementLogs(prevLogs => [newLog, ...prevLogs]);
-        return { ...t, availability: newAvail };
-      }
-      return t;
-    }));
-    triggerToast(`Teacher availability updated to ${newAvail}`);
-  };
-
-  const handleQuickVerifyToggle = (teacherId: string) => {
-    setTeachersList(prev => prev.map(t => {
-      if (t.id === teacherId) {
-        const nextState = !t.isVerified;
-        if (nextState) {
-          const newLog: AvailabilityMovementLog = {
-            id: `mov-${Date.now()}`,
-            teacherId: t.id,
-            teacherName: t.name,
-            avatar: t.photo,
-            previousStatus: t.availability,
-            newStatus: t.availability,
-            changedBy: 'CEC Admin',
-            reason: 'Issued CEC Verified Badge after document verification.',
-            timestamp: 'Just Now'
-          };
-          setMovementLogs(prevLogs => [newLog, ...prevLogs]);
-        }
-        return { ...t, isVerified: nextState };
-      }
-      return t;
-    }));
-    triggerToast('Verification status updated.');
-  };
-
-  // Actions
-  const handleConfirmConsultation = (id: string) => {
-    setConsultationsList(prev => prev.map(item => item.id === id ? { ...item, status: 'Confirmed' } : item));
-    triggerToast('Consultation request confirmed and added to calendar!');
-  };
-
-  const handleAddAppointment = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newApt.title || !newApt.clientName) {
-      triggerToast('Please enter an appointment title and client name.');
-      return;
-    }
-    const created: CalendarAppointment = {
-      id: `apt-${Date.now()}`,
-      title: newApt.title || 'Advisory Session',
-      clientName: newApt.clientName || 'Client',
-      schoolName: newApt.schoolName || 'School',
-      date: newApt.date || selectedCalendarDate,
-      time: newApt.time || '10:00 AM - 11:00 AM',
-      type: newApt.type || 'Proprietor Consultation',
-      format: newApt.format || 'Google Meet / Zoom',
-      meetingLink: newApt.meetingLink || 'https://meet.google.com/cec-advisory',
-      status: 'Confirmed',
-      notes: newApt.notes || ''
-    };
-    setAppointments([created, ...appointments]);
-    setShowNewAptModal(false);
-    setNewApt({
-      title: '',
-      clientName: '',
-      schoolName: '',
-      date: selectedCalendarDate,
-      time: '10:00 AM - 11:00 AM',
-      type: 'Proprietor Consultation',
-      format: 'Google Meet / Zoom',
-      meetingLink: '',
-      notes: ''
+  // Scheduling from an inquiry pre-fills the calendar form and moves the inquiry along
+  const scheduleFromInquiry = (inquiry: InquiryRow) => {
+    setAppointmentDraft({
+      ...blankAppointment(),
+      title: inquiry.kind === 'teacher_request' ? `Interview: ${inquiry.subject}` : inquiry.subject || 'Consultation',
+      client_name: inquiry.name,
+      organization: inquiry.organization,
+      phone: inquiry.phone,
+      appointment_date: /^\d{4}-\d{2}-\d{2}$/.test(inquiry.preferred_date) && inquiry.preferred_date >= today ? inquiry.preferred_date : today,
+      kind: inquiry.kind === 'teacher_request' ? 'Teacher Interview' : 'Consultation',
+      format: inquiry.meeting_format.includes('Virtual') ? 'Google Meet / Zoom' : 'In-Person',
+      notes: inquiry.message.slice(0, 500),
+      inquiry_id: inquiry.id
     });
-    triggerToast('New appointment scheduled and added to calendar!');
+    openTab('calendar');
   };
 
-  const handleDeleteAppointment = (id: string) => {
-    setAppointments(appointments.filter(a => a.id !== id));
-    triggerToast('Appointment removed from calendar.');
-  };
-
-  const handleSendBroadcast = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newBroadcastTitle.trim() || !newBroadcastBody.trim()) {
-      triggerToast('Please fill out both broadcast title and message body.');
-      return;
+  const createAppointment = async (input: AppointmentInput) => {
+    const result = await appointmentsData.createAppointment(input);
+    if (!result.error && input.inquiry_id) {
+      await inquiriesData.updateInquiry(input.inquiry_id, { status: 'scheduled' });
     }
-    const msg: BroadcastMessage = {
-      id: `bc-${Date.now()}`,
-      target: newBroadcastTarget,
-      title: newBroadcastTitle,
-      body: newBroadcastBody,
-      date: 'Just Now',
-      status: 'Sent',
-      readsCount: 0
-    };
-    setBroadcasts([msg, ...broadcasts]);
-    setNewBroadcastTitle('');
-    setNewBroadcastBody('');
-    triggerToast(`Message sent to ${newBroadcastTarget}!`);
+    return result;
   };
 
-  const handleRecordManualMovement = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!manualLogReason.trim()) {
-      triggerToast('Please provide a reason for this movement.');
-      return;
-    }
-    const created: AvailabilityMovementLog = {
-      id: `mov-${Date.now()}`,
-      teacherId: `t-manual`,
-      teacherName: manualLogTeacherName,
-      previousStatus: manualLogPrevStatus,
-      newStatus: manualLogNewStatus,
-      changedBy: 'CEC Admin',
-      reason: manualLogReason,
-      schoolInvolved: manualLogSchool || 'Partner School Network',
-      timestamp: 'Just Now'
-    };
-    setMovementLogs([created, ...movementLogs]);
-    setShowLogMovementModal(false);
-    setManualLogReason('');
-    setManualLogSchool('');
-    triggerToast('Teacher status change recorded successfully!');
-  };
+  const handleDraftHandled = useCallback(() => setAppointmentDraft(null), []);
 
-  // Computed availability counts
-  const countImmediate = teachersList.filter(t => t.availability === 'Immediate').length + 38;
-  const countTwoWeeks = teachersList.filter(t => t.availability === '2 Weeks Notice').length + 19;
-  const countNextTerm = teachersList.filter(t => t.availability === 'Next Academic Term').length + 42;
-  const countPlaced = 284;
-  const countVerified = teachersList.filter(t => t.isVerified).length + 1100;
-  const countPendingReview = teacherApplications.applications.filter(a => a.verification_status === 'pending').length;
-
-  // Filtered candidate list
-  const filteredCandidates = teachersList.filter(t => {
-    const matchesSearch = 
-      t.name.toLowerCase().includes(candidateSearch.toLowerCase()) ||
-      t.title.toLowerCase().includes(candidateSearch.toLowerCase()) ||
-      t.location.toLowerCase().includes(candidateSearch.toLowerCase()) ||
-      t.qualification.toLowerCase().includes(candidateSearch.toLowerCase());
-    
-    const matchesAvailability = 
-      candidateAvailabilityFilter === 'All' || t.availability === candidateAvailabilityFilter;
-
-    const matchesVerified = 
-      candidateVerifiedFilter === 'All' || 
-      (candidateVerifiedFilter === 'Verified' && t.isVerified) ||
-      (candidateVerifiedFilter === 'Unverified' && !t.isVerified);
-
-    return matchesSearch && matchesAvailability && matchesVerified;
-  });
-
-  const filteredMovements = movementLogs.filter(log => {
-    if (movementFilter === 'All') return true;
-    return log.newStatus === movementFilter || log.previousStatus === movementFilter;
-  });
+  const navGroups: { title: string; items: NavItem[] }[] = [
+    { title: 'Overview', items: [{ key: 'overview', label: 'Dashboard', icon: LayoutDashboard }] },
+    {
+      title: 'Teachers',
+      items: [
+        { key: 'activity', label: 'Live Movements', icon: Activity },
+        { key: 'teachers', label: 'Talent Pool', icon: Users, badge: teachers.length },
+        { key: 'approvals', label: 'Approvals', icon: UserCheck, badge: counts.pending }
+      ]
+    },
+    {
+      title: 'Operations',
+      items: [
+        { key: 'inquiries', label: 'Inquiries', icon: Inbox, badge: counts.newInquiries },
+        { key: 'calendar', label: 'Calendar', icon: CalendarDays, badge: counts.upcoming }
+      ]
+    },
+    {
+      title: 'Content',
+      items: [
+        { key: 'workshops', label: 'Workshops', icon: Ticket },
+        { key: 'store', label: 'Learning Essentials', icon: ShoppingBag },
+        { key: 'broadcasts', label: 'Broadcasts', icon: Send }
+      ]
+    },
+    { title: 'Account', items: [{ key: 'profile', label: 'My Profile', icon: UserCircle2 }] }
+  ];
+  const allItems = navGroups.flatMap((g) => g.items);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      
-      {/* Dynamic Toast Feedback */}
-      {toastMessage && (
-        <div className="bg-[#2ac0db]/15 border border-[#2ac0db] text-[#126373] px-4 py-3 rounded-2xl flex items-center gap-2 font-bold text-xs shadow-md animate-in fade-in slide-in-from-top-2 duration-200">
-          <CheckCircle2 className="w-4 h-4 text-[#2ac0db] shrink-0" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
 
-      {/* Clean, Welcoming Admin Header */}
-      <div className="bg-gradient-to-r from-slate-950 via-[#0d3842] to-slate-950 text-white p-6 sm:p-8 rounded-3xl border border-[#2ac0db]/30 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-center gap-4 sm:gap-6">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#2ac0db] flex items-center justify-center text-slate-950 font-heading font-extrabold text-2xl sm:text-3xl shadow-lg border-2 border-white/20">
-            MN
-          </div>
+      {/* Header */}
+      <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-5">
+        <div className="flex items-center gap-4">
+          <button onClick={() => openTab('profile')} className="relative group shrink-0 cursor-pointer" title="Edit my profile">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="Admin" className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border border-slate-200" />
+            ) : (
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#126373] text-white flex items-center justify-center font-heading font-extrabold text-xl">{initials}</div>
+            )}
+            <span className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-white border border-slate-200 text-slate-600 group-hover:text-[#126373] shadow-sm">
+              <Camera className="w-3 h-3" />
+            </span>
+          </button>
           <div>
-            <h1 className="font-heading font-extrabold text-xl sm:text-2xl text-white">
-              Miss Nancie's Admin Center
+            <p className="text-[11px] font-bold uppercase tracking-widest text-[#126373]">{getGreeting()}</p>
+            <h1 className="font-heading font-extrabold text-xl sm:text-2xl text-slate-900">
+              {firstName ? `Welcome back, ${firstName}` : 'CEC Admin Centre'}
             </h1>
-            <p className="text-xs text-slate-300 mt-1">
-              CEC Educational Consult: Early years educator recruitment, school audits and workshop management
+            <p className="text-xs text-slate-500 mt-0.5">
+              {counts.pending > 0 || counts.newInquiries > 0
+                ? `${counts.pending} teacher${counts.pending === 1 ? '' : 's'} to review · ${counts.newInquiries} new inquir${counts.newInquiries === 1 ? 'y' : 'ies'}`
+                : 'You are all caught up.'}
             </p>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={() => {
-              setActiveTab('movements');
-              setShowLogMovementModal(true);
-            }}
-            className="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+            onClick={() => { setAppointmentDraft(blankAppointment()); openTab('calendar'); }}
+            className="px-4 py-2.5 bg-[#126373] hover:bg-[#0e4f5c] text-white font-bold text-xs rounded-xl flex items-center gap-1.5 cursor-pointer"
           >
-            <Activity className="w-4 h-4" />
-            <span>Log Movement</span>
+            <Plus className="w-3.5 h-3.5" /> New Appointment
           </button>
-          <button
-            onClick={() => {
-              setActiveTab('calendar');
-              setShowNewAptModal(true);
-            }}
-            className="px-4 py-2.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Schedule Session</span>
+          <button onClick={() => onNavigate('home')} className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 flex items-center gap-1.5 cursor-pointer">
+            <Globe className="w-3.5 h-3.5" /> View Website
           </button>
-          <button
-            onClick={() => onNavigate('directory')}
-            className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-xs rounded-xl border border-white/20 transition-all cursor-pointer"
-          >
-            Public Site View
-          </button>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 hover:text-white font-bold text-xs rounded-xl border border-rose-400/30 transition-all cursor-pointer flex items-center gap-1.5"
-          >
-            <span>Logout</span>
+          <button onClick={handleLogout} className="px-4 py-2.5 bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-700 font-bold text-xs rounded-xl border border-slate-200 flex items-center gap-1.5 cursor-pointer">
+            <LogOut className="w-3.5 h-3.5" /> Logout
           </button>
         </div>
       </div>
 
-      {/* Main Layout Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        {/* Left Admin Navigation */}
-        <aside className="lg:col-span-3 space-y-2 bg-white p-4 rounded-3xl border border-slate-200/90 shadow-2xs">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 py-1">
-            Admin Menu
-          </div>
-
+      {/* Mobile tab strip */}
+      <div className="lg:hidden flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
+        {allItems.map((item) => (
           <button
-            onClick={() => setActiveTab('dashboard')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center gap-2.5 transition-all cursor-pointer ${
-              activeTab === 'dashboard'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-700 hover:bg-slate-100'
+            key={item.key}
+            onClick={() => openTab(item.key)}
+            className={`shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
+              activeTab === item.key ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200'
             }`}
           >
-            <BarChart3 className="w-4 h-4 text-[#2ac0db]" />
-            <span>Dashboard & Overview</span>
+            <item.icon className="w-3.5 h-3.5" />
+            {item.label}
+            {item.badge ? <span className={`px-1.5 rounded-full text-[10px] ${activeTab === item.key ? 'bg-white/20' : 'bg-slate-100'}`}>{item.badge}</span> : null}
           </button>
+        ))}
+      </div>
 
-          {/* Tab: Live Teacher Movement Tracker */}
-          <button
-            onClick={() => setActiveTab('movements')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
-              activeTab === 'movements'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-700 hover:bg-slate-100'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <Activity className="w-4 h-4 text-emerald-400" />
-              <span>Live Movements</span>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        {/* Sidebar */}
+        <aside className="hidden lg:block lg:col-span-3 bg-white p-3 rounded-2xl border border-slate-200 sticky top-32 space-y-4">
+          {navGroups.map((group) => (
+            <div key={group.title} className="space-y-0.5">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 pt-1 pb-1.5">{group.title}</p>
+              {group.items.map((item) => (
+                <button
+                  key={item.key}
+                  onClick={() => openTab(item.key)}
+                  className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                    activeTab === item.key ? 'bg-[#126373]/10 text-[#126373]' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  }`}
+                >
+                  <span className="flex items-center gap-2.5">
+                    <item.icon className="w-4 h-4" />
+                    {item.label}
+                  </span>
+                  {item.badge ? (
+                    <span className={`min-w-[20px] px-1.5 py-0.5 rounded-full text-[10px] text-center ${
+                      activeTab === item.key ? 'bg-[#126373] text-white' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {item.badge}
+                    </span>
+                  ) : null}
+                </button>
+              ))}
             </div>
-            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold rounded-full">
-              Live
-            </span>
-          </button>
-
-          {/* Tab: Teacher Talent Pool & Profiles */}
-          <button
-            onClick={() => setActiveTab('candidates')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
-              activeTab === 'candidates'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-700 hover:bg-slate-100'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <Users className="w-4 h-4 text-[#2ac0db]" />
-              <span>Teacher Talent Pool</span>
-            </div>
-            <span className="px-2 py-0.5 bg-slate-100 text-slate-800 text-[10px] font-bold rounded-full">
-              {teachersList.length}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('approvals')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
-              activeTab === 'approvals'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-700 hover:bg-slate-100'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <UserCheck className="w-4 h-4 text-[#2ac0db]" />
-              <span>Teacher Approvals</span>
-            </div>
-            <span className="px-2 py-0.5 bg-[#2ac0db] text-slate-950 text-[10px] font-extrabold rounded-full">
-              {countPendingReview}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('calendar')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
-              activeTab === 'calendar'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-700 hover:bg-slate-100'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <Calendar className="w-4 h-4 text-[#2ac0db]" />
-              <span>Schedule & Calendar</span>
-            </div>
-            <span className="px-2 py-0.5 bg-[#fa7b2d] text-white text-[10px] font-bold rounded-full">
-              {appointments.length}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('placements')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
-              activeTab === 'placements'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-700 hover:bg-slate-100'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <Building2 className="w-4 h-4 text-[#2ac0db]" />
-              <span>School Placement Pipeline</span>
-            </div>
-            <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-full">
-              {pipelineLeads.length}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('consultations')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
-              activeTab === 'consultations'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-700 hover:bg-slate-100'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <BookOpenCheck className="w-4 h-4 text-[#2ac0db]" />
-              <span>Consultation Inquiries</span>
-            </div>
-            <span className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-full">
-              {consultationsList.length}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('workshops')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
-              activeTab === 'workshops'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-700 hover:bg-slate-100'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <Ticket className="w-4 h-4 text-[#2ac0db]" />
-              <span>Workshops & CPD</span>
-            </div>
-            <span className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-full">
-              {workshops.length}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('store')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
-              activeTab === 'store'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-700 hover:bg-slate-100'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <ShoppingBag className="w-4 h-4 text-[#2ac0db]" />
-              <span>Store Orders & Stock</span>
-            </div>
-            <span className="px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-full">
-              {products.length}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('broadcasts')}
-            className={`w-full text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
-              activeTab === 'broadcasts'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'text-slate-700 hover:bg-slate-100'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <Send className="w-4 h-4 text-[#2ac0db]" />
-              <span>Broadcasts & Alerts</span>
-            </div>
-            <span className="px-2 py-0.5 bg-sky-100 text-sky-800 text-[10px] font-bold rounded-full">
-              {broadcasts.length}
-            </span>
-          </button>
+          ))}
         </aside>
 
-        {/* Right Super Admin Workspace Body */}
-        <main className="lg:col-span-9 space-y-6">
-          
-          {/* TAB 1: DASHBOARD & KPIS */}
-          {activeTab === 'dashboard' && (
-            <div className="space-y-6">
-              
-              {/* Detailed Live Teacher Availability Breakdown Card Strip */}
-              <div className="bg-slate-900 text-white p-6 rounded-3xl border border-slate-800 space-y-4 shadow-xl">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                  <div>
-                    <h3 className="font-heading font-extrabold text-base text-white flex items-center gap-2">
-                      <Activity className="w-4 h-4 text-[#2ac0db]" />
-                      Live Teacher Availability & Approval Roster
-                    </h3>
-                    <p className="text-xs text-slate-400">Exact live movement and deployment status across 1,248 registered educators</p>
-                  </div>
-                  <button
-                    onClick={() => setActiveTab('movements')}
-                    className="text-xs font-bold text-[#2ac0db] hover:underline flex items-center gap-1 cursor-pointer"
-                  >
-                    View Movement Stream <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-center">
-                  
-                  {/* Immediate */}
-                  <div 
-                    onClick={() => {
-                      setActiveTab('candidates');
-                      setCandidateAvailabilityFilter('Immediate');
-                    }}
-                    className="bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-emerald-500/30 transition-all cursor-pointer space-y-1 group"
-                  >
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 mx-auto shadow-xs group-hover:scale-125 transition-transform" />
-                    <div className="text-2xl font-extrabold text-emerald-400">{countImmediate}</div>
-                    <div className="text-[11px] font-bold text-slate-200">Immediate</div>
-                    <div className="text-[9px] text-slate-400">Ready to deploy</div>
-                  </div>
-
-                  {/* 2 Weeks Notice */}
-                  <div 
-                    onClick={() => {
-                      setActiveTab('candidates');
-                      setCandidateAvailabilityFilter('2 Weeks Notice');
-                    }}
-                    className="bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-amber-500/30 transition-all cursor-pointer space-y-1 group"
-                  >
-                    <div className="w-2.5 h-2.5 rounded-full bg-amber-400 mx-auto shadow-xs group-hover:scale-125 transition-transform" />
-                    <div className="text-2xl font-extrabold text-amber-400">{countTwoWeeks}</div>
-                    <div className="text-[11px] font-bold text-slate-200">2 Wks Notice</div>
-                    <div className="text-[9px] text-slate-400">Concluding notice</div>
-                  </div>
-
-                  {/* Next Term */}
-                  <div 
-                    onClick={() => {
-                      setActiveTab('candidates');
-                      setCandidateAvailabilityFilter('Next Academic Term');
-                    }}
-                    className="bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-sky-500/30 transition-all cursor-pointer space-y-1 group"
-                  >
-                    <div className="w-2.5 h-2.5 rounded-full bg-sky-400 mx-auto shadow-xs group-hover:scale-125 transition-transform" />
-                    <div className="text-2xl font-extrabold text-sky-400">{countNextTerm}</div>
-                    <div className="text-[11px] font-bold text-slate-200">Next Term</div>
-                    <div className="text-[9px] text-slate-400">Sept / Jan Matching</div>
-                  </div>
-
-                  {/* Placed / Employed */}
-                  <div 
-                    onClick={() => {
-                      setActiveTab('candidates');
-                      setCandidateAvailabilityFilter('Placed / Employed');
-                    }}
-                    className="bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-purple-500/30 transition-all cursor-pointer space-y-1 group"
-                  >
-                    <div className="w-2.5 h-2.5 rounded-full bg-purple-400 mx-auto shadow-xs group-hover:scale-125 transition-transform" />
-                    <div className="text-2xl font-extrabold text-purple-400">{countPlaced}</div>
-                    <div className="text-[11px] font-bold text-slate-200">Placed / Working</div>
-                    <div className="text-[9px] text-slate-400">In Partner Schools</div>
-                  </div>
-
-                  {/* Verified Badge */}
-                  <div 
-                    onClick={() => {
-                      setActiveTab('candidates');
-                      setCandidateVerifiedFilter('Verified');
-                    }}
-                    className="bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-[#2ac0db]/30 transition-all cursor-pointer space-y-1 group"
-                  >
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#2ac0db] mx-auto shadow-xs group-hover:scale-125 transition-transform" />
-                    <div className="text-2xl font-extrabold text-[#2ac0db]">{countVerified}</div>
-                    <div className="text-[11px] font-bold text-slate-200">Verified</div>
-                    <div className="text-[9px] text-slate-400">Vetted by Nancie</div>
-                  </div>
-
-                  {/* Pending Audits */}
-                  <div 
-                    onClick={() => setActiveTab('approvals')}
-                    className="bg-white/5 hover:bg-white/10 p-3.5 rounded-2xl border border-rose-500/30 transition-all cursor-pointer space-y-1 group"
-                  >
-                    <div className="w-2.5 h-2.5 rounded-full bg-rose-400 mx-auto shadow-xs group-hover:scale-125 transition-transform" />
-                    <div className="text-2xl font-extrabold text-rose-400">{countPendingReview}</div>
-                    <div className="text-[11px] font-bold text-slate-200">Pending Review</div>
-                    <div className="text-[9px] text-slate-400">Requires audit</div>
-                  </div>
-
-                </div>
-              </div>
-
-              {/* General Metric Cards Row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
-                  <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-xs font-bold text-slate-700">Verified Teachers</span>
-                    <Award className="w-4 h-4 text-[#126373]" />
-                  </div>
-                  <div className="text-2xl font-extrabold text-slate-900">1,248</div>
-                  <p className="text-[11px] text-[#126373] font-bold">+18 approved this week</p>
-                </div>
-
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
-                  <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-xs font-bold text-slate-700">School Placements</span>
-                    <Building2 className="w-4 h-4 text-[#fa7b2d]" />
-                  </div>
-                  <div className="text-2xl font-extrabold text-slate-900">284</div>
-                  <p className="text-[11px] text-[#fa7b2d] font-bold">98.4% retention rate</p>
-                </div>
-
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
-                  <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-xs font-bold text-slate-700">Advisory Sessions</span>
-                    <Calendar className="w-4 h-4 text-[#2ac0db]" />
-                  </div>
-                  <div className="text-2xl font-extrabold text-slate-900">92</div>
-                  <p className="text-[11px] text-[#126373] font-bold">{appointments.length} scheduled this month</p>
-                </div>
-
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
-                  <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-xs font-bold text-slate-700">Est. Total Revenue</span>
-                    <TrendingUp className="w-4 h-4 text-emerald-600" />
-                  </div>
-                  <div className="text-2xl font-extrabold text-emerald-700">GH₵ 48,250</div>
-                  <p className="text-[11px] text-slate-500 font-medium">Recruitment & Audits</p>
-                </div>
-              </div>
-
-              {/* Charts Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {/* Placements Chart */}
-                <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-heading font-bold text-slate-900 text-sm">Monthly Teacher Placements</h3>
-                      <p className="text-xs text-slate-500">Teachers placed in private preschools</p>
-                    </div>
-                    <span className="text-xs text-slate-400 font-semibold">2026 YTD</span>
-                  </div>
-                  <div className="h-56 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={MOCK_ADMIN_ANALYTICS.monthlyPlacements}>
-                        <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} />
-                        <YAxis stroke="#94a3b8" fontSize={11} />
-                        <Tooltip />
-                        <Bar dataKey="teachers" fill="#126373" radius={[4, 4, 0, 0]} name="Placed Teachers" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                {/* Level Distribution Pie */}
-                <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-heading font-bold text-slate-900 text-sm">Teacher Specialization Breakdown</h3>
-                      <p className="text-xs text-slate-500">Candidates by early learning stage</p>
-                    </div>
-                  </div>
-                  <div className="h-56 w-full flex items-center justify-center">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={MOCK_ADMIN_ANALYTICS.levelDistribution}
-                          dataKey="value"
-                          nameKey="name"
-                          cx="50%"
-                          cy="50%"
-                          outerRadius={75}
-                          innerRadius={45}
-                          paddingAngle={3}
-                        >
-                          {MOCK_ADMIN_ANALYTICS.levelDistribution.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-[11px] font-semibold text-slate-600">
-                    {MOCK_ADMIN_ANALYTICS.levelDistribution.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }}></span>
-                        <span>{item.name}: {item.value}%</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Quick Action Hub */}
-              <div className="bg-slate-900 text-white p-6 rounded-3xl space-y-4">
-                <h3 className="font-heading font-bold text-sm text-white flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-[#2ac0db]" />
-                  Quick Actions
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                  <button
-                    onClick={() => { setActiveTab('candidates'); }}
-                    className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl text-left border border-white/10 transition-colors cursor-pointer space-y-1"
-                  >
-                    <Users className="w-4 h-4 text-[#2ac0db]" />
-                    <div className="font-bold text-white">Teacher Profiles</div>
-                    <div className="text-[10px] text-slate-300">View teacher details</div>
-                  </button>
-
-                  <button
-                    onClick={() => { setActiveTab('movements'); setShowLogMovementModal(true); }}
-                    className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl text-left border border-white/10 transition-colors cursor-pointer space-y-1"
-                  >
-                    <Activity className="w-4 h-4 text-emerald-400" />
-                    <div className="font-bold text-white">Record Status Move</div>
-                    <div className="text-[10px] text-slate-300">Update availability log</div>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('approvals')}
-                    className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl text-left border border-white/10 transition-colors cursor-pointer space-y-1"
-                  >
-                    <UserCheck className="w-4 h-4 text-[#fa7b2d]" />
-                    <div className="font-bold text-white">Review New Teachers</div>
-                    <div className="text-[10px] text-slate-300">Approve applications</div>
-                  </button>
-
-                  <button
-                    onClick={() => setActiveTab('broadcasts')}
-                    className="p-3 bg-white/10 hover:bg-white/20 rounded-2xl text-left border border-white/10 transition-colors cursor-pointer space-y-1"
-                  >
-                    <Send className="w-4 h-4 text-[#2ac0db]" />
-                    <div className="font-bold text-white">Send Broadcast</div>
-                    <div className="text-[10px] text-slate-300">Message all teachers</div>
-                  </button>
-                </div>
-              </div>
-
-            </div>
-          )}
-
-          {/* TAB: LIVE MOVEMENTS (Exact Tracker of who is available and who is not) */}
-          {activeTab === 'movements' && (
-            <div className="space-y-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-heading font-extrabold text-slate-900 text-lg flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-emerald-600" />
-                    Live Teacher Availability Movement Stream
-                  </h3>
-                  <p className="text-xs text-slate-500">Real-time audit log tracking who is currently available, who signed contracts and status shifts</p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setShowLogMovementModal(true)}
-                    className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Record Manual Move</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Filter Tabs */}
-              <div className="flex items-center gap-2 flex-wrap text-xs font-bold">
-                <span className="text-slate-400 mr-1">Filter Stream:</span>
-                {(['All', 'Immediate', '2 Weeks Notice', 'Placed / Employed'] as const).map((filterOpt) => (
-                  <button
-                    key={filterOpt}
-                    onClick={() => setMovementFilter(filterOpt)}
-                    className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
-                      movementFilter === filterOpt
-                        ? 'bg-slate-900 text-white shadow-xs'
-                        : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    {filterOpt}
-                  </button>
-                ))}
-              </div>
-
-              {/* Movement Timeline Stream */}
-              <div className="space-y-3">
-                {filteredMovements.map((log) => (
-                  <div 
-                    key={log.id} 
-                    className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-[#2ac0db] transition-colors"
-                  >
-                    <div className="flex items-start gap-4">
-                      {log.avatar ? (
-                        <img src={log.avatar} alt={log.teacherName} className="w-12 h-12 rounded-2xl object-cover border border-slate-200 shrink-0" />
-                      ) : (
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0b2228] to-[#114c5a] text-white flex items-center justify-center font-bold text-sm shrink-0">
-                          {log.teacherName.substring(0, 2).toUpperCase()}
-                        </div>
-                      )}
-
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className="font-heading font-extrabold text-slate-900 text-sm">{log.teacherName}</h4>
-                          <span className="text-xs text-slate-400">•</span>
-                          <span className="text-[11px] font-bold text-slate-400">{log.timestamp}</span>
-                        </div>
-
-                        {/* Status Transition Pill */}
-                        <div className="flex items-center gap-2 text-xs flex-wrap">
-                          <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-bold text-[11px]">
-                            {log.previousStatus}
-                          </span>
-                          <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
-                          <span className={`px-2.5 py-0.5 rounded-md font-extrabold text-[11px] ${
-                            log.newStatus === 'Immediate' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' :
-                            log.newStatus === 'Placed / Employed' ? 'bg-purple-100 text-purple-800 border border-purple-300' :
-                            log.newStatus === '2 Weeks Notice' ? 'bg-amber-100 text-amber-800 border border-amber-300' :
-                            'bg-sky-100 text-sky-800 border border-sky-300'
-                          }`}>
-                            {log.newStatus}
-                          </span>
-                        </div>
-
-                        <p className="text-xs text-slate-600 pt-0.5">{log.reason}</p>
-                        
-                        {log.schoolInvolved && (
-                          <p className="text-[11px] text-[#126373] font-bold flex items-center gap-1">
-                            <Building2 className="w-3.5 h-3.5" />
-                            School Involved: {log.schoolInvolved}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="text-right shrink-0">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Logged By</span>
-                      <span className="text-xs font-extrabold text-slate-800">{log.changedBy}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB: CANDIDATES TALENT POOL & TEACHER PROFILES */}
-          {activeTab === 'candidates' && (
-            <div className="space-y-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-heading font-extrabold text-slate-900 text-lg flex items-center gap-2">
-                    <Users className="w-5 h-5 text-[#2ac0db]" />
-                    Teacher Directory & Profiles
-                  </h3>
-                  <p className="text-xs text-slate-500">View teacher qualifications, demo lessons, references and manage availability</p>
-                </div>
-                <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl">
-                  Showing {filteredCandidates.length} of {teachersList.length} Teachers
-                </span>
-              </div>
-
-              {/* Filters Bar */}
-              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="relative">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                  <input
-                    type="text"
-                    placeholder="Search candidate name, qualification, location..."
-                    value={candidateSearch}
-                    onChange={(e) => setCandidateSearch(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                  />
-                </div>
-
-                <div>
-                  <select
-                    value={candidateAvailabilityFilter}
-                    onChange={(e) => setCandidateAvailabilityFilter(e.target.value)}
-                    className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                  >
-                    <option value="All">All Availability States</option>
-                    <option value="Immediate">🟢 Ready Immediately</option>
-                    <option value="2 Weeks Notice">🟡 2 Weeks Notice</option>
-                    <option value="Next Academic Term">🔵 Next Academic Term</option>
-                    <option value="Placed / Employed">🟣 Placed / Employed</option>
-                  </select>
-                </div>
-
-                <div>
-                  <select
-                    value={candidateVerifiedFilter}
-                    onChange={(e) => setCandidateVerifiedFilter(e.target.value)}
-                    className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                  >
-                    <option value="All">All Verification Statuses</option>
-                    <option value="Verified">Verified by Miss Nancie</option>
-                    <option value="Unverified">Pending Verification</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Candidate Table */}
-              <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-50 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
-                      <tr>
-                        <th className="py-3 px-4">Teacher & Level</th>
-                        <th className="py-3 px-4">Qualification</th>
-                        <th className="py-3 px-4">Availability</th>
-                        <th className="py-3 px-4">Verification</th>
-                        <th className="py-3 px-4">Salary Expectation</th>
-                        <th className="py-3 px-4 text-right">Profile</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 font-semibold">
-                      {filteredCandidates.map((t) => (
-                        <tr key={t.id} className="hover:bg-slate-50/80 transition-colors">
-                          <td className="py-3 px-4">
-                            <div className="flex items-center gap-3">
-                              <img src={t.photo} alt={t.name} className="w-10 h-10 rounded-xl object-cover border border-slate-200 shrink-0" />
-                              <div>
-                                <div className="font-extrabold text-slate-900">{t.name}</div>
-                                <div className="text-[11px] text-[#126373]">{t.teachingLevel}</div>
-                              </div>
-                            </div>
-                          </td>
-
-                          <td className="py-3 px-4 text-slate-700">
-                            <div>{t.qualification}</div>
-                            <div className="text-[10px] text-slate-400">{t.experienceYears}+ Yrs Exp • {t.location}</div>
-                          </td>
-
-                          <td className="py-3 px-4">
-                            <select
-                              value={t.availability}
-                              onChange={(e) => handleQuickAvailabilityChange(t.id, e.target.value as AvailabilityStatus)}
-                              className={`p-1.5 rounded-lg text-xs font-bold border outline-none cursor-pointer ${
-                                t.availability === 'Immediate' ? 'bg-emerald-50 text-emerald-900 border-emerald-200' :
-                                t.availability === 'Placed / Employed' ? 'bg-purple-50 text-purple-900 border-purple-200' :
-                                t.availability === '2 Weeks Notice' ? 'bg-amber-50 text-amber-900 border-amber-200' :
-                                'bg-sky-50 text-sky-900 border-sky-200'
-                              }`}
-                            >
-                              <option value="Immediate">🟢 Immediate</option>
-                              <option value="2 Weeks Notice">🟡 2 Weeks</option>
-                              <option value="Next Academic Term">🔵 Next Term</option>
-                              <option value="Placed / Employed">🟣 Placed</option>
-                            </select>
-                          </td>
-
-                          <td className="py-3 px-4">
-                            <button
-                              type="button"
-                              onClick={() => handleQuickVerifyToggle(t.id)}
-                              className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 cursor-pointer transition-all ${
-                                t.isVerified 
-                                  ? 'bg-emerald-100 text-emerald-900 border border-emerald-200' 
-                                  : 'bg-amber-100 text-amber-900 border border-amber-200'
-                              }`}
-                            >
-                              <ShieldCheck className="w-3.5 h-3.5" />
-                              {t.isVerified ? 'Verified' : 'Pending Check'}
-                            </button>
-                          </td>
-
-                          <td className="py-3 px-4 text-slate-900 font-bold">
-                            {t.salaryExpectation}
-                          </td>
-
-                          <td className="py-3 px-4 text-right">
-                            <button
-                              type="button"
-                              onClick={() => handleOpenTeacherProfile(t)}
-                              className="px-3.5 py-1.5 bg-slate-900 hover:bg-[#126373] text-white font-bold text-xs rounded-xl shadow-2xs flex items-center gap-1 ml-auto cursor-pointer transition-colors"
-                            >
-                              <Eye className="w-3.5 h-3.5 text-[#2ac0db]" />
-                              <span>View Profile</span>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: TEACHER APPROVALS & VETTING */}
-          {activeTab === 'approvals' && (
-            <TeacherApplicationsPanel
-              applications={teacherApplications.applications}
-              loading={teacherApplications.loading}
-              error={teacherApplications.error}
-              onRefresh={teacherApplications.refresh}
-              onSetStatus={teacherApplications.setVerificationStatus}
+        {/* Workspace */}
+        <main className="lg:col-span-9 min-w-0">
+          {activeTab === 'overview' && (
+            <AdminOverviewPanel
+              teachers={teachers}
+              inquiries={inquiriesData.inquiries}
+              appointments={appointmentsData.appointments}
+              activity={activityData.activity}
+              workshops={workshops}
+              products={products}
+              profileViews={profileViews}
+              onOpen={openTab}
             />
           )}
 
-          {/* TAB 4: CALENDAR */}
+          {activeTab === 'activity' && (
+            <ActivityStreamPanel
+              activity={activityData.activity}
+              teachers={teachers}
+              loading={activityData.loading}
+              error={activityData.error}
+              onRefresh={activityData.refresh}
+              onAddNote={activityData.addNote}
+            />
+          )}
+
+          {activeTab === 'teachers' && (
+            <TalentPoolPanel
+              teachers={teachers}
+              loading={teacherApplications.loading}
+              error={teacherApplications.error}
+              onRefresh={teacherApplications.refresh}
+              onSetAvailability={async (userId, availability) => {
+                const result = await teacherApplications.setAvailability(userId, availability);
+                if (!result.error) activityData.refresh();
+                return result;
+              }}
+              onViewDetails={(t) => {
+                setApprovalsFocus(t.email);
+                setActiveTab('approvals');
+              }}
+            />
+          )}
+
+          {activeTab === 'approvals' && (
+            <TeacherApplicationsPanel
+              applications={teachers}
+              loading={teacherApplications.loading}
+              error={teacherApplications.error}
+              onRefresh={teacherApplications.refresh}
+              onSetStatus={async (userId, status) => {
+                const result = await teacherApplications.setVerificationStatus(userId, status);
+                if (!result.error) activityData.refresh();
+                return result;
+              }}
+              focusSearch={approvalsFocus}
+            />
+          )}
+
+          {activeTab === 'inquiries' && (
+            <InquiriesPanel
+              inquiries={inquiriesData.inquiries}
+              loading={inquiriesData.loading}
+              error={inquiriesData.error}
+              onRefresh={inquiriesData.refresh}
+              onUpdate={inquiriesData.updateInquiry}
+              onDelete={inquiriesData.deleteInquiry}
+              onSchedule={scheduleFromInquiry}
+            />
+          )}
+
           {activeTab === 'calendar' && (
-            <div className="space-y-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-[#2ac0db]" />
-                    Miss Nancie's Master Calendar & Appointments
-                  </h3>
-                  <p className="text-xs text-slate-500">Manage client consultations, EYFS school audits and candidate screening interviews</p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setShowNewAptModal(true)}
-                    className="px-4 py-2.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>New Appointment</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Interactive Date Picker Strip */}
-              <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-700 px-1">
-                  <span>August 2026 Scheduled Days</span>
-                  <span className="text-[#126373]">Selected: {selectedCalendarDate}</span>
-                </div>
-
-                <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold">
-                  {['Mon 17', 'Tue 18', 'Wed 19', 'Thu 20', 'Fri 21', 'Sat 22', 'Sun 23'].map((day, idx) => {
-                    const dateVal = `2026-08-${17 + idx}`;
-                    const hasAppointments = appointments.filter(a => a.date === dateVal).length;
-                    const isSelected = selectedCalendarDate === dateVal;
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => setSelectedCalendarDate(dateVal)}
-                        className={`p-3 rounded-2xl flex flex-col items-center gap-1 transition-all cursor-pointer ${
-                          isSelected
-                            ? 'bg-slate-900 text-white shadow-md'
-                            : 'bg-slate-50 hover:bg-slate-100 text-slate-700'
-                        }`}
-                      >
-                        <span className="text-[11px] opacity-75">{day.split(' ')[0]}</span>
-                        <span className="text-base font-extrabold">{day.split(' ')[1]}</span>
-                        {hasAppointments > 0 && (
-                          <span className={`px-1.5 py-0.2 rounded-full text-[9px] font-extrabold ${isSelected ? 'bg-[#2ac0db] text-slate-950' : 'bg-[#fa7b2d] text-white'}`}>
-                            {hasAppointments} {hasAppointments === 1 ? 'Slot' : 'Slots'}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Scheduled Appointments for Selected Date & All Upcoming */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-heading font-bold text-slate-900 text-sm">
-                    Appointments for {selectedCalendarDate} ({appointments.filter(a => a.date === selectedCalendarDate).length})
-                  </h4>
-                  <span className="text-xs text-slate-500">{appointments.length} total scheduled</span>
-                </div>
-
-                {appointments.filter(a => a.date === selectedCalendarDate).length === 0 ? (
-                  <div className="bg-white p-8 rounded-2xl border border-dashed border-slate-300 text-center space-y-3">
-                    <Calendar className="w-8 h-8 text-slate-400 mx-auto" />
-                    <p className="text-xs font-bold text-slate-600">No scheduled sessions for this date.</p>
-                    <button
-                      onClick={() => setShowNewAptModal(true)}
-                      className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl cursor-pointer"
-                    >
-                      Book Session for this Date
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {appointments.filter(a => a.date === selectedCalendarDate).map((apt) => (
-                      <div key={apt.id} className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                        <div className="space-y-1.5">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#2ac0db]/15 text-[#126373] border border-[#2ac0db]/30">
-                              {apt.type}
-                            </span>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                              {apt.status}
-                            </span>
-                            <span className="text-xs text-slate-500 font-semibold flex items-center gap-1">
-                              <Clock className="w-3.5 h-3.5 text-slate-400" /> {apt.time}
-                            </span>
-                          </div>
-
-                          <h5 className="font-heading font-bold text-slate-900 text-base">{apt.title}</h5>
-                          <p className="text-xs font-semibold text-slate-700">{apt.clientName} • <span className="text-slate-500">{apt.schoolName}</span></p>
-                          
-                          <div className="flex items-center gap-3 text-xs text-slate-500 pt-0.5">
-                            <span className="flex items-center gap-1 font-medium"><MapPin className="w-3.5 h-3.5 text-[#fa7b2d]" /> {apt.format}</span>
-                            {apt.meetingLink && (
-                              <a href={apt.meetingLink} target="_blank" rel="noopener noreferrer" className="text-[#126373] hover:underline flex items-center gap-1 font-bold">
-                                <Video className="w-3.5 h-3.5" /> Meeting Link
-                              </a>
-                            )}
-                          </div>
-
-                          {apt.notes && (
-                            <p className="text-[11px] text-slate-500 italic bg-slate-50 p-2 rounded-xl mt-1 max-w-xl">
-                              “{apt.notes}”
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-2 shrink-0">
-                          <button
-                            onClick={() => triggerToast(`Copied meeting invite link for ${apt.clientName}`)}
-                            className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition-colors cursor-pointer"
-                            title="Copy Meeting Invite"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteAppointment(apt.id)}
-                            className="p-2 text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
-                            title="Cancel / Delete Appointment"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
+            <CalendarPanel
+              appointments={appointmentsData.appointments}
+              loading={appointmentsData.loading}
+              error={appointmentsData.error}
+              onCreate={createAppointment}
+              onUpdate={appointmentsData.updateAppointment}
+              onDelete={appointmentsData.deleteAppointment}
+              draft={appointmentDraft}
+              onDraftHandled={handleDraftHandled}
+            />
           )}
 
-          {/* TAB: PLACEMENTS */}
-          {activeTab === 'placements' && (
-            <div className="space-y-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
-                    <Building2 className="w-5 h-5 text-[#2ac0db]" />
-                    School Placement Pipeline
-                  </h3>
-                  <p className="text-xs text-slate-500">Track client school requests through matching, interviewing and 90-day guarantee</p>
-                </div>
-                <button
-                  onClick={() => triggerToast('New vacancy lead registered into placement tracker.')}
-                  className="px-4 py-2.5 bg-slate-900 hover:bg-[#126373] text-white font-bold text-xs rounded-xl cursor-pointer"
-                >
-                  + Add School Request
-                </button>
-              </div>
-
-              <div className="space-y-3">
-                {pipelineLeads.map((lead) => (
-                  <div key={lead.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="font-bold text-slate-900 text-sm">{lead.schoolName}</h4>
-                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${
-                          lead.stage === 'Placed' ? 'bg-emerald-100 text-emerald-800' :
-                          lead.stage === 'Interviews' ? 'bg-[#2ac0db]/20 text-[#126373]' :
-                          lead.stage === 'Shortlisting' ? 'bg-amber-100 text-amber-800' :
-                          'bg-slate-100 text-slate-700'
-                        }`}>
-                          Stage: {lead.stage}
-                        </span>
-                      </div>
-                      <p className="text-xs font-semibold text-[#126373]">{lead.requestedRole} • {lead.location}</p>
-                      <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-500">
-                        <span>Contact: <strong>{lead.contactPerson}</strong> ({lead.contactPhone})</span>
-                        <span>•</span>
-                        <span>Budget: <strong>{lead.budget}</strong></span>
-                        {lead.assignedTeacher && (
-                          <>
-                            <span>•</span>
-                            <span className="text-[#126373] font-bold">Assigned: {lead.assignedTeacher}</span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => triggerToast(`Opened candidate matching modal for ${lead.schoolName}`)}
-                        className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl cursor-pointer"
-                      >
-                        Match Candidate
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB: CONSULTATIONS */}
-          {activeTab === 'consultations' && (
-            <div className="space-y-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs">
-                <h3 className="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
-                  <BookOpenCheck className="w-5 h-5 text-[#2ac0db]" />
-                  Proprietor & School Inquiries
-                </h3>
-                <p className="text-xs text-slate-500">Incoming school requests for recruitment, classroom design and EYFS audits</p>
-              </div>
-
-              <div className="space-y-4">
-                {consultationsList.map((item) => (
-                  <div key={item.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-slate-900 text-sm">{item.clientName}</h4>
-                        <span className={`px-2 py-0.2 rounded text-[10px] font-bold ${
-                          item.status === 'Confirmed' ? 'bg-emerald-100 text-emerald-800' : 'bg-sky-100 text-sky-800'
-                        }`}>
-                          {item.status}
-                        </span>
-                      </div>
-                      <p className="text-xs text-[#126373] font-semibold">{item.schoolName}</p>
-                      <p className="text-xs text-slate-600">Service: <strong>{item.serviceName}</strong></p>
-                      <p className="text-[11px] text-slate-500">Requested: {item.requestedDate} • Phone: {item.phone}</p>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {item.status !== 'Confirmed' ? (
-                        <button
-                          onClick={() => handleConfirmConsultation(item.id)}
-                          className="px-4 py-2 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl shadow-xs cursor-pointer"
-                        >
-                          Confirm & Book
-                        </button>
-                      ) : (
-                        <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
-                          <CheckCircle2 className="w-4 h-4" /> Booked
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB: WORKSHOPS */}
           {activeTab === 'workshops' && (
-            <div className="space-y-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
-                    <Ticket className="w-5 h-5 text-[#2ac0db]" />
-                    Workshops & Teacher Training Master
-                  </h3>
-                  <p className="text-xs text-slate-500">Create and edit the workshops shown on the public Workshops page</p>
-                </div>
-                <button
-                  onClick={() => { setEditingWorkshop(null); setWorkshopModalOpen(true); }}
-                  className="px-4 py-2.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl shadow-xs cursor-pointer"
-                >
-                  + Create Workshop
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {workshops.map((ws) => (
-                  <div key={ws.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#2ac0db]/15 text-[#126373]">
-                          {ws.category}
-                        </span>
-                        <h4 className="font-bold text-slate-900 text-sm mt-1">{ws.title}</h4>
-                      </div>
-                      <span className="text-sm font-extrabold text-slate-900">{ws.price}</span>
-                    </div>
-
-                    <div className="text-xs text-slate-500 space-y-1">
-                      <p><Clock className="w-3.5 h-3.5 inline mr-1 text-slate-400" /> {ws.date} • {ws.time}</p>
-                      <p><MapPin className="w-3.5 h-3.5 inline mr-1 text-slate-400" /> {ws.venue}</p>
-                      <p className="text-[11px] font-semibold text-emerald-700">Enrolled: {ws.totalSeats - ws.availableSeats} of {ws.totalSeats} seats booked ({ws.availableSeats} remaining)</p>
-                    </div>
-
-                    <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
-                      <button
-                        onClick={() => { setEditingWorkshop(ws); setWorkshopModalOpen(true); }}
-                        className="flex-1 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl flex items-center justify-center gap-1 cursor-pointer"
-                      >
-                        <Edit className="w-3.5 h-3.5" />
-                        <span>Edit</span>
-                      </button>
-                      <button
-                        onClick={async () => {
-                          if (!window.confirm(`Delete "${ws.title}"? This can't be undone.`)) return;
-                          const { error } = await deleteWorkshop(ws.id);
-                          if (error) toast.error(error, 'Delete Failed');
-                          else toast.success('Workshop removed.', 'Deleted');
-                        }}
-                        className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl flex items-center justify-center gap-1 cursor-pointer border border-rose-200"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-                {workshops.length === 0 && (
-                  <p className="text-xs text-slate-500 font-semibold py-6 text-center col-span-2">No workshops yet - click "Create Workshop" to add the first one.</p>
-                )}
-              </div>
-            </div>
+            <WorkshopsAdminPanel
+              workshops={workshops}
+              registrations={inquiriesData.inquiries.filter((i) => i.kind === 'workshop')}
+              onCreate={() => { setEditingWorkshop(null); setWorkshopModalOpen(true); }}
+              onEdit={(ws) => { setEditingWorkshop(ws); setWorkshopModalOpen(true); }}
+              onDelete={deleteWorkshop}
+            />
           )}
 
-          {/* TAB: STORE */}
           {activeTab === 'store' && (
-            <div className="space-y-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
-                    <ShoppingBag className="w-5 h-5 text-[#2ac0db]" />
-                    Learning Essentials & Orders Manager
-                  </h3>
-                  <p className="text-xs text-slate-500">Create and edit the products shown on the public Learning Essentials store</p>
-                </div>
-                <button
-                  onClick={() => { setEditingProduct(null); setProductModalOpen(true); }}
-                  className="px-4 py-2.5 bg-slate-900 hover:bg-[#126373] text-white font-bold text-xs rounded-xl cursor-pointer"
-                >
-                  + Add Product Item
-                </button>
-              </div>
-
-              <div className="space-y-3">
-                {products.map((prod) => (
-                  <div key={prod.id} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <img src={prod.image} alt={prod.name} className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0" />
-                      <div className="min-w-0">
-                        <h4 className="font-bold text-slate-900 text-xs sm:text-sm truncate">{prod.name}</h4>
-                        <p className="text-[11px] text-[#126373] font-semibold">{prod.category} • {prod.ageGroup}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 text-xs shrink-0">
-                      <span className="font-extrabold text-slate-900 text-sm">GH₵ {prod.price}</span>
-                      <span className={`px-2 py-0.5 font-bold rounded border ${prod.inStock ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'}`}>
-                        {prod.inStock ? 'In Stock' : 'Out of Stock'}
-                      </span>
-                      <button
-                        onClick={() => { setEditingProduct(prod); setProductModalOpen(true); }}
-                        className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl cursor-pointer"
-                        title="Edit product"
-                      >
-                        <Edit className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={async () => {
-                          if (!window.confirm(`Delete "${prod.name}"? This can't be undone.`)) return;
-                          const { error } = await deleteProduct(prod.id);
-                          if (error) toast.error(error, 'Delete Failed');
-                          else toast.success('Product removed.', 'Deleted');
-                        }}
-                        className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl cursor-pointer border border-rose-200"
-                        title="Delete product"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-                {products.length === 0 && (
-                  <p className="text-xs text-slate-500 font-semibold py-6 text-center">No products yet - click "Add Product Item" to add the first one.</p>
-                )}
-              </div>
-            </div>
+            <StoreManagerPanel
+              products={products}
+              createProduct={createProduct}
+              deleteProduct={deleteProduct}
+              onAdd={(section) => { setEditingProduct(null); setNewProductSection(section); setProductModalOpen(true); }}
+              onEdit={(prod) => { setEditingProduct(prod); setProductModalOpen(true); }}
+            />
           )}
 
-          {/* TAB: BROADCASTS */}
           {activeTab === 'broadcasts' && (
-            <div className="space-y-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs">
-                <h3 className="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
-                  <Send className="w-5 h-5 text-[#2ac0db]" />
-                  System Announcements & Broadcasts
-                </h3>
-                <p className="text-xs text-slate-500">Dispatch platform notifications, job alerts and policy updates to teachers & school proprietors</p>
-              </div>
-
-              {/* Compose New Broadcast Form */}
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs space-y-4">
-                <h4 className="font-heading font-bold text-slate-900 text-sm flex items-center gap-2">
-                  <Bell className="w-4 h-4 text-[#fa7b2d]" />
-                  Compose New Broadcast
-                </h4>
-
-                <form onSubmit={handleSendBroadcast} className="space-y-3 text-xs">
-                  <div>
-                    <label className="block font-bold text-slate-700 mb-1">Target Audience</label>
-                    <select
-                      value={newBroadcastTarget}
-                      onChange={(e) => setNewBroadcastTarget(e.target.value as any)}
-                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                    >
-                      <option value="All Teachers">All Verified Teachers (1,248 Recipients)</option>
-                      <option value="School Owners">Registered School Proprietors (284 Schools)</option>
-                      <option value="All Platform Users">Entire Network (1,500+ Users)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-slate-700 mb-1">Announcement Subject</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Urgent Notice: New Term Recruitment Matching Cycle"
-                      value={newBroadcastTitle}
-                      onChange={(e) => setNewBroadcastTitle(e.target.value)}
-                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-slate-700 mb-1">Message Content</label>
-                    <textarea
-                      rows={3}
-                      placeholder="Type your official announcement here..."
-                      value={newBroadcastBody}
-                      onChange={(e) => setNewBroadcastBody(e.target.value)}
-                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                      required
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="px-5 py-2.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Send className="w-4 h-4" />
-                    <span>Send Announcement</span>
-                  </button>
-                </form>
-              </div>
-
-              {/* Past Broadcasts List */}
-              <div className="space-y-3">
-                <h4 className="font-heading font-bold text-slate-900 text-sm">Dispatched Broadcasts History</h4>
-                {broadcasts.map((bc) => (
-                  <div key={bc.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 bg-[#126373] text-white text-[10px] font-bold rounded">
-                          {bc.target}
-                        </span>
-                        <span className="text-[11px] text-slate-400">{bc.date}</span>
-                      </div>
-                      <span className="text-[11px] text-emerald-700 font-bold flex items-center gap-1">
-                        <Eye className="w-3.5 h-3.5" /> {bc.readsCount} reads
-                      </span>
-                    </div>
-
-                    <h5 className="font-heading font-bold text-slate-900 text-sm">{bc.title}</h5>
-                    <p className="text-xs text-slate-600 leading-relaxed">{bc.body}</p>
-                  </div>
-                ))}
-              </div>
-
-            </div>
+            <BroadcastsPanel
+              broadcasts={broadcastsData.broadcasts}
+              loading={broadcastsData.loading}
+              error={broadcastsData.error}
+              teacherCount={teachers.length}
+              onSend={broadcastsData.sendBroadcast}
+              onDelete={broadcastsData.deleteBroadcast}
+            />
           )}
 
+          {activeTab === 'profile' && <AdminProfilePanel />}
         </main>
-
       </div>
-
-      {/* Teacher Profile Modal (Slides up from bottom) */}
-      <TeacherDetailDrawer
-        teacher={selectedTeacherForDrawer}
-        isOpen={isDrawerOpen}
-        onClose={() => {
-          setIsDrawerOpen(false);
-          setSelectedTeacherForDrawer(null);
-        }}
-        onUpdateStatus={handleUpdateTeacherFromDrawer}
-      />
 
       <WorkshopFormModal
         isOpen={workshopModalOpen}
@@ -1792,7 +385,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             ? await updateWorkshop(editingWorkshop.id, input)
             : await createWorkshop(input);
           if (error) toast.error(error, 'Save Failed');
-          else toast.success(editingWorkshop ? 'Workshop updated.' : 'Workshop created and listed on public site.', 'Saved');
+          else toast.success(editingWorkshop ? 'Workshop updated.' : 'Workshop created and listed on the website.', 'Saved');
           return { error };
         }}
       />
@@ -1801,267 +394,16 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
         isOpen={productModalOpen}
         onClose={() => setProductModalOpen(false)}
         editing={editingProduct}
+        defaultSection={newProductSection}
         onSave={async (input) => {
           const { error } = editingProduct
             ? await updateProduct(editingProduct.id, input)
             : await createProduct(input);
           if (error) toast.error(error, 'Save Failed');
-          else toast.success(editingProduct ? 'Product updated.' : 'Product added to catalog.', 'Saved');
+          else toast.success(editingProduct ? 'Changes saved to the store.' : (input.section === 'books' ? 'Book added to the store.' : 'Item added to the store.'), 'Saved');
           return { error };
         }}
       />
-
-      {/* Manual Movement Logger Modal */}
-      {showLogMovementModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-4 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-heading font-bold text-slate-900 text-base flex items-center gap-2">
-                <Activity className="w-5 h-5 text-emerald-600" />
-                Record Teacher Movement
-              </h3>
-              <button
-                onClick={() => setShowLogMovementModal(false)}
-                className="text-slate-400 hover:text-slate-600 font-bold text-lg cursor-pointer"
-              >
-                ×
-              </button>
-            </div>
-
-            <form onSubmit={handleRecordManualMovement} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Teacher Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Amina Bello"
-                  value={manualLogTeacherName}
-                  onChange={(e) => setManualLogTeacherName(e.target.value)}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Previous Status</label>
-                  <select
-                    value={manualLogPrevStatus}
-                    onChange={(e) => setManualLogPrevStatus(e.target.value as AvailabilityStatus)}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                  >
-                    <option value="Immediate">Immediate</option>
-                    <option value="2 Weeks Notice">2 Weeks Notice</option>
-                    <option value="Next Academic Term">Next Academic Term</option>
-                    <option value="Placed / Employed">Placed / Employed</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">New Status</label>
-                  <select
-                    value={manualLogNewStatus}
-                    onChange={(e) => setManualLogNewStatus(e.target.value as AvailabilityStatus)}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                  >
-                    <option value="Immediate">Immediate</option>
-                    <option value="2 Weeks Notice">2 Weeks Notice</option>
-                    <option value="Next Academic Term">Next Academic Term</option>
-                    <option value="Placed / Employed">Placed / Employed</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">School / Employer Involved (Optional)</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Grange School Early Years, Ikeja GRA"
-                  value={manualLogSchool}
-                  onChange={(e) => setManualLogSchool(e.target.value)}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Reason / Note</label>
-                <textarea
-                  rows={2}
-                  placeholder="e.g. Completed notice period; ready for immediate deployment."
-                  value={manualLogReason}
-                  onChange={(e) => setManualLogReason(e.target.value)}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                  required
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setShowLogMovementModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md cursor-pointer"
-                >
-                  Log Movement
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* New Appointment Modal Form */}
-      {showNewAptModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-4 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-heading font-bold text-slate-900 text-base flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-[#2ac0db]" />
-                Schedule Miss Nancie Session
-              </h3>
-              <button
-                onClick={() => setShowNewAptModal(false)}
-                className="text-slate-400 hover:text-slate-600 font-bold text-lg cursor-pointer"
-              >
-                ×
-              </button>
-            </div>
-
-            <form onSubmit={handleAddAppointment} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Session Title</label>
-                <input
-                  type="text"
-                  placeholder="e.g. EYFS Curriculum Audit & Staff Alignment"
-                  value={newApt.title || ''}
-                  onChange={(e) => setNewApt({ ...newApt, title: e.target.value })}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Client Name</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Mrs. Folashade"
-                    value={newApt.clientName || ''}
-                    onChange={(e) => setNewApt({ ...newApt, clientName: e.target.value })}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">School / Organization</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Corona Early Years"
-                    value={newApt.schoolName || ''}
-                    onChange={(e) => setNewApt({ ...newApt, schoolName: e.target.value })}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Date</label>
-                  <input
-                    type="date"
-                    value={newApt.date || selectedCalendarDate}
-                    onChange={(e) => setNewApt({ ...newApt, date: e.target.value })}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Time Slot</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 10:00 AM - 11:30 AM"
-                    value={newApt.time || ''}
-                    onChange={(e) => setNewApt({ ...newApt, time: e.target.value })}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Service Type</label>
-                  <select
-                    value={newApt.type}
-                    onChange={(e) => setNewApt({ ...newApt, type: e.target.value as any })}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                  >
-                    <option value="Proprietor Consultation">Proprietor Consultation</option>
-                    <option value="EYFS Audit">EYFS Curriculum Audit</option>
-                    <option value="Teacher Screening">Teacher Screening</option>
-                    <option value="CEC Space Walkthrough">CEC Space Walkthrough</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Session Format</label>
-                  <select
-                    value={newApt.format}
-                    onChange={(e) => setNewApt({ ...newApt, format: e.target.value as any })}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                  >
-                    <option value="Google Meet / Zoom">Google Meet / Zoom</option>
-                    <option value="In-Person (Lekki Office)">In-Person (Lekki Office)</option>
-                    <option value="On-Site School Visit">On-Site School Visit</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Meeting Link or Address</label>
-                <input
-                  type="text"
-                  placeholder="https://meet.google.com/cec-session"
-                  value={newApt.meetingLink || ''}
-                  onChange={(e) => setNewApt({ ...newApt, meetingLink: e.target.value })}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Notes & Objective</label>
-                <textarea
-                  rows={2}
-                  placeholder="Key focal areas for this session..."
-                  value={newApt.notes || ''}
-                  onChange={(e) => setNewApt({ ...newApt, notes: e.target.value })}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setShowNewAptModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold rounded-xl shadow-md cursor-pointer"
-                >
-                  Add to Calendar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 };

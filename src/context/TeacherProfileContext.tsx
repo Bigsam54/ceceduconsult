@@ -146,7 +146,8 @@ export const TeacherProfileProvider: React.FC<{ children: React.ReactNode }> = (
   const displayName = (profile?.full_name || metadata.full_name || metadata.name || '').trim();
   const firstName = displayName.split(/\s+/)[0] ?? '';
   const avatarUrl = profile?.avatar_url || metadata.avatar_url || metadata.picture || '';
-  const initials = (displayName || 'Teacher')
+  // Without a name yet, use the email (e.g. "nancie@..." -> "N") rather than a generic letter
+  const initials = (displayName || session?.user?.email || 'CEC')
     .split(/\s+/)
     .map((n) => n[0])
     .join('')

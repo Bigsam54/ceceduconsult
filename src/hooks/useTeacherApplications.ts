@@ -54,5 +54,19 @@ export const useTeacherApplications = () => {
     return { error: null };
   }, []);
 
-  return { applications, loading, error, refresh, setVerificationStatus };
+  const setAvailability = useCallback(async (userId: string, availability: string) => {
+    if (!supabase) return { error: 'Backend not connected yet.' };
+    const { data, error: updateError } = await supabase
+      .from('teacher_profiles')
+      .update({ availability })
+      .eq('user_id', userId)
+      .select('*')
+      .single();
+
+    if (updateError) return { error: updateError.message };
+    setApplications((prev) => prev.map((a) => (a.user_id === userId ? (data as TeacherProfileRow) : a)));
+    return { error: null };
+  }, []);
+
+  return { applications, loading, error, refresh, setVerificationStatus, setAvailability };
 };

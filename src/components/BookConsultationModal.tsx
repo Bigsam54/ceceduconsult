@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ConsultationService } from '../types';
 import { useToast } from '../context/ToastContext';
+import { submitInquiry } from '../services/inquiryService';
 import { 
   X, 
   ArrowLeft, 
@@ -76,6 +77,19 @@ export const BookConsultationModal: React.FC<BookConsultationModalProps> = ({ se
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
+    submitInquiry({
+      kind: 'consultation',
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      organization: formData.schoolName,
+      subject: formData.serviceTitle,
+      message: formData.notes,
+      preferredDate: formData.preferredDate,
+      meetingFormat: formData.meetingType
+    }).then(({ error }) => {
+          if (error) toast.error('We could not save your request online. Please also reach us on WhatsApp so nothing is missed.', 'Not Saved');
+    });
     toast.success(
       `Consultation booking request received for "${formData.serviceTitle}". Miss Nancie will contact you within 24 hours.`,
       'Booking Received'

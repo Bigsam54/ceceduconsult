@@ -16,6 +16,7 @@ import {
   IdCard
 } from 'lucide-react';
 import { uploadToCloudinary, CLOUDINARY_FOLDERS } from '../lib/cloudinary';
+import { prepareImage } from '../utils/prepareImage';
 
 export type CardSideKey = 'front' | 'back';
 
@@ -39,7 +40,6 @@ export const isGhanaCardComplete = (card: GhanaCardState) =>
 // ID-1 card format (85.6mm x 54mm) used by the Ghana Card
 const CARD_ASPECT = 85.6 / 54;
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
-const MAX_IMAGE_DIMENSION = 2400;
 
 const SIDE_COPY: Record<CardSideKey, { title: string; hint: string; cameraLabel: string }> = {
   front: {
@@ -53,31 +53,6 @@ const SIDE_COPY: Record<CardSideKey, { title: string; hint: string; cameraLabel:
     cameraLabel: 'BACK of your Ghana Card'
   }
 };
-
-// Large phone photos are downscaled to keep uploads quick; anything the browser can't decode is sent as-is
-const prepareImage = (file: File): Promise<Blob> =>
-  new Promise((resolve) => {
-    const objectUrl = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      URL.revokeObjectURL(objectUrl);
-      const scale = Math.min(1, MAX_IMAGE_DIMENSION / Math.max(img.naturalWidth, img.naturalHeight));
-      if (scale === 1 && file.size <= 3 * 1024 * 1024) {
-        resolve(file);
-        return;
-      }
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(img.naturalWidth * scale);
-      canvas.height = Math.round(img.naturalHeight * scale);
-      canvas.getContext('2d')?.drawImage(img, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob((blob) => resolve(blob ?? file), 'image/jpeg', 0.92);
-    };
-    img.onerror = () => {
-      URL.revokeObjectURL(objectUrl);
-      resolve(file);
-    };
-    img.src = objectUrl;
-  });
 
 const FrameCorners: React.FC<{ className?: string }> = ({ className = 'border-[#2ac0db]' }) => (
   <>

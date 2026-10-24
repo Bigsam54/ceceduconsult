@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PasswordVisibilityToggle } from '../components/common/PasswordVisibilityToggle';
 import { ViewMode } from '../types';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
@@ -21,6 +22,7 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({ onNavigate, onLo
   const { signIn, signOut, isConfigured } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -133,13 +135,14 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({ onNavigate, onLo
               <div className="relative">
                 <Lock className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-900 font-medium text-slate-900"
+                  className="w-full pl-10 pr-11 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-slate-900 font-medium text-slate-900"
                 />
+                <PasswordVisibilityToggle visible={showPassword} onToggle={() => setShowPassword(!showPassword)} />
               </div>
             </div>
 

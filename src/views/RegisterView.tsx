@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { PasswordVisibilityToggle } from '../components/common/PasswordVisibilityToggle';
 import { ViewMode } from '../types';
 import { safeScrollToTop } from '../utils/safeWindow';
 import { useToast } from '../context/ToastContext';
@@ -52,6 +53,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
     bio: ''
   });
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -315,13 +317,14 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   placeholder="At least 6 characters"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
+                  className="w-full pl-9 pr-11 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
                 />
+                <PasswordVisibilityToggle visible={showPassword} onToggle={() => setShowPassword(!showPassword)} />
               </div>
               <p className="text-[11px] text-slate-400 mt-1">This is what you'll use to log in to your Teacher Dashboard.</p>
             </div>

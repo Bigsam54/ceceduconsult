@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LearningProduct } from '../types';
 import { safeOpenUrl } from '../utils/safeWindow';
+import { submitInquiry } from '../services/inquiryService';
 import { useToast } from '../context/ToastContext';
 import { X, ArrowLeft, Truck } from 'lucide-react';
 import { WhatsAppIcon } from './icons/WhatsAppIcon';
@@ -52,6 +53,14 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({ pr
   const currentImg = selectedImage || product.image;
 
   const handleInquiry = () => {
+    // The customer continues on WhatsApp; this records the demand for the admin inbox
+    submitInquiry({
+      kind: 'product',
+      subject: product.name,
+      message: product.section === 'books' ? 'Book enquiry via WhatsApp' : 'Product enquiry via WhatsApp',
+      referenceId: product.id,
+      quantity
+    });
     toast.info(`Preparing WhatsApp inquiry for ${quantity}x ${product.name}...`, 'Opening WhatsApp');
     const msg = `Hello CEC Learning Essentials!\n\nI am interested in ordering:\n*Product:* ${product.name}\n*Quantity:* ${quantity}\n\nPlease share delivery details and availability in Ghana.`;
     safeOpenUrl(`https://wa.me/233540390029?text=${encodeURIComponent(msg)}`);
@@ -137,6 +146,9 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({ pr
                 <h3 className="text-lg sm:text-xl font-heading font-extrabold text-slate-900">
                   {product.name}
                 </h3>
+                {product.author && (
+                  <p className="text-sm text-slate-500 font-medium mt-0.5">by <span className="text-slate-800 font-semibold">{product.author}</span></p>
+                )}
 
                 <div className="mt-3 text-xl sm:text-2xl font-extrabold text-slate-900">
                   {product.priceDisplay || `GH₵ ${product.price.toLocaleString()}`}

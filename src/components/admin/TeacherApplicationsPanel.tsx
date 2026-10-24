@@ -32,6 +32,8 @@ interface TeacherApplicationsPanelProps {
   error: string | null;
   onRefresh: () => void;
   onSetStatus: (userId: string, status: VerificationStatus) => Promise<{ error: string | null }>;
+  /** Opens the queue focused on one teacher (e.g. from the Talent Pool) */
+  focusSearch?: string;
 }
 
 type StatusFilter = VerificationStatus | 'all';
@@ -161,11 +163,19 @@ export const TeacherApplicationsPanel: React.FC<TeacherApplicationsPanelProps> =
   loading,
   error,
   onRefresh,
-  onSetStatus
+  onSetStatus,
+  focusSearch
 }) => {
   const toast = useToast();
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('pending');
-  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(focusSearch ? 'all' : 'pending');
+  const [search, setSearch] = useState(focusSearch ?? '');
+
+  useEffect(() => {
+    if (focusSearch) {
+      setSearch(focusSearch);
+      setStatusFilter('all');
+    }
+  }, [focusSearch]);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [viewer, setViewer] = useState<{ teacher: TeacherProfileRow; side: 'front' | 'back' } | null>(null);
 

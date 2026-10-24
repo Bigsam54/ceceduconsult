@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { recordProfileView } from '../services/inquiryService';
 import { Teacher } from '../types';
 import { CediIcon } from '../components/icons/CediIcon';
 import { 
@@ -28,6 +29,10 @@ export const TeacherProfileView: React.FC<TeacherProfileViewProps> = ({
   onBack,
   onContactCEC
 }) => {
+  useEffect(() => {
+    if (teacher) recordProfileView(teacher.id);
+  }, [teacher?.id]);
+
   if (!teacher) return null;
 
   const initials = teacher.name

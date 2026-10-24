@@ -9,7 +9,9 @@ export const isCloudinaryConfigured = Boolean(cloudName && uploadPreset);
 
 export const CLOUDINARY_FOLDERS = {
   ghanaCards: 'cec/teachers/ghana-cards',
-  avatars: 'cec/teachers/avatars'
+  avatars: 'cec/teachers/avatars',
+  storeBooks: 'cec/store/books',
+  storeResources: 'cec/store/school-resources'
 } as const;
 
 /**

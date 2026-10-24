@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Workshop } from '../types';
 import { useToast } from '../context/ToastContext';
+import { submitInquiry } from '../services/inquiryService';
 import { 
   X, 
   ArrowLeft,
@@ -60,8 +61,21 @@ export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ wo
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setRegistered(true);
+    submitInquiry({
+      kind: 'workshop',
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      organization: formData.schoolName,
+      subject: workshop.title,
+      preferredDate: workshop.date,
+      referenceId: workshop.id,
+      quantity: ticketCount
+    }).then(({ error }) => {
+          if (error) toast.error('We could not save your request online. Please also reach us on WhatsApp so nothing is missed.', 'Not Saved');
+    });
     toast.success(
-      `Registration confirmed for ${ticketCount} seat(s) at "${workshop.title}". Confirmation email sent!`,
+      `Registration received for ${ticketCount} seat(s) at "${workshop.title}". The CEC team will contact you to confirm.`,
       'Seat Reserved'
     );
     try {
