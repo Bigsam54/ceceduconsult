@@ -12,7 +12,9 @@ import {
   Building2, 
   User, 
   Phone, 
-  Calendar 
+  Calendar,
+  PenLine,
+  RotateCcw
 } from 'lucide-react';
 import { WhatsAppIcon } from './icons/WhatsAppIcon';
 
@@ -29,6 +31,13 @@ export const ContactTeacherModal: React.FC<ContactTeacherModalProps> = ({ teache
   const [phone, setPhone] = useState('');
   const [requestedDate, setRequestedDate] = useState('');
   const [copied, setCopied] = useState(false);
+  // null = follow the auto-filled template; a string = the user's own edited message
+  const [customMessage, setCustomMessage] = useState<string | null>(null);
+
+  // Start fresh whenever a different teacher is requested
+  useEffect(() => {
+    setCustomMessage(null);
+  }, [teacher?.id]);
 
   // Close on Escape key and body scroll lock
   useEffect(() => {
@@ -53,18 +62,24 @@ export const ContactTeacherModal: React.FC<ContactTeacherModalProps> = ({ teache
 
   const initials = teacher.name.split(' ').map(n => n[0]).join('').slice(0, 2);
 
-  const defaultMessage = `Hello Miss Nancie (CEC Consult, Ghana),\n\nI am ${contactPerson || '[Your Name]'} representing ${schoolName || '[School Name]'}.\n\nWe viewed the verified profile for ${teacher.name} (${teacher.title}, ${teacher.teachingLevel}) on the CEC Teacher Network.\n\nWe would like to request candidate details and schedule an interview on ${requestedDate || '[Target Date]'}.\n\nPlease reach us back at ${phone || '[Phone]'}.\n\nThank you!`;
+  const templateMessage = `Hello CEC Educational Consult,\n\nI am ${contactPerson || '[Your Name]'} representing ${schoolName || '[School Name]'}.\n\nWe viewed the verified profile for ${teacher.name} (${teacher.title}, ${teacher.teachingLevel}) on the CEC Teacher Network.\n\nWe would like to request this teacher and schedule an interview on ${requestedDate || '[Target Date]'}.\n\nPlease reach us back at ${phone || '[Phone]'}.\n\nThank you!`;
+
+  const message = customMessage ?? templateMessage;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(defaultMessage);
+    navigator.clipboard.writeText(message);
     setCopied(true);
     toast.success('Interview request template copied to clipboard!', 'Copied');
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleSendWhatsApp = () => {
-    const encoded = encodeURIComponent(defaultMessage);
-    toast.info(`Connecting with Miss Nancie on WhatsApp for candidate ${teacher.name}...`, 'Opening WhatsApp');
+    if (!message.trim()) {
+      toast.error('Please write a short message before sending your request.', 'Message Empty');
+      return;
+    }
+    const encoded = encodeURIComponent(message);
+    toast.info(`Sending your request for ${teacher.name} to the CEC team on WhatsApp...`, 'Opening WhatsApp');
     safeOpenUrl(`https://wa.me/233540390029?text=${encoded}`);
   };
 
@@ -101,7 +116,7 @@ export const ContactTeacherModal: React.FC<ContactTeacherModalProps> = ({ teache
                 <ShieldCheck className="w-3.5 h-3.5" /> Placement Inquiry
               </span>
               <h3 className="text-sm sm:text-base font-heading font-bold text-white truncate max-w-[220px]">
-                Request Interview for {teacher.name}
+                Request {teacher.name}
               </h3>
             </div>
           </div>
@@ -199,23 +214,46 @@ export const ContactTeacherModal: React.FC<ContactTeacherModalProps> = ({ teache
 
           {/* Generated Message Preview */}
           <div className="space-y-1">
-            <div className="flex items-center justify-between text-[11px]">
-              <span className="font-bold text-slate-700">Message Preview:</span>
-              <button
+            <div className="flex items-center justify-between text-[11px] gap-2">
+              <span className="font-bold text-slate-700 flex items-center gap-1.5">
+                Your Message
+                <span className="px-1.5 py-0.5 rounded-md bg-[#2ac0db]/15 text-[#126373] text-[10px] font-bold flex items-center gap-1">
+                  <PenLine className="w-3 h-3" /> Editable
+                </span>
+              </span>
+              <div className="flex items-center gap-3">
+                {customMessage !== null && (
+                  <button
+                    type="button"
+                    onClick={() => setCustomMessage(null)}
+                    className="text-slate-500 hover:text-slate-800 font-semibold flex items-center gap-1 cursor-pointer"
+                    title="Discard your edits and use the auto-filled message"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Reset</span>
+                  </button>
+                )}
+                <button
                 type="button"
                 onClick={handleCopy}
                 className="text-[#126373] hover:text-[#2ac0db] font-semibold flex items-center gap-1 cursor-pointer"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copied ? 'Copied!' : 'Copy Message'}</span>
+                <span>{copied ? 'Copied!' : 'Copy'}</span>
               </button>
+              </div>
             </div>
             <textarea
-              readOnly
-              rows={3}
-              value={defaultMessage}
-              className="w-full p-2.5 bg-slate-100/90 border border-slate-200 rounded-xl font-mono text-[11px] text-slate-700 leading-relaxed resize-none focus:outline-none"
+              rows={8}
+              value={message}
+              onChange={(e) => setCustomMessage(e.target.value)}
+              className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 leading-relaxed resize-y min-h-[140px] outline-none focus:ring-2 focus:ring-[#2ac0db] focus:border-transparent"
             />
+            <p className="text-[10px] text-slate-400">
+              {customMessage === null
+                ? 'This message fills in automatically from the details above. Click into it to edit anything you like.'
+                : 'You have edited this message. Changes to the fields above will no longer update it.'}
+            </p>
           </div>
 
           {/* Direct CTA Buttons */}
@@ -226,7 +264,7 @@ export const ContactTeacherModal: React.FC<ContactTeacherModalProps> = ({ teache
               className="w-full sm:flex-1 py-3 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-extrabold rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer text-xs"
             >
               <WhatsAppIcon className="w-4 h-4" />
-              <span>Send WhatsApp to Miss Nancie</span>
+              <span>Request This Teacher</span>
             </button>
             <button
               type="button"

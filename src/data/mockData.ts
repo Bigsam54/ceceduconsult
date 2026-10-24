@@ -332,7 +332,7 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
     id: 'srv-recruitment',
     title: 'Teacher Recruitment & Staff Placement',
     shortDesc: 'End-to-end recruitment of vetted, qualified educators tailored to your school needs.',
-    fullDesc: 'We handle candidate sourcing, credentials verification, practical classroom observation, background checks and matching with your school values across regional and international institutions.',
+    fullDesc: 'We handle candidate sourcing, credentials verification, practical classroom observation, background checks matching your school\'s needs.',
     iconName: 'UserCheck',
     features: [
       'Comprehensive candidate screening and professional licensing alignment',
@@ -344,7 +344,7 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   },
   {
     id: 'srv-hometutoring',
-    title: 'Home tutoring',
+    title: 'Home Tutoring',
     shortDesc: 'A structured topup academic programme to support a child\'s education.',
     fullDesc: 'Dedicated in-home or virtual personal educators who provide diagnostic assessments, structured academic top-up and foundational reinforcement.',
     iconName: 'GraduationCap',
@@ -359,11 +359,11 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   {
     id: 'srv-homeschooling',
     title: 'Homeschooling',
-    shortDesc: 'Structured curriculum with flexible child led approaches done from home across all levels.',
+    shortDesc: 'Structured curriculum with flexible child-led approaches done from home across all levels.',
     fullDesc: 'End-to-end homeschooling guidance including curriculum design, daily schedules, learning materials and milestone assessments tailored to your child.',
     iconName: 'BookOpenCheck',
     features: [
-      'Child led experiential pacing and comprehensive learning milestones',
+      'Child-led experiential pacing and comprehensive learning milestones',
       'Structured international and local curriculum frameworks across all levels',
       'Regular progress monitoring, assessments and parent mentorship'
     ],
@@ -373,11 +373,11 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   {
     id: 'srv-curriculum',
     title: 'Early Childhood Curriculum Design & Migration',
-    shortDesc: 'Customized Early childhood curriculum, blended curriculum and international curriculums designed for maximum child engagement for children ages 3months to 6 six.',
+    shortDesc: 'Customized early childhood curriculum, blended curriculum and international curriculum designed for maximum child engagement for children ages 3 months to 6 years.',
     fullDesc: 'Our curriculum experts review your existing scheme of work or design a bespoke child-centric curriculum aligned with global early childhood standards.',
     iconName: 'BookOpenCheck',
     features: [
-      'CEC Customised Early childhood curriculum for ages 3 months to 6 years',
+      'CEC Customised Early Childhood Curriculum for ages 3 months to 6 years',
       'Hybrid and international curriculums available (Cambridge, Oxford and Pearson)',
       'Teacher lesson plan templates, schemes of work and assessment rubrics'
     ],
@@ -387,7 +387,7 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   {
     id: 'srv-spaces',
     title: 'CEC Spaces: School designs, Classroom Setup & Transformation',
-    shortDesc: 'Themed school designs, signature classroom décor and equipment planning for modern, child-friendly learning environments.',
+    shortDesc: 'Themed school designs, signature classroom decor and equipment planning for modern, child-friendly learning environments.',
     fullDesc: 'We turn plain rooms into vibrant, ergonomically designed learning sanctuaries with safety-tested furniture, sensory learning zones and outdoor play areas.',
     iconName: 'LayoutGrid',
     features: [
@@ -400,9 +400,9 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   },
   {
     id: 'srv-pd',
-    title: 'Professional Development workshops for teacher and school leaders',
-    shortDesc: 'Practical training modules delivered in person or online to boost educator competency and innovation.',
-    fullDesc: 'Equip your teachers and leaders with modern classroom management, positive discipline, phonics mastery and parent communication methods.',
+    title: 'Professional Development Workshops for Teachers and School Leaders',
+    shortDesc: 'Practical training modules delivered in-person or online to boost educator competency and innovation.',
+    fullDesc: 'Equip your teachers and leaders with modern classroom strategies and innovative educational practices.',
     iconName: 'GraduationCap',
     features: [
       'On-site workshops or international virtual interactive modules',
@@ -416,12 +416,12 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
     id: 'srv-reading-club',
     title: 'CEC Reading Club & Phonics Circles (Online)',
     shortDesc: 'Weekly live virtual phonics, guided storytelling and online book clubs for children ages 4 to 12.',
-    fullDesc: 'A joyful 100% online literacy program helping young learners build phonemic awareness, expressive reading fluency and an enduring love for books through structured virtual reading circles.',
+    fullDesc: 'A joyful 100% online literacy programme helping young learners build phonemic awareness, expressive reading fluency and love for books through structured virtual reading circles.',
     iconName: 'BookOpen',
     features: [
       'Weekly live virtual reading and phonics sessions for children ages 4 to 12',
       'Certificate for various reading challenges',
-      'Curated Weekly online and audio books and digital reading logs'
+      'Curated weekly online and audio books and digital reading logs'
     ],
     recommendedFor: 'Parents and families seeking engaging live online literacy coaching',
     pricingTag: 'Term & Monthly Subscriptions'
@@ -443,7 +443,7 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   {
     id: 'srv-branding',
     title: 'School Branding Services',
-    shortDesc: 'Branding solutions designed to help schools to build a strong, distintive and memorable identity.',
+    shortDesc: 'Branding solutions designed to help schools to build a strong, distinctive and memorable identity.',
     fullDesc: 'Comprehensive identity design and positioning for educational institutions seeking to stand out, attract discerning families and inspire trust.',
     iconName: 'Sparkles',
     features: [
@@ -456,8 +456,8 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   },
   {
     id: 'srv-library',
-    title: 'Library setup',
-    shortDesc: 'School and home and library setup with curated age-appropriate book selections.',
+    title: 'Library Setup',
+    shortDesc: 'School and home library setup with curated age-appropriate book selections.',
     fullDesc: 'Designing captivating reading sanctuaries in schools and homes with ergonomic display shelving, cozy reading nooks and catalogue literature collections.',
     iconName: 'BookOpen',
     features: [
@@ -498,7 +498,7 @@ export const MOCK_CONSULTATION_SERVICES: ConsultationService[] = [
   },
   {
     id: 'srv-sms',
-    title: 'School Management system',
+    title: 'School Management System',
     shortDesc: 'Modern digital platforms to streamline school administrative processes, records and communications.',
     fullDesc: 'Integrated school software solutions for attendance tracking, student progress reports, parent messaging and administrative efficiency.',
     iconName: 'LayoutGrid',

@@ -4,7 +4,6 @@ import {
   CheckCircle2, 
   MapPin, 
   Briefcase, 
-  DollarSign, 
   Clock, 
   Star, 
   ArrowRight, 
@@ -12,6 +11,7 @@ import {
   GraduationCap,
   Building2
 } from 'lucide-react';
+import { CediIcon } from './icons/CediIcon';
 
 interface TeacherCardProps {
   teacher: Teacher;
@@ -90,7 +90,7 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onViewProfile
             {/* Rating badge */}
             <div className="flex items-center gap-1 px-2 py-0.5 bg-slate-50 rounded-lg border border-slate-200 text-xs font-bold text-slate-800 shrink-0">
               <Star className="w-3 h-3 fill-[#fa7b2d] text-[#fa7b2d]" />
-              <span>{teacher.rating.toFixed(1)}</span>
+              <span>{teacher.reviewsCount > 0 ? teacher.rating.toFixed(1) : 'New'}</span>
             </div>
           </div>
         </div>
@@ -102,7 +102,7 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onViewProfile
             <span>{teacher.experienceYears} Yrs Exp.</span>
           </div>
           <div className="flex items-center gap-1.5 text-slate-700 font-medium">
-            <DollarSign className="w-3.5 h-3.5 text-slate-400" />
+            <CediIcon className="w-3.5 h-3.5 text-slate-400" />
             <span className="truncate">{teacher.salaryExpectation}</span>
           </div>
           <div className="flex items-center gap-1.5 col-span-2">

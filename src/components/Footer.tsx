@@ -113,7 +113,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               </li>
               <li>
                 <button onClick={() => onNavigate('consultancy')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
-                  Home tutoring & Homeschooling
+                  Home Tutoring & Homeschooling
                 </button>
               </li>
               <li>
@@ -123,7 +123,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               </li>
               <li>
                 <button onClick={() => onNavigate('cec-spaces')} className="hover:text-[#2ac0db] transition-colors cursor-pointer text-left">
-                  CEC Inspire Spaces (Classroom Setup)
+                  CEC Inspire Spaces (School & Classroom Setup)
                 </button>
               </li>
               <li>

@@ -37,7 +37,7 @@ export const SchoolsToConsiderSection: React.FC<SchoolsToConsiderSectionProps> =
   onSelectSchool,
   onOpenConsultationModal,
   title = "Schools to Consider",
-  subtitle = "Looking for the right school for your child? Discover reputable schools and institutions in Ghana partnered with CEC for excellence in pedagogy, safety and classroom environment.",
+  subtitle = "Looking for the right school for your child? Discover reputable schools and institutions in Ghana partnered with CEC for excellence in pedagogy, safety and conducive environments.",
   showAdvertiseBanner = true
 }) => {
   const toast = useToast();

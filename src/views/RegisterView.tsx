@@ -3,6 +3,8 @@ import { ViewMode } from '../types';
 import { safeScrollToTop } from '../utils/safeWindow';
 import { useToast } from '../context/ToastContext';
 import { supabase } from '../lib/supabaseClient';
+import { uploadToCloudinary, CLOUDINARY_FOLDERS } from '../lib/cloudinary';
+import { GhanaCardCapture, GhanaCardState, emptyGhanaCard, isGhanaCardComplete } from '../components/GhanaCardCapture';
 import {
   CheckCircle2,
   ArrowRight,
@@ -33,6 +35,8 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
   const [profileImage, setProfileImage] = useState<string>('');
   const [uploadError, setUploadError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [profileFile, setProfileFile] = useState<File | null>(null);
+  const [ghanaCard, setGhanaCard] = useState<GhanaCardState>(emptyGhanaCard);
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -59,6 +63,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
         return;
       }
       setUploadError('');
+      setProfileFile(file);
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
@@ -71,6 +76,17 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
   };
 
   const handleNext = async () => {
+    if (step === 1 && !isGhanaCardComplete(ghanaCard)) {
+      const stillUploading = ghanaCard.front?.status === 'uploading' || ghanaCard.back?.status === 'uploading';
+      toast.error(
+        stillUploading
+          ? 'Please wait for your Ghana Card photos to finish uploading.'
+          : 'Please capture or upload both the front and back of your Ghana Card to continue.',
+        'Ghana Card Required'
+      );
+      return;
+    }
+
     if (step < 5) {
       setStep(step + 1);
       safeScrollToTop();
@@ -94,6 +110,17 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
     }
 
     setSubmitting(true);
+
+    // The profile photo is optional, so a failed upload shouldn't block the application
+    let avatarUrl = '';
+    if (profileFile) {
+      try {
+        avatarUrl = await uploadToCloudinary(profileFile, { folder: CLOUDINARY_FOLDERS.avatars, fileName: profileFile.name });
+      } catch {
+        toast.info('Your profile photo could not be uploaded. You can add it later from your dashboard.', 'Photo Skipped');
+      }
+    }
+
     const { error: signUpError } = await supabase.auth.signUp({
       email: formData.email,
       password: formData.password,
@@ -106,7 +133,12 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
           qualification: formData.qualification,
           salary_expectation: formData.salaryExpectation,
           bio: formData.bio,
-          availability: formData.availability
+          availability: formData.availability,
+          phone: formData.phone,
+          experience_years: formData.experienceYears,
+          avatar_url: avatarUrl,
+          ghana_card_front_url: ghanaCard.front?.url ?? '',
+          ghana_card_back_url: ghanaCard.back?.url ?? ''
         }
       }
     });
@@ -206,6 +238,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                     type="button"
                     onClick={() => {
                       setProfileImage('');
+                      setProfileFile(null);
                       toast.info('Profile photo removed.');
                     }}
                     className="absolute -top-2 -right-2 w-6 h-6 bg-rose-600 text-white rounded-full flex items-center justify-center shadow hover:bg-rose-700 cursor-pointer"
@@ -235,6 +268,9 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                 </button>
               </div>
             </div>
+
+            {/* Ghana Card front & back (required) */}
+            <GhanaCardCapture value={ghanaCard} onChange={setGhanaCard} />
 
             <div>
               <label className="block font-bold text-slate-700 mb-1">Full Legal Name *</label>
@@ -347,7 +383,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Nursery & KG, Preschool (EYFS), Lower Primary (Grades 1 to 3), or JHS (English)"
+                  placeholder="e.g. Pre-school (Nursery & KG), Primary, JHS or Special Needs"
                   value={formData.teachingLevel}
                   onChange={(e) => setFormData({ ...formData, teachingLevel: e.target.value })}
                   className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
@@ -358,11 +394,10 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
               <div className="flex flex-wrap items-center gap-1.5 mt-2">
                 <span className="text-[10px] text-slate-500 font-semibold">Quick Suggestions:</span>
                 {[
-                  'Preschool (EYFS)',
-                  'Nursery & Kindergarten',
-                  'Lower Primary (Grades 1 to 3)',
-                  'JHS (English)',
-                  'Special Needs (SEN)'
+                  'Pre-school (Nursery & KG)',
+                  'Primary',
+                  'JHS',
+                  'Special Needs'
                 ].map((lvl) => (
                   <button
                     key={lvl}
@@ -418,7 +453,7 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. B.Ed. Early Childhood Education, PGDE, Montessori Diploma, or Certified Literacy Coach"
+                  placeholder="e.g. Masters in Education, B.Ed, PGDE, Diploma or Certificate"
                   value={formData.qualification}
                   onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
                   className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
@@ -429,11 +464,11 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
               <div className="flex flex-wrap items-center gap-1.5 mt-2">
                 <span className="text-[10px] text-slate-500 font-semibold">Quick Suggestions:</span>
                 {[
-                  'B.Ed Early Childhood Education',
-                  'Early Childhood Diploma',
-                  'EYFS & Montessori Certified',
-                  'PGDE (Early Years)',
-                  'Certified Literacy Coach'
+                  'Masters in Education',
+                  'Bachelors (B.Ed)',
+                  'PGDE',
+                  'Diploma in Education',
+                  'Teaching Certificate'
                 ].map((qual) => (
                   <button
                     key={qual}
@@ -469,7 +504,6 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                 className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
               >
                 <option value="Immediate">Immediate</option>
-                <option value="2 Weeks Notice">2 Weeks Notice</option>
                 <option value="Next Academic Term">Next Academic Term</option>
               </select>
             </div>
@@ -515,6 +549,32 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
                 <p><strong>Qualification:</strong> {formData.qualification || 'B.Ed Early Childhood'}</p>
                 <p><strong>Availability:</strong> {formData.availability}</p>
                 <p className="col-span-2"><strong>Salary:</strong> {formData.salaryExpectation}</p>
+              </div>
+
+              <div className="pt-2.5 border-t border-slate-200">
+                <p className="font-bold text-xs mb-2">Ghana Card</p>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {(['front', 'back'] as const).map((side) => {
+                    const cardSide = ghanaCard[side];
+                    return (
+                      <div key={side} className="space-y-1">
+                        <div className="relative rounded-xl overflow-hidden bg-slate-200 border border-slate-200" style={{ aspectRatio: 85.6 / 54 }}>
+                          {cardSide?.previewUrl ? (
+                            <img src={cardSide.previewUrl} alt={`Ghana Card ${side}`} className="absolute inset-0 w-full h-full object-cover" />
+                          ) : (
+                            <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-slate-500 px-2 text-center break-all">
+                              {cardSide?.fileName ?? 'Not uploaded'}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[10px] font-semibold text-slate-500 capitalize flex items-center gap-1">
+                          {cardSide?.status === 'done' && <CheckCircle2 className="w-3 h-3 text-emerald-600" />}
+                          {side}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>

@@ -72,7 +72,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
             {/* Short, direct CEC Brand Subtitle */}
             <p className="text-base sm:text-lg md:text-xl text-slate-200 leading-relaxed max-w-2xl font-medium">
-              We connect schools and families with vetted educators, educational consultancy, and signature school and classroom setups.
+              We connect schools and families with vetted educators, educational consultancy services and signature school and classroom setups.
             </p>
 
             {/* Action Buttons */}

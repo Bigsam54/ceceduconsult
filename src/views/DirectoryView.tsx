@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ViewMode, Teacher, TeacherFilterState } from '../types';
-import { MOCK_TEACHERS } from '../data/mockData';
+import { useDirectoryTeachers } from '../hooks/useDirectoryTeachers';
 import { TeacherCard } from '../components/TeacherCard';
 import { 
   Search, 
@@ -11,7 +11,6 @@ import {
   SlidersHorizontal,
   MapPin,
   Briefcase,
-  DollarSign,
   GraduationCap,
   Clock,
   CheckCircle2,
@@ -22,6 +21,30 @@ interface DirectoryViewProps {
   onSelectTeacher: (teacher: Teacher) => void;
   onContactTeacher: (teacher: Teacher) => void;
 }
+
+// Filter categories group the free-text levels/qualifications teachers enter
+const LEVEL_PATTERNS: Record<string, RegExp> = {
+  'Pre-school': /pre-?school|early childhood|eyfs|nursery|kindergarten|\bkg\b|creche|early years/i,
+  'Primary': /primary/i,
+  'JHS': /jhs|junior high/i,
+  'Special Needs': /special needs|\bsen\b/i
+};
+
+const QUALIFICATION_PATTERNS: Record<string, RegExp> = {
+  'Masters': /master|\bm\.?ed\b|\bm\.?phil\b|\bmsc\b|\bma\b/i,
+  'Bachelors': /bachelor|\bb\.?ed\b|\bbsc\b|\bba\b/i,
+  'PGDE': /pgde|pdge|post-?graduate diploma/i,
+  'Diploma': /diploma/i,
+  'Certificate': /certif/i
+};
+
+const matchesTeachingLevel = (value: string, level: string) => LEVEL_PATTERNS[level]?.test(value) ?? false;
+
+const matchesQualification = (value: string, qualification: string) => {
+  // A PGDE is a diploma by name, but has its own category
+  if (qualification === 'Diploma' && QUALIFICATION_PATTERNS.PGDE.test(value)) return false;
+  return QUALIFICATION_PATTERNS[qualification]?.test(value) ?? false;
+};
 
 export const DirectoryView: React.FC<DirectoryViewProps> = ({
   onSelectTeacher,
@@ -35,20 +58,21 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
     maxSalary: 2500,
     experienceMinYears: 0,
     onlyVerified: false,
-    location: 'All'
+    location: ''
   });
 
-  const [sortBy, setSortBy] = useState<'rating' | 'experience' | 'name'>('rating');
+  const { teachers } = useDirectoryTeachers();
+
+  const [sortBy, setSortBy] = useState<'recommended' | 'rating' | 'experience' | 'name'>('recommended');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  const levelOptions = ['All', 'Early Childhood (EYFS)', 'Nursery', 'Kindergarten', 'Lower Primary', 'JHS (English)', 'Special Needs (SEN)'];
-  const qualificationOptions = ['All', 'B.Ed Early Childhood', 'EYFS Certified', 'Early Childhood Diploma', 'PGDE', 'Early Years Specialist'];
-  const availabilityOptions = ['All', 'Immediate', '2 Weeks Notice', 'Next Academic Term'];
-  const locationOptions = ['All', 'East Legon', 'Airport Residential', 'Cantonments', 'Tema', 'Kumasi', 'Takoradi'];
+  const levelOptions = ['All', 'Pre-school', 'Primary', 'JHS', 'Special Needs'];
+  const qualificationOptions = ['All', 'Masters', 'Bachelors', 'PGDE', 'Diploma', 'Certificate'];
+  const availabilityOptions = ['All', 'Immediate', 'Next Academic Term'];
 
   // Filter Logic
   const filteredTeachers = useMemo(() => {
-    return MOCK_TEACHERS.filter((t) => {
+    return teachers.filter((t) => {
       // Search
       if (filters.searchQuery.trim()) {
         const q = filters.searchQuery.toLowerCase();
@@ -60,16 +84,16 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
       }
 
       // Teaching Level
-      if (filters.teachingLevel !== 'All' && t.teachingLevel !== filters.teachingLevel) return false;
+      if (filters.teachingLevel !== 'All' && !matchesTeachingLevel(t.teachingLevel, filters.teachingLevel)) return false;
 
       // Qualification
-      if (filters.qualification !== 'All' && t.qualification !== filters.qualification) return false;
+      if (filters.qualification !== 'All' && !matchesQualification(t.qualification, filters.qualification)) return false;
 
       // Availability
       if (filters.availability !== 'All' && t.availability !== filters.availability) return false;
 
       // Location
-      if (filters.location !== 'All' && !t.location.toLowerCase().includes(filters.location.toLowerCase())) return false;
+      if (filters.location.trim() && !t.location.toLowerCase().includes(filters.location.trim().toLowerCase())) return false;
 
       // Experience
       if (t.experienceYears < filters.experienceMinYears) return false;
@@ -79,11 +103,13 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
 
       return true;
     }).sort((a, b) => {
+      // Recommended: newly verified CEC registrations first, then by rating
+      if (sortBy === 'recommended') return Number(Boolean(b.isRegistered)) - Number(Boolean(a.isRegistered)) || b.rating - a.rating;
       if (sortBy === 'rating') return b.rating - a.rating;
       if (sortBy === 'experience') return b.experienceYears - a.experienceYears;
       return a.name.localeCompare(b.name);
     });
-  }, [filters, sortBy]);
+  }, [teachers, filters, sortBy]);
 
   const resetFilters = () => {
     setFilters({
@@ -94,7 +120,7 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
       maxSalary: 2500,
       experienceMinYears: 0,
       onlyVerified: false,
-      location: 'All'
+      location: ''
     });
   };
 
@@ -103,7 +129,7 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
     filters.teachingLevel !== 'All' ||
     filters.qualification !== 'All' ||
     filters.availability !== 'All' ||
-    filters.location !== 'All' ||
+    filters.location.trim() !== '' ||
     filters.experienceMinYears > 0 ||
     filters.onlyVerified;
 
@@ -259,15 +285,13 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                 Location
               </label>
-              <select
+              <input
+                type="text"
+                placeholder="e.g. East Legon, Tema, Kumasi"
                 value={filters.location}
                 onChange={(e) => setFilters({ ...filters, location: e.target.value })}
                 className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-sky-500"
-              >
-                {locationOptions.map((opt) => (
-                  <option key={opt} value={opt}>{opt}</option>
-                ))}
-              </select>
+              />
             </div>
 
             {/* Min Experience Range Slider */}
@@ -308,6 +332,7 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 font-bold text-slate-800 outline-none cursor-pointer"
               >
+                <option value="recommended">Recommended</option>
                 <option value="rating">Highest Rating</option>
                 <option value="experience">Years Experience</option>
                 <option value="name">Candidate Name</option>
@@ -337,10 +362,10 @@ export const DirectoryView: React.FC<DirectoryViewProps> = ({
                   <X className="w-3 h-3 cursor-pointer" onClick={() => setFilters({ ...filters, availability: 'All' })} />
                 </span>
               )}
-              {filters.location !== 'All' && (
+              {filters.location.trim() && (
                 <span className="px-3 py-1 bg-sky-100 text-sky-900 rounded-full text-xs font-bold flex items-center gap-1 border border-sky-200">
                   Loc: {filters.location}
-                  <X className="w-3 h-3 cursor-pointer" onClick={() => setFilters({ ...filters, location: 'All' })} />
+                  <X className="w-3 h-3 cursor-pointer" onClick={() => setFilters({ ...filters, location: '' })} />
                 </span>
               )}
               {filters.experienceMinYears > 0 && (

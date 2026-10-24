@@ -131,7 +131,7 @@ export const ConsultancyView: React.FC<ConsultancyViewProps> = ({ onOpenConsulta
 
               {/* Service Name - strictly just name, no subtitles */}
               <div className="w-full flex-1 flex flex-col items-center justify-center">
-                <h3 className="text-xs sm:text-sm md:text-base font-heading font-bold text-slate-900 group-hover:text-[#126373] transition-colors leading-snug line-clamp-2">
+                <h3 className="text-xs sm:text-sm md:text-base font-heading font-bold text-slate-900 group-hover:text-[#126373] transition-colors leading-snug break-words">
                   {srv.title}
                 </h3>
               </div>
@@ -165,7 +165,7 @@ export const ConsultancyView: React.FC<ConsultancyViewProps> = ({ onOpenConsulta
                   {getServiceIcon(selectedService.id)}
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-base sm:text-xl font-heading font-bold text-slate-900 leading-tight truncate">
+                  <h3 className="text-base sm:text-xl font-heading font-bold text-slate-900 leading-tight break-words">
                     {selectedService.title}
                   </h3>
                   <p className="text-[11px] sm:text-xs text-[#126373] font-semibold">

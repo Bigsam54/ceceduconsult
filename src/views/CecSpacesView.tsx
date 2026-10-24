@@ -5,7 +5,6 @@ import {
   MapPin,
   CheckCircle2,
   MessageCircle,
-  Ruler,
   Palette,
   ShieldCheck,
   BookOpen,
@@ -15,7 +14,6 @@ import {
   Compass,
   PackageCheck,
   ArrowRight,
-  Frame,
   Globe2
 } from 'lucide-react';
 
@@ -31,9 +29,9 @@ const zones = [
 ];
 
 const process = [
-  { step: '01', title: 'Consult & Assess', desc: 'We visit or review your space virtually to understand your goals, budget and constraints.', icon: ClipboardList },
+  { step: '01', title: 'Consult & Assess', desc: 'We visit or review your space to understand your goals, budget and constraints.', icon: ClipboardList },
   { step: '02', title: 'Design & Plan', desc: 'A themed layout and zoning plan tailored to your learners\' ages and curriculum.', icon: Compass },
-  { step: '03', title: 'Source & Build', desc: 'Ergonomic furniture, sensory materials and decor sourced and prepared for install.', icon: PackageCheck },
+  { step: '03', title: 'Source & Build', desc: 'Ergonomic furniture, sensory materials and decor sourced and prepared for installation.', icon: PackageCheck },
   { step: '04', title: 'Install & Audit', desc: 'Full setup on-site, finished with a child-safety and sanitation audit.', icon: ShieldCheck }
 ];
 
@@ -68,7 +66,7 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
             CEC Inspire <span className="text-[#2ac0db]">Spaces</span>
           </h1>
           <p className="text-slate-200 text-sm sm:text-base md:text-lg leading-relaxed max-w-xl font-medium">
-            Themed school design and signature classroom setups that turn ordinary rooms into inspiring, child-friendly learning spaces.
+            Themed school designs and signature classroom setups that turn ordinary spaces into inspiring, child-friendly learning environments.
           </p>
           <div className="pt-2">
             <button
@@ -255,38 +253,6 @@ export const CecSpacesView: React.FC<CecSpacesViewProps> = ({ onOpenConsultation
               </div>
             );
           })}
-        </div>
-      </section>
-
-      {/* What's Included */}
-      <section className="space-y-6 sm:space-y-8">
-        <div className="text-center space-y-1.5 sm:space-y-2 max-w-2xl mx-auto">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-slate-900">
-            What's Included
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
-            <Ruler className="w-7 h-7 sm:w-8 sm:h-8 text-[#2ac0db]" />
-            <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">3D Spatial & Zoning Layout</h3>
-            <p className="text-xs text-slate-600">Custom floorplan mapping for sensory play, reading nooks and practical life centres.</p>
-          </div>
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
-            <Palette className="w-7 h-7 sm:w-8 sm:h-8 text-[#fa7b2d]" />
-            <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">Wooden Furniture Sourcing</h3>
-            <p className="text-xs text-slate-600">Child-height ergonomic natural beechwood shelves, tables and low chairs.</p>
-          </div>
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
-            <Frame className="w-7 h-7 sm:w-8 sm:h-8 text-[#2ac0db]" />
-            <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">Themed Decor & Branding</h3>
-            <p className="text-xs text-slate-600">Cohesive visual themes, wall art and signage that bring each classroom to life.</p>
-          </div>
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
-            <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-[#fa7b2d]" />
-            <h3 className="font-heading font-bold text-sm sm:text-base text-slate-900">Child Safety & Sanitation Audit</h3>
-            <p className="text-xs text-slate-600">Corner rounding, non-toxic finishes, impact flooring and electrical socket child-proofing.</p>
-          </div>
         </div>
       </section>
 

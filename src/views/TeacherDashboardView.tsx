@@ -3,32 +3,41 @@ import { ViewMode } from '../types';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { useTeacherProfile } from '../hooks/useTeacherProfile';
-import { 
-  LayoutDashboard, 
-  Eye, 
-  Briefcase, 
-  Settings, 
-  Award, 
-  TrendingUp, 
+import { uploadToCloudinary, CLOUDINARY_FOLDERS } from '../lib/cloudinary';
+import { GhanaCardCapture, GhanaCardState, emptyGhanaCard, isGhanaCardComplete } from '../components/GhanaCardCapture';
+import {
+  LayoutDashboard,
+  Eye,
+  Briefcase,
+  Award,
+  TrendingUp,
   ArrowUpRight,
+  ArrowRight,
   Upload,
   Camera,
   Trash2,
   CheckCircle2,
-  Sparkles,
+  Circle,
   Save,
   GraduationCap,
   MapPin,
-  DollarSign,
   BookOpen,
-  FileCheck,
-  LogOut
+  LogOut,
+  Loader2,
+  Users,
+  PenLine,
+  ShieldCheck,
+  Clock,
+  XCircle,
+  IdCard
 } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 
 interface TeacherDashboardViewProps {
   onNavigate: (view: ViewMode) => void;
 }
+
+type PlacementStatus = 'Immediate' | 'Next Academic Term' | 'Not Available';
 
 const viewsData = [
   { day: 'Mon', views: 12 },
@@ -40,15 +49,32 @@ const viewsData = [
   { day: 'Sun', views: 65 }
 ];
 
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+};
+
 export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNavigate }) => {
   const toast = useToast();
   const { signOut } = useAuth();
-  const { profile, loading: profileLoading, error: profileError, saveProfile } = useTeacherProfile();
+  const {
+    profile,
+    loading: profileLoading,
+    error: profileError,
+    saveProfile,
+    displayName,
+    firstName,
+    avatarUrl,
+    initials
+  } = useTeacherProfile();
   const [activeTab, setActiveTab] = useState<'overview' | 'opportunities' | 'settings'>('overview');
-  const [availability, setAvailability] = useState<'Immediate' | '2 Weeks Notice' | 'Not Available'>('Immediate');
+  const [availability, setAvailability] = useState<PlacementStatus>('Immediate');
 
   // Teacher profile state - seeded from the real Supabase row once it loads
-  const [profileImage, setProfileImage] = useState<string>('');
+  const [photoPreview, setPhotoPreview] = useState<string>('');
+  const [photoUploading, setPhotoUploading] = useState(false);
   const [fullName, setFullName] = useState<string>('');
   const [headline, setHeadline] = useState<string>('');
   const [teachingLevel, setTeachingLevel] = useState<string>('');
@@ -59,62 +85,90 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [newSkillInput, setNewSkillInput] = useState<string>('');
   const [saving, setSaving] = useState(false);
+  const [ghanaCard, setGhanaCard] = useState<GhanaCardState>(emptyGhanaCard);
+  const [replacingCard, setReplacingCard] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // While a new photo uploads, show the local preview; otherwise the saved one
+  const profileImage = photoPreview || avatarUrl;
 
   // Populate the editable fields once the real profile row has loaded
   useEffect(() => {
     if (!profile) return;
-    setFullName(profile.full_name);
+    setFullName(profile.full_name || displayName);
     setHeadline(profile.headline);
     setTeachingLevel(profile.teaching_level);
     setLocation(profile.location);
     setQualification(profile.qualification);
     setSalaryExpectation(profile.salary_expectation);
     setBio(profile.bio);
-    setSelectedSkills(profile.skills);
-    setAvailability(profile.availability as 'Immediate' | '2 Weeks Notice' | 'Not Available');
+    setSelectedSkills(profile.skills ?? []);
+    setAvailability(profile.availability as PlacementStatus);
   }, [profile]);
+
+  // Once both sides finish uploading, save them to the profile for CEC to review
+  useEffect(() => {
+    if (!isGhanaCardComplete(ghanaCard)) return;
+    saveProfile({
+      ghana_card_front_url: ghanaCard.front?.url ?? '',
+      ghana_card_back_url: ghanaCard.back?.url ?? ''
+    }).then(({ error }) => {
+      if (error) {
+        toast.error(error, 'Could Not Save Ghana Card');
+        return;
+      }
+      toast.success('Your Ghana Card has been saved and sent to the CEC team for verification.', 'Ghana Card Saved');
+      setGhanaCard(emptyGhanaCard);
+      setReplacingCard(false);
+    });
+  }, [ghanaCard.front?.url, ghanaCard.back?.url]);
+
+  const uploadPhoto = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please choose an image file (PNG, JPG or WEBP).', 'Upload Failed');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size exceeds 5MB limit. Please choose a smaller image.', 'Upload Failed');
+      return;
+    }
+
+    const preview = URL.createObjectURL(file);
+    setPhotoPreview(preview);
+    setPhotoUploading(true);
+    try {
+      const url = await uploadToCloudinary(file, { folder: CLOUDINARY_FOLDERS.avatars, fileName: file.name });
+      const { error } = await saveProfile({ avatar_url: url });
+      if (error) throw new Error(error);
+      toast.success('Your new profile photo is live on your profile.', 'Photo Updated');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not upload your photo.', 'Upload Failed');
+    } finally {
+      setPhotoUploading(false);
+      setPhotoPreview('');
+      URL.revokeObjectURL(preview);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('File size exceeds 5MB limit. Please choose a smaller image.', 'Upload Failed');
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setProfileImage(event.target.result as string);
-          toast.success('Profile picture updated successfully!', 'Photo Updated');
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+    if (file) uploadPhoto(file);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
-    if (file && file.type.startsWith('image/')) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('File size exceeds 5MB limit. Please choose a smaller image.', 'Upload Failed');
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setProfileImage(event.target.result as string);
-          toast.success('Profile picture uploaded successfully!', 'Photo Updated');
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+    if (file) uploadPhoto(file);
   };
 
-  const handleRemovePhoto = () => {
-    setProfileImage('');
+  const handleRemovePhoto = async () => {
+    const { error } = await saveProfile({ avatar_url: '' });
+    if (error) {
+      toast.error(error, 'Could Not Remove Photo');
+      return;
+    }
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -162,17 +216,42 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
     onNavigate('home');
   };
 
-  const initials = (fullName || 'T')
-    .split(' ')
-    .map(n => n[0])
-    .join('')
-    .substring(0, 2)
-    .toUpperCase();
+  // Profile strength is based on what schools and the CEC team need to see
+  const completionItems = [
+    { label: 'Profile photo', done: Boolean(avatarUrl) },
+    { label: 'Full name', done: Boolean(profile?.full_name) },
+    { label: 'Professional title', done: Boolean(profile?.headline) },
+    { label: 'Teaching level', done: Boolean(profile?.teaching_level) },
+    { label: 'Location', done: Boolean(profile?.location) },
+    { label: 'Qualification', done: Boolean(profile?.qualification) },
+    { label: 'Teaching bio', done: Boolean(profile?.bio) },
+    { label: 'Skills & methods', done: (profile?.skills?.length ?? 0) > 0 },
+    { label: 'Ghana Card', done: Boolean(profile?.ghana_card_front_url && profile?.ghana_card_back_url) }
+  ];
+  const completedCount = completionItems.filter((item) => item.done).length;
+  const completionPercent = Math.round((completedCount / completionItems.length) * 100);
+  const missingItems = completionItems.filter((item) => !item.done);
+
+  const hasSavedCard = Boolean(profile?.ghana_card_front_url && profile?.ghana_card_back_url);
+  const verificationStatus = profile?.verification_status ?? 'pending';
+  const verificationBadge = {
+    approved: { label: 'CEC Verified', icon: ShieldCheck, className: 'bg-emerald-400/15 border-emerald-300/30 text-emerald-200' },
+    pending: { label: hasSavedCard ? 'Verification in review' : 'Verification pending', icon: Clock, className: 'bg-amber-400/15 border-amber-300/30 text-amber-200' },
+    rejected: { label: 'Verification unsuccessful', icon: XCircle, className: 'bg-rose-400/15 border-rose-300/30 text-rose-200' }
+  }[verificationStatus];
+  const VerificationIcon = verificationBadge.icon;
+
+  const placementLabel: Record<PlacementStatus, string> = {
+    'Immediate': 'Available Immediately',
+    'Next Academic Term': 'Available Next Term',
+    'Not Available': 'Currently Employed'
+  };
 
   if (profileLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 flex items-center justify-center">
-        <p className="text-sm text-slate-500 font-semibold">Loading your profile...</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 flex flex-col items-center justify-center gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-[#2ac0db]" />
+        <p className="text-sm text-slate-500 font-semibold">Loading your dashboard...</p>
       </div>
     );
   }
@@ -187,85 +266,136 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
         </div>
       )}
 
-      {/* Top Welcome Bar */}
-      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-center gap-4 sm:gap-6">
-          
-          {/* Avatar with click-to-upload or edit */}
-          <div className="relative group shrink-0">
-            {profileImage ? (
-              <img
-                src={profileImage}
-                alt={fullName}
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-[#2ac0db] shadow-md"
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[#0b2228] to-[#114c5a] text-white flex items-center justify-center font-heading font-extrabold text-xl sm:text-2xl border-2 border-[#2ac0db] shadow-md">
-                {initials}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileUpload}
+        className="hidden"
+      />
+
+      {/* Personalised Welcome Hero */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0b2228] via-[#114c5a] to-[#126373] text-white shadow-xl">
+        <div className="absolute -top-24 -right-20 w-72 h-72 rounded-full bg-[#2ac0db]/25 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-28 left-1/3 w-72 h-72 rounded-full bg-[#fa7b2d]/15 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 inset-x-0 h-1 bg-gradient-to-r from-[#2ac0db] via-[#fa7b2d] to-[#2ac0db]" />
+
+        <div className="relative p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+
+            {/* Avatar with quick photo change */}
+            <div className="relative group shrink-0 self-start sm:self-auto">
+              {profileImage ? (
+                <img
+                  src={profileImage}
+                  alt={displayName || 'Your profile photo'}
+                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl object-cover ring-4 ring-white/20 shadow-xl"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-[#2ac0db] to-[#126373] text-white flex items-center justify-center font-heading font-extrabold text-2xl sm:text-3xl ring-4 ring-white/20 shadow-xl">
+                  {initials}
+                </div>
+              )}
+              {photoUploading && (
+                <div className="absolute inset-0 rounded-3xl bg-slate-950/50 flex items-center justify-center">
+                  <Loader2 className="w-6 h-6 animate-spin text-white" />
+                </div>
+              )}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={photoUploading}
+                className="absolute -bottom-1.5 -right-1.5 bg-[#fa7b2d] hover:bg-[#e66b1d] text-white p-2 rounded-full shadow-lg ring-4 ring-[#114c5a] transition-transform hover:scale-110 cursor-pointer"
+                title="Change Profile Photo"
+              >
+                <Camera className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <div className="space-y-1.5">
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#2ac0db]">{getGreeting()}</p>
+              <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-white leading-tight">
+                {firstName ? `Welcome back, ${firstName}!` : 'Welcome to your CEC dashboard!'}
+              </h1>
+              <p className="text-sm text-slate-200/90 font-medium">
+                {headline || 'Add your professional title so schools know your speciality'}
+                {location && (
+                  <span className="inline-flex items-center gap-1 ml-2 text-slate-300">
+                    <MapPin className="w-3.5 h-3.5 text-[#fa7b2d]" /> {location}
+                  </span>
+                )}
+              </p>
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-white/10 border border-white/15 text-white flex items-center gap-1">
+                  <Users className="w-3 h-3 text-[#2ac0db]" /> CEC Teacher Network
+                </span>
+                <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold border flex items-center gap-1 ${verificationBadge.className}`}>
+                  <VerificationIcon className="w-3 h-3" /> {verificationBadge.label}
+                </span>
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-400/15 border border-emerald-300/30 text-emerald-200 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> {placementLabel[availability] ?? availability}
+                </span>
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-[#fa7b2d]/15 border border-[#fa7b2d]/30 text-orange-200">
+                  Profile {completionPercent}% complete
+                </span>
               </div>
-            )}
+            </div>
+          </div>
+
+          {/* Status & Quick Actions */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm p-2 pl-3 rounded-2xl border border-white/15">
+              <span className="text-xs font-bold text-slate-200">Placement</span>
+              <select
+                value={availability}
+                onChange={async (e) => {
+                  const val = e.target.value as PlacementStatus;
+                  setAvailability(val);
+                  const { error } = await saveProfile({ availability: val });
+                  if (error) {
+                    toast.error(error, 'Status Update Failed');
+                  } else {
+                    toast.info(`Placement status updated to "${placementLabel[val]}".`, 'Status Updated');
+                  }
+                }}
+                className="bg-white border-0 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 outline-none cursor-pointer focus:ring-2 focus:ring-[#2ac0db]"
+              >
+                <option value="Immediate">Immediate</option>
+                <option value="Next Academic Term">Next Academic Term</option>
+                <option value="Not Available">Currently Employed</option>
+              </select>
+            </div>
+
             <button
               onClick={() => setActiveTab('settings')}
-              className="absolute -bottom-1.5 -right-1.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 p-1.5 rounded-full shadow-md transition-transform hover:scale-110 cursor-pointer"
-              title="Change Profile Photo"
+              className="px-4 py-2.5 bg-white text-slate-900 hover:bg-[#2ac0db] font-bold text-xs rounded-2xl transition-colors flex items-center gap-1.5 cursor-pointer shadow-md"
             >
-              <Camera className="w-3.5 h-3.5" />
+              <PenLine className="w-3.5 h-3.5" />
+              <span>Edit Profile</span>
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="px-3.5 py-2.5 bg-white/10 hover:bg-rose-500/20 text-white font-bold text-xs rounded-2xl border border-white/15 transition-colors flex items-center gap-1.5 cursor-pointer"
+              title="Log Out of Teacher Portal"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Logout</span>
             </button>
           </div>
-
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="font-heading font-extrabold text-xl sm:text-2xl text-slate-900">Welcome, {fullName}</h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#2ac0db]/15 text-[#126373] border border-[#2ac0db]/30 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> CEC Verified Teacher
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">{headline} • <span className="font-semibold text-slate-800">{location}</span></p>
-            <p className="text-[11px] text-slate-400 mt-1">Profile ID: <span className="font-mono font-bold text-slate-600">CEC-T-8492</span></p>
-          </div>
         </div>
 
-        {/* Status & Quick Actions */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2.5 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-            <span className="text-xs font-bold text-slate-700">Placement:</span>
-            <select
-              value={availability}
-              onChange={async (e) => {
-                const val = e.target.value as any;
-                setAvailability(val);
-                const { error } = await saveProfile({ availability: val });
-                if (error) {
-                  toast.error(error, 'Status Update Failed');
-                } else {
-                  toast.info(`Placement status updated to "${val}".`, 'Status Updated');
-                }
-              }}
-              className="bg-white border border-slate-200 rounded-xl px-3 py-1 text-xs font-bold text-slate-800 outline-none cursor-pointer focus:ring-2 focus:ring-[#2ac0db]"
+        {!displayName && (
+          <div className="relative border-t border-white/10 bg-white/5 px-6 sm:px-8 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <p className="text-xs text-slate-200">Add your full name so schools and the CEC team can recognise you.</p>
+            <button
+              onClick={() => setActiveTab('settings')}
+              className="text-xs font-bold text-[#2ac0db] hover:text-white flex items-center gap-1 cursor-pointer"
             >
-              <option value="Immediate">Immediate Placement</option>
-              <option value="2 Weeks Notice">2 Weeks Notice</option>
-              <option value="Not Available">Currently Employed</option>
-            </select>
+              Add my name <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
-
-          <button
-            onClick={() => onNavigate('directory')}
-            className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-2xl transition-colors cursor-pointer"
-          >
-            Public Directory
-          </button>
-
-          <button
-            onClick={handleLogout}
-            className="px-3.5 py-2.5 bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-700 font-bold text-xs rounded-2xl border border-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer"
-            title="Log Out of Teacher Portal"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Logout</span>
-          </button>
-        </div>
+        )}
       </div>
 
       {/* Main Grid */}
@@ -354,13 +484,57 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
 
                 <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
                   <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-xs font-bold text-slate-700">Profile Status</span>
+                    <span className="text-xs font-bold text-slate-700">Profile Strength</span>
                     <Award className="w-4 h-4 text-[#2ac0db]" />
                   </div>
-                  <div className="text-2xl font-extrabold text-[#126373]">100%</div>
-                  <p className="text-[11px] text-[#126373] font-bold">Verified & Visible to Recruiters</p>
+                  <div className="text-2xl font-extrabold text-[#126373]">{completionPercent}%</div>
+                  <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-[#2ac0db] to-[#126373] transition-all duration-500"
+                      style={{ width: `${completionPercent}%` }}
+                    />
+                  </div>
+                  <p className="text-[11px] text-[#126373] font-bold">
+                    {missingItems.length === 0 ? 'Complete & ready for schools' : `${missingItems.length} item${missingItems.length === 1 ? '' : 's'} left to complete`}
+                  </p>
                 </div>
               </div>
+
+              {/* Personal checklist of what's still missing */}
+              {missingItems.length > 0 && (
+                <div className="bg-gradient-to-br from-[#fa7b2d]/10 via-white to-[#2ac0db]/10 p-5 sm:p-6 rounded-3xl border border-[#fa7b2d]/20 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <h3 className="font-heading font-bold text-slate-900 text-sm sm:text-base">
+                        {firstName ? `${firstName}, your profile is almost there` : 'Your profile is almost there'}
+                      </h3>
+                      <p className="text-xs text-slate-500">Complete profiles get noticed by school owners much faster.</p>
+                    </div>
+                    <button
+                      onClick={() => setActiveTab('settings')}
+                      className="shrink-0 px-4 py-2.5 bg-[#fa7b2d] hover:bg-[#e66b1d] text-white font-bold text-xs rounded-xl shadow-md shadow-[#fa7b2d]/25 flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <span>Complete My Profile</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {completionItems.map((item) => (
+                      <span
+                        key={item.label}
+                        className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border ${
+                          item.done
+                            ? 'bg-white/70 border-emerald-200 text-emerald-700'
+                            : 'bg-white border-slate-200 text-slate-600'
+                        }`}
+                      >
+                        {item.done ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> : <Circle className="w-3.5 h-3.5 shrink-0 text-slate-300" />}
+                        {item.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Chart: Views Over Time */}
               <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs space-y-4">
@@ -479,11 +653,17 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                           {initials}
                         </div>
                       )}
-                      <div className="absolute -bottom-1 -right-1 bg-[#2ac0db] text-slate-950 p-1.5 rounded-full shadow ring-2 ring-white">
-                        <CheckCircle2 className="w-4 h-4" />
-                      </div>
+                      {photoUploading ? (
+                        <div className="absolute inset-0 rounded-3xl bg-slate-950/50 flex items-center justify-center">
+                          <Loader2 className="w-7 h-7 animate-spin text-white" />
+                        </div>
+                      ) : (
+                        <div className="absolute -bottom-1 -right-1 bg-[#2ac0db] text-slate-950 p-1.5 rounded-full shadow ring-2 ring-white">
+                          <CheckCircle2 className="w-4 h-4" />
+                        </div>
+                      )}
                     </div>
-                    <span className="text-xs font-bold text-slate-800">{fullName}</span>
+                    <span className="text-xs font-bold text-slate-800">{fullName || 'Your Name'}</span>
                     <span className="text-[10px] text-slate-500">Live Directory Preview</span>
                   </div>
 
@@ -508,14 +688,6 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                       </div>
                     </div>
 
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                    />
-
                     {/* Action buttons */}
                     <div className="flex items-center gap-3 pt-1">
                       <button
@@ -524,7 +696,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                         className="text-xs font-bold text-slate-900 hover:text-[#126373] flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer"
                       >
                         <Camera className="w-3.5 h-3.5" />
-                        <span>{profileImage ? 'Change Photo' : 'Select Photo File'}</span>
+                        <span>{photoUploading ? 'Uploading...' : profileImage ? 'Change Photo' : 'Select Photo File'}</span>
                       </button>
                       
                       {profileImage && (
@@ -541,6 +713,76 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                   </div>
 
                 </div>
+              </div>
+
+              {/* Ghana Card Verification */}
+              <div className="space-y-4 border-b border-slate-100 pb-8">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div>
+                    <h3 className="font-heading font-bold text-slate-900 text-base flex items-center gap-2">
+                      <IdCard className="w-5 h-5 text-[#2ac0db]" />
+                      Ghana Card Verification
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      {verificationStatus === 'approved'
+                        ? 'Your identity has been verified by the CEC team.'
+                        : verificationStatus === 'rejected'
+                        ? 'The CEC team could not verify your Ghana Card. Please upload clearer photos of both sides.'
+                        : hasSavedCard
+                        ? 'Thank you! The CEC team is reviewing your Ghana Card.'
+                        : 'Add the front and back of your Ghana Card so the CEC team can verify your identity.'}
+                    </p>
+                  </div>
+                  {hasSavedCard && !replacingCard && (
+                    <button
+                      type="button"
+                      onClick={() => setReplacingCard(true)}
+                      className="text-xs font-bold text-slate-900 hover:text-[#126373] flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>Replace Ghana Card</span>
+                    </button>
+                  )}
+                </div>
+
+                {hasSavedCard && !replacingCard ? (
+                  <div className="grid grid-cols-2 gap-3 max-w-lg">
+                    {(['front', 'back'] as const).map((side) => {
+                      const url = side === 'front' ? profile?.ghana_card_front_url : profile?.ghana_card_back_url;
+                      return (
+                        <div key={side} className="space-y-1">
+                          <div className="relative rounded-2xl overflow-hidden bg-slate-900 border border-slate-200" style={{ aspectRatio: 85.6 / 54 }}>
+                            {url && /\.pdf($|\?)/i.test(url) ? (
+                              <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">PDF uploaded</span>
+                            ) : (
+                              <img src={url} alt={`Ghana Card ${side}`} className="absolute inset-0 w-full h-full object-cover" />
+                            )}
+                            <span className="absolute top-2 right-2 p-1 rounded-full bg-emerald-500 text-white shadow">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                            </span>
+                          </div>
+                          <p className="text-[11px] font-semibold text-slate-500 capitalize">{side}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <GhanaCardCapture value={ghanaCard} onChange={setGhanaCard} />
+                    {replacingCard && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setReplacingCard(false);
+                          setGhanaCard(emptyGhanaCard);
+                        }}
+                        className="text-xs font-bold text-slate-500 hover:text-slate-800 cursor-pointer"
+                      >
+                        Cancel and keep my current Ghana Card
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Profile Details Form */}
@@ -626,13 +868,13 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                         type="text"
                         value={teachingLevel}
                         onChange={(e) => setTeachingLevel(e.target.value)}
-                        placeholder="e.g. Nursery & KG, Preschool (EYFS), Lower Primary (Grades 1 to 3), or JHS (English)"
+                        placeholder="e.g. Pre-school (Nursery & KG), Primary, JHS or Special Needs"
                         className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
                         required
                       />
                     </div>
                     <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                      {['Preschool (EYFS)', 'Nursery & Kindergarten', 'Lower Primary (Grades 1 to 3)', 'JHS (English)', 'Special Needs (SEN)'].map((lvl) => (
+                      {['Pre-school (Nursery & KG)', 'Primary', 'JHS', 'Special Needs'].map((lvl) => (
                         <button
                           key={lvl}
                           type="button"
@@ -659,13 +901,13 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ onNa
                         type="text"
                         value={qualification}
                         onChange={(e) => setQualification(e.target.value)}
-                        placeholder="e.g. B.Ed. Early Childhood Education, PGDE, Montessori Diploma, or Certified Literacy Coach"
+                        placeholder="e.g. Masters in Education, B.Ed, PGDE, Diploma or Certificate"
                         className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-[#2ac0db]"
                         required
                       />
                     </div>
                     <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                      {['B.Ed Early Childhood', 'EYFS & Montessori Diploma', 'PGDE (Early Years)', 'Certified Literacy Specialist'].map((q) => (
+                      {['Masters in Education', 'Bachelors (B.Ed)', 'PGDE', 'Diploma in Education', 'Teaching Certificate'].map((q) => (
                         <button
                           key={q}
                           type="button"

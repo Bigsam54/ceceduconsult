@@ -121,6 +121,19 @@
 }
 
 /* Horizontal Sliding Ticker Animation */
+/* Scan line sweeping the Ghana Card camera frame */
+@keyframes cardscan {
+  0%, 100% {
+    top: 6%;
+    opacity: 0.2;
+  }
+  50% {
+    top: 94%;
+    opacity: 1;
+  }
+}
+
+
 @keyframes ticker-slide {
   from {
     transform: translateX(0);

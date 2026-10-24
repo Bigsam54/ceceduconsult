@@ -71,13 +71,16 @@ export interface Teacher {
   name: string;
   title: string;
   photo: string;
-  teachingLevel: 'Early Childhood (EYFS)' | 'Nursery' | 'Kindergarten' | 'Lower Primary' | 'Special Needs (SEN)' | 'JHS (English)';
+  // Free text: registered teachers type their own level and qualification
+  teachingLevel: string;
   location: string;
   experienceYears: number;
   salaryExpectation: string;
   availability: AvailabilityStatus;
-  qualification: 'B.Ed Early Childhood' | 'EYFS Certified' | 'Early Childhood Diploma' | 'PGDE' | 'Early Years Specialist' | 'B.Ed Early Childhood & Language Education';
+  qualification: string;
   isVerified: boolean;
+  /** True for teachers who registered on the site (vs. the built-in sample profiles) */
+  isRegistered?: boolean;
   verificationStatus?: VerificationStatus;
   rating: number;
   reviewsCount: number;

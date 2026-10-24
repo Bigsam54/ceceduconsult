@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { 
   ViewMode, 
-  PendingTeacherApproval, 
   ConsultationBooking, 
   Teacher, 
   AvailabilityStatus,
   AvailabilityMovementLog 
 } from '../types';
 import {
-  MOCK_PENDING_APPROVALS,
   MOCK_CONSULTATION_BOOKINGS,
   MOCK_ADMIN_ANALYTICS,
   MOCK_TEACHERS
@@ -21,6 +19,9 @@ import { WorkshopFormModal } from '../components/admin/WorkshopFormModal';
 import { ProductFormModal } from '../components/admin/ProductFormModal';
 import { useWorkshops } from '../hooks/useWorkshops';
 import { useStoreProducts } from '../hooks/useStoreProducts';
+import { useTeacherApplications } from '../hooks/useTeacherApplications';
+import { TeacherApplicationsPanel } from '../components/admin/TeacherApplicationsPanel';
+import { rowToTeacher } from '../utils/teacherMapping';
 import { Workshop, LearningProduct } from '../types';
 import { 
   UserCheck, 
@@ -130,8 +131,16 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
   const [editingProduct, setEditingProduct] = useState<LearningProduct | null>(null);
 
   // State Management
+  const teacherApplications = useTeacherApplications();
   const [teachersList, setTeachersList] = useState<Teacher[]>(MOCK_TEACHERS);
-  const [pendingList, setPendingList] = useState<PendingTeacherApproval[]>(MOCK_PENDING_APPROVALS);
+
+  // Approved registrations join the talent pool ahead of the sample profiles
+  useEffect(() => {
+    const approved = teacherApplications.applications
+      .filter((a) => a.verification_status === 'approved')
+      .map(rowToTeacher);
+    setTeachersList((prev) => [...approved, ...prev.filter((t) => !t.isRegistered)]);
+  }, [teacherApplications.applications]);
   const [consultationsList, setConsultationsList] = useState<ConsultationBooking[]>(MOCK_CONSULTATION_BOOKINGS);
   const [movementLogs, setMovementLogs] = useState<AvailabilityMovementLog[]>(INITIAL_MOVEMENT_LOGS);
   const [movementFilter, setMovementFilter] = useState<'All' | 'Immediate' | 'Placed / Employed' | '2 Weeks Notice'>('All');
@@ -407,32 +416,6 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
   };
 
   // Actions
-  const handleApproveTeacher = (id: string) => {
-    setPendingList(prev => prev.map(item => item.id === id ? { ...item, status: 'Approved' } : item));
-    // Also record movement
-    const pendingItem = pendingList.find(p => p.id === id);
-    if (pendingItem) {
-      const newLog: AvailabilityMovementLog = {
-        id: `mov-${Date.now()}`,
-        teacherId: id,
-        teacherName: pendingItem.teacherName,
-        avatar: pendingItem.avatar,
-        previousStatus: '2 Weeks Notice',
-        newStatus: 'Immediate',
-        changedBy: 'CEC Admin',
-        reason: 'Application approved and verified by CEC Admin.',
-        timestamp: 'Just Now'
-      };
-      setMovementLogs(prevLogs => [newLog, ...prevLogs]);
-    }
-    triggerToast('Teacher approved and verified!');
-  };
-
-  const handleRejectTeacher = (id: string) => {
-    setPendingList(prev => prev.map(item => item.id === id ? { ...item, status: 'Rejected' } : item));
-    triggerToast('Teacher application marked as rejected.');
-  };
-
   const handleConfirmConsultation = (id: string) => {
     setConsultationsList(prev => prev.map(item => item.id === id ? { ...item, status: 'Confirmed' } : item));
     triggerToast('Consultation request confirmed and added to calendar!');
@@ -529,7 +512,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
   const countNextTerm = teachersList.filter(t => t.availability === 'Next Academic Term').length + 42;
   const countPlaced = 284;
   const countVerified = teachersList.filter(t => t.isVerified).length + 1100;
-  const countPendingReview = pendingList.filter(p => p.status === 'Pending Review').length;
+  const countPendingReview = teacherApplications.applications.filter(a => a.verification_status === 'pending').length;
 
   // Filtered candidate list
   const filteredCandidates = teachersList.filter(t => {
@@ -1305,65 +1288,13 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
 
           {/* TAB 3: TEACHER APPROVALS & VETTING */}
           {activeTab === 'approvals' && (
-            <div className="space-y-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-heading font-bold text-slate-900 text-lg flex items-center gap-2">
-                    <UserCheck className="w-5 h-5 text-[#2ac0db]" />
-                    Candidate Verification Queue
-                  </h3>
-                  <p className="text-xs text-slate-500">Audit applicant credentials, certifications and approve verified badges</p>
-                </div>
-                <span className="text-xs font-bold text-[#126373] bg-[#2ac0db]/15 px-3 py-1 rounded-full border border-[#2ac0db]/30">
-                  {pendingList.filter(p => p.status === 'Pending Review').length} Pending Audits
-                </span>
-              </div>
-
-              <div className="space-y-4">
-                {pendingList.map((item) => (
-                  <div key={item.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      <img src={item.avatar} alt={item.teacherName} className="w-14 h-14 rounded-2xl object-cover border border-slate-200" />
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-slate-900 text-sm">{item.teacherName}</h4>
-                          <span className={`px-2 py-0.2 rounded text-[10px] font-bold ${
-                            item.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' :
-                            item.status === 'Rejected' ? 'bg-rose-100 text-rose-800' :
-                            'bg-amber-100 text-amber-800'
-                          }`}>
-                            {item.status}
-                          </span>
-                        </div>
-                        <p className="text-xs text-[#126373] font-semibold">{item.qualification} • {item.level}</p>
-                        <p className="text-[11px] text-slate-400">Applied: {item.appliedDate}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {item.status !== 'Approved' && (
-                        <button
-                          onClick={() => handleApproveTeacher(item.id)}
-                          className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center gap-1 shadow-xs cursor-pointer"
-                        >
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>Approve & Verify</span>
-                        </button>
-                      )}
-                      {item.status !== 'Rejected' && (
-                        <button
-                          onClick={() => handleRejectTeacher(item.id)}
-                          className="px-3.5 py-2 bg-slate-100 hover:bg-rose-100 hover:text-rose-700 text-slate-700 font-bold text-xs rounded-xl flex items-center gap-1 transition-colors cursor-pointer"
-                        >
-                          <XCircle className="w-3.5 h-3.5" />
-                          <span>Reject</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <TeacherApplicationsPanel
+              applications={teacherApplications.applications}
+              loading={teacherApplications.loading}
+              error={teacherApplications.error}
+              onRefresh={teacherApplications.refresh}
+              onSetStatus={teacherApplications.setVerificationStatus}
+            />
           )}
 
           {/* TAB 4: CALENDAR */}

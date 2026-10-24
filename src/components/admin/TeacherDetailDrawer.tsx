@@ -5,7 +5,6 @@ import {
   CheckCircle2, 
   GraduationCap, 
   MapPin, 
-  DollarSign, 
   Phone, 
   Mail, 
   ShieldCheck, 
@@ -19,6 +18,7 @@ import {
   AlertCircle,
   Sparkles
 } from 'lucide-react';
+import { CediIcon } from '../icons/CediIcon';
 import { WhatsAppIcon } from '../icons/WhatsAppIcon';
 
 interface TeacherDetailDrawerProps {
@@ -156,7 +156,7 @@ export const TeacherDetailDrawer: React.FC<TeacherDetailDrawerProps> = ({
                   {teacher.experienceYears}+ Years Teaching Experience
                 </span>
                 <span className="flex items-center gap-1">
-                  <DollarSign className="w-3.5 h-3.5 text-slate-400" />
+                  <CediIcon className="w-3.5 h-3.5 text-slate-400" />
                   Salary Expectation: {teacher.salaryExpectation}
                 </span>
               </div>

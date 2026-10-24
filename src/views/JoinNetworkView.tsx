@@ -5,12 +5,12 @@ import {
   ArrowRight, 
   ShieldCheck, 
   Sparkles,
-  DollarSign,
   CheckCircle2,
   GraduationCap,
   Users,
   Camera
 } from 'lucide-react';
+import { CediIcon } from '../components/icons/CediIcon';
 
 interface JoinNetworkViewProps {
   onNavigate: (view: ViewMode) => void;
@@ -130,7 +130,7 @@ export const JoinNetworkView: React.FC<JoinNetworkViewProps> = ({ onNavigate }) 
           </h1>
 
           <p className="text-slate-200 text-xs sm:text-sm md:text-base leading-relaxed max-w-xl font-medium">
-            Join the most reputable early childhood teacher community. Get discovered by top international and private schools, access CEC's specialized mentorship and earn dignified compensation.
+            Join the most reputable teacher community. Get discovered by top international and private schools, access CEC's specialized mentorship and earn dignified compensation.
           </p>
 
           <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
@@ -181,7 +181,7 @@ export const JoinNetworkView: React.FC<JoinNetworkViewProps> = ({ onNavigate }) 
           
           <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-2xs space-y-3 sm:space-y-4 hover:shadow-lg hover:border-[#2ac0db] transition-all">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center font-bold">
-              <DollarSign className="w-5 h-5 sm:w-6 sm:h-6" />
+              <CediIcon className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <h3 className="font-heading font-bold text-base sm:text-lg text-slate-900">
               Higher Salary Opportunities
@@ -199,7 +199,7 @@ export const JoinNetworkView: React.FC<JoinNetworkViewProps> = ({ onNavigate }) 
               CEC Specialized Mentorship
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-              Receive direct coaching on EYFS lesson planning, child-friendly apparatus usage, Synthetic Phonics mastery and classroom management techniques.
+              Receive direct coaching on lesson planning, child-friendly apparatus usage, Synthetic Phonics mastery and classroom management techniques.
             </p>
           </div>
 
@@ -230,7 +230,7 @@ export const JoinNetworkView: React.FC<JoinNetworkViewProps> = ({ onNavigate }) 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
             {[
               { step: '01', title: 'Submit Application', desc: 'Fill out our teacher profile form with your qualifications, teaching level and preferences.' },
-              { step: '02', title: 'Credentials Audit', desc: 'Our team verifies your degrees, certifications, background and previous school references.' },
+              { step: '02', title: 'Credentials Audit', desc: 'Our team verifies your qualifications, certifications, background and previous school references.' },
               { step: '03', title: 'Get Placed', desc: 'Your verified profile goes live on the CEC Network and school interview opportunities begin!' }
             ].map((s, i) => (
               <div key={i} className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/90 shadow-2xs space-y-3">
