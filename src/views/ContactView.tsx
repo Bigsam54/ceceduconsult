@@ -193,12 +193,22 @@ export const ContactView: React.FC = () => {
                 <Phone className="w-4 h-4 text-[#2ac0db] shrink-0 mt-0.5" />
                 <div>
                   <strong className="block text-slate-200">Phone & WhatsApp Lines</strong>
-                  <div className="text-slate-300 space-y-1 mt-1 font-semibold">
+                  <div className="text-slate-300 space-y-1.5 mt-1 font-semibold">
+                    <p className="flex items-center gap-2">
+                      <Phone className="w-3.5 h-3.5 text-[#2ac0db]" />
+                      <span>+233 54 363 3161</span>
+                      <span className="text-slate-500 text-[10px] font-medium">(Calls & WhatsApp)</span>
+                    </p>
                     <p className="flex items-center gap-2">
                       <WhatsAppIcon className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>+233 54 039 0029 (Primary / WhatsApp)</span>
+                      <span>+233 54 039 0029</span>
+                      <span className="text-slate-500 text-[10px] font-medium">(WhatsApp only)</span>
                     </p>
-                    <p>+233 20 685 5347</p>
+                    <p className="flex items-center gap-2">
+                      <Phone className="w-3.5 h-3.5 text-[#2ac0db]" />
+                      <span>+233 20 685 5347</span>
+                      <span className="text-slate-500 text-[10px] font-medium">(Calls & WhatsApp)</span>
+                    </p>
                   </div>
                 </div>
               </div>
