@@ -51,6 +51,14 @@ export const VIEW_SEO: Partial<Record<ViewMode, SeoMeta>> = {
     title: 'About CEC Educational Consult | Our Story & Founder',
     description: 'Meet Miss Nancie and the CEC Educational Consult team pioneering early childhood excellence in Ghana through educators, spaces and programmes.',
   },
+  'privacy': {
+    title: 'Privacy Policy | CEC Educational Consult',
+    description: 'How CEC Educational Consult collects, uses and protects personal information, including teacher profiles and Ghana Card verification.',
+  },
+  'terms': {
+    title: 'Terms of Service | CEC Educational Consult',
+    description: 'The terms for using the CEC Educational Consult website, teacher network, consultancy, workshops and Learning Essentials store.',
+  },
   'contact': {
     title: 'Contact CEC Educational Consult | Ghana',
     description: 'Get in touch with CEC Educational Consult for teacher recruitment, school setup, reading clubs or consultancy enquiries.',

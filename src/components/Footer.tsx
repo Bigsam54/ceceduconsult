@@ -245,9 +245,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>© {new Date().getFullYear()} CEC Educational Consult. Designed for Early Childhood Education Excellence.</p>
           <div className="flex items-center gap-4">
-            <span className="hover:text-slate-300 cursor-pointer">Privacy Policy</span>
-            <span className="hover:text-slate-300 cursor-pointer">Terms of Service</span>
-            <span className="hover:text-slate-300 cursor-pointer">Teacher Verification Standard</span>
+            <button onClick={() => onNavigate('privacy')} className="hover:text-slate-300 cursor-pointer">Privacy Policy</button>
+            <button onClick={() => onNavigate('terms')} className="hover:text-slate-300 cursor-pointer">Terms of Service</button>
           </div>
         </div>
 

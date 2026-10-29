@@ -20,6 +20,8 @@ export const VIEW_PATHS: Record<ViewMode, string> = {
   'teacher-dashboard': '/teacher-dashboard',
   'admin-login': '/admin-login',
   'admin-dashboard': '/admin-dashboard',
+  'privacy': '/privacy',
+  'terms': '/terms',
 };
 
 const PATH_TO_VIEW: Record<string, ViewMode> = {};

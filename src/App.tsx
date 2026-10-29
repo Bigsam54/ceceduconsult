@@ -27,6 +27,8 @@ import { LearningEssentialsView } from './views/LearningEssentialsView';
 import { SchoolsView } from './views/SchoolsView';
 import { AboutView } from './views/AboutView';
 import { ContactView } from './views/ContactView';
+import { PrivacyPolicyView } from './views/PrivacyPolicyView';
+import { TermsOfServiceView } from './views/TermsOfServiceView';
 import { LoginView } from './views/LoginView';
 import { RegisterView } from './views/RegisterView';
 import { TeacherDashboardView } from './views/TeacherDashboardView';
@@ -223,6 +225,8 @@ export default function App() {
         )}
 
         {currentView === 'contact' && <ContactView />}
+        {currentView === 'privacy' && <PrivacyPolicyView />}
+        {currentView === 'terms' && <TermsOfServiceView />}
 
         {currentView === 'login' && (
           <LoginView

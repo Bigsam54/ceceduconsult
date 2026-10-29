@@ -15,7 +15,9 @@ export type ViewMode =
   | 'register'
   | 'teacher-dashboard'
   | 'admin-login'
-  | 'admin-dashboard';
+  | 'admin-dashboard'
+  | 'privacy'
+  | 'terms';
 
 export type AvailabilityStatus = 
   | 'Immediate' 
