@@ -57,7 +57,7 @@ export const TalentPoolPanel: React.FC<TalentPoolPanelProps> = ({ teachers, load
     <div className="space-y-5">
       <PanelHeader
         icon={Users}
-        title="Teacher Talent Pool"
+        title="Teachers"
         description="Every registered teacher. Update availability here; changes appear in Live Movements and on Find a Teacher."
         actions={
           <button onClick={onRefresh} className={secondaryButton}>

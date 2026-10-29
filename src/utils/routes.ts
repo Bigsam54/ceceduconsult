@@ -22,6 +22,7 @@ export const VIEW_PATHS: Record<ViewMode, string> = {
   'admin-dashboard': '/admin-dashboard',
   'privacy': '/privacy',
   'terms': '/terms',
+  'onboarding': '/onboarding',
 };
 
 const PATH_TO_VIEW: Record<string, ViewMode> = {};

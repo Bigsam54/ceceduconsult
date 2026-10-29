@@ -32,7 +32,7 @@ interface TeacherApplicationsPanelProps {
   error: string | null;
   onRefresh: () => void;
   onSetStatus: (userId: string, status: VerificationStatus) => Promise<{ error: string | null }>;
-  /** Opens the queue focused on one teacher (e.g. from the Talent Pool) */
+  /** Opens the queue focused on one teacher (e.g. from the Teachers list) */
   focusSearch?: string;
 }
 

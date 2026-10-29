@@ -29,6 +29,8 @@ import { AboutView } from './views/AboutView';
 import { ContactView } from './views/ContactView';
 import { PrivacyPolicyView } from './views/PrivacyPolicyView';
 import { TermsOfServiceView } from './views/TermsOfServiceView';
+import { OnboardingView } from './views/OnboardingView';
+import { useTeacherProfile } from './context/TeacherProfileContext';
 import { LoginView } from './views/LoginView';
 import { RegisterView } from './views/RegisterView';
 import { TeacherDashboardView } from './views/TeacherDashboardView';
@@ -45,6 +47,7 @@ const getInitialView = (): ViewMode => getViewFromPath(window.location.pathname)
 
 export default function App() {
   const { session, role, loading: authLoading, roleLoading } = useAuth();
+  const { profile, loading: profileLoading } = useTeacherProfile();
   const [currentView, setCurrentView] = useState<ViewMode>(getInitialView);
 
   // Sets app state and syncs the real URL bar (so every page is a distinct,
@@ -78,6 +81,22 @@ export default function App() {
       navigateTo(intendedPortal === 'admin' ? 'admin-dashboard' : 'teacher-dashboard');
     }
   }, [session]);
+
+  // New teachers finish onboarding (details, teaching info, Ghana Card) before
+  // reaching their dashboard. Teachers who joined before onboarding existed are
+  // marked complete by migration 0007, so they go straight through.
+  const needsOnboarding = Boolean(
+    session && role === 'teacher' && !profileLoading && profile && profile.onboarding_completed === false
+  );
+
+  React.useEffect(() => {
+    if (needsOnboarding && currentView === 'teacher-dashboard') {
+      navigateTo('onboarding');
+    }
+  }, [needsOnboarding, currentView]);
+
+  // Sign-up and onboarding are full-screen, app-style flows without the site chrome
+  const isAppScreen = currentView === 'register' || currentView === 'onboarding';
 
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   
@@ -157,11 +176,13 @@ export default function App() {
       <SplashScreen minDuration={1400} />
 
       {/* Top Sticky Navigation */}
-      <Navbar
-        currentView={currentView}
-        onNavigate={handleNavigate}
-        onOpenLogin={() => handleNavigate('login')}
-      />
+      {!isAppScreen && (
+        <Navbar
+          currentView={currentView}
+          onNavigate={handleNavigate}
+          onOpenLogin={() => handleNavigate('login')}
+        />
+      )}
 
       {/* Main Dynamic View Outlet */}
       <main className="flex-1">
@@ -239,8 +260,12 @@ export default function App() {
           <RegisterView onNavigate={handleNavigate} />
         )}
 
+        {currentView === 'onboarding' && (
+          <OnboardingView onNavigate={handleNavigate} />
+        )}
+
         {currentView === 'teacher-dashboard' && (
-          authLoading ? null : session ? (
+          authLoading || needsOnboarding ? null : session ? (
             <TeacherDashboardView onNavigate={handleNavigate} />
           ) : (
             <LoginView onNavigate={handleNavigate} onLoginSuccess={handleLoginSuccess} />
@@ -267,10 +292,12 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer
-        onNavigate={handleNavigate}
-        onOpenConsultationModal={handleOpenConsultationModal}
-      />
+      {!isAppScreen && (
+        <Footer
+          onNavigate={handleNavigate}
+          onOpenConsultationModal={handleOpenConsultationModal}
+        />
+      )}
 
       {/* Global Modals */}
       <ContactTeacherModal

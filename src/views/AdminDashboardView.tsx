@@ -140,7 +140,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       title: 'Teachers',
       items: [
         { key: 'activity', label: 'Live Movements', icon: Activity },
-        { key: 'teachers', label: 'Talent Pool', icon: Users, badge: teachers.length },
+        { key: 'teachers', label: 'Teachers', icon: Users, badge: teachers.length },
         { key: 'approvals', label: 'Approvals', icon: UserCheck, badge: counts.pending }
       ]
     },

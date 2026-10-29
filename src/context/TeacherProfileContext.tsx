@@ -22,6 +22,7 @@ export interface TeacherProfileRow {
   verification_status: 'pending' | 'approved' | 'rejected';
   verified_at: string | null;
   created_at?: string;
+  onboarding_completed: boolean;
 }
 
 interface TeacherProfileContextType {
@@ -54,7 +55,9 @@ const emptyProfile = (userId: string, email: string): TeacherProfileRow => ({
   phone: '',
   experience_years: 0,
   verification_status: 'pending',
-  verified_at: null
+  verified_at: null,
+  // Treated as done until the database says otherwise (e.g. before migration 0007 is run)
+  onboarding_completed: true
 });
 
 const TeacherProfileContext = createContext<TeacherProfileContextType | undefined>(undefined);

@@ -122,6 +122,22 @@
 
 /* Horizontal Sliding Ticker Animation */
 /* Scan line sweeping the Ghana Card camera frame */
+/* Onboarding steps slide in like app screens */
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-screen-in {
+  animation: screen-in 0.35s ease-out both;
+}
+
 @keyframes cardscan {
   0%, 100% {
     top: 6%;

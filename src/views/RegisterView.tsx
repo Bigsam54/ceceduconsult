@@ -1,632 +1,237 @@
-import React, { useState, useRef } from 'react';
-import { PasswordVisibilityToggle } from '../components/common/PasswordVisibilityToggle';
+import React, { useState } from 'react';
 import { ViewMode } from '../types';
-import { safeScrollToTop } from '../utils/safeWindow';
 import { useToast } from '../context/ToastContext';
+import { useAuth, INTENDED_PORTAL_KEY } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
-import { uploadToCloudinary, CLOUDINARY_FOLDERS } from '../lib/cloudinary';
-import { GhanaCardCapture, GhanaCardState, emptyGhanaCard, isGhanaCardComplete } from '../components/GhanaCardCapture';
-import {
-  CheckCircle2,
-  ArrowRight,
-  ArrowLeft,
-  User,
-  Briefcase,
-  GraduationCap,
-  Clock,
-  Sparkles,
-  Upload,
-  ShieldCheck,
-  Check,
-  Camera,
-  Trash2,
-  MapPin,
-  BookOpen,
-  Lock
-} from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { AppScreen, primaryCta, fieldClass, FieldLabel } from '../components/onboarding/AppScreen';
+import { PasswordVisibilityToggle } from '../components/common/PasswordVisibilityToggle';
+import { Sparkles, ShieldCheck, Briefcase, GraduationCap, MailCheck, Loader2, ArrowRight, User, Mail, Lock } from 'lucide-react';
 
 interface RegisterViewProps {
   onNavigate: (view: ViewMode) => void;
 }
 
+const GoogleLogo: React.FC = () => (
+  <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
+    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
+    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+  </svg>
+);
+
+type Screen = 'start' | 'email' | 'check-inbox';
+
+/**
+ * Step one of joining: create the account. Everything else (details, teaching
+ * info, Ghana Card) happens in the onboarding steps right after, for both
+ * Google and email sign-ups.
+ */
 export const RegisterView: React.FC<RegisterViewProps> = ({ onNavigate }) => {
   const toast = useToast();
-  const [step, setStep] = useState(1);
-  const [profileImage, setProfileImage] = useState<string>('');
-  const [uploadError, setUploadError] = useState<string>('');
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [profileFile, setProfileFile] = useState<File | null>(null);
-  const [ghanaCard, setGhanaCard] = useState<GhanaCardState>(emptyGhanaCard);
-
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    phone: '',
-    location: '',
-    teachingLevel: '',
-    experienceYears: '5',
-    qualification: '',
-    salaryExpectation: 'GH₵ 8,000 - 12,000 / month',
-    availability: 'Immediate',
-    bio: ''
-  });
-  const [submitting, setSubmitting] = useState(false);
+  const { signInWithGoogle, isConfigured } = useAuth();
+  const [screen, setScreen] = useState<Screen>('start');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [googleSubmitting, setGoogleSubmitting] = useState(false);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        const err = 'File size exceeds 5MB limit. Please choose a smaller photo.';
-        setUploadError(err);
-        toast.error(err, 'Upload Failed');
-        return;
-      }
-      setUploadError('');
-      setProfileFile(file);
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setProfileImage(event.target.result as string);
-          toast.success('Profile photo uploaded successfully!', 'Photo Updated');
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+  const notConnected = () => toast.error('Sign-up is not available right now. Please try again shortly.', 'Not Connected');
+
+  const handleGoogle = async () => {
+    if (!isConfigured) return notConnected();
+    setGoogleSubmitting(true);
+    const { error } = await signInWithGoogle('teacher');
+    setGoogleSubmitting(false);
+    if (error) toast.error(error, 'Google Sign-Up Failed');
+    // On success the browser goes to Google, then returns and continues to onboarding
   };
 
-  const handleNext = async () => {
-    if (step === 1 && !isGhanaCardComplete(ghanaCard)) {
-      const stillUploading = ghanaCard.front?.status === 'uploading' || ghanaCard.back?.status === 'uploading';
-      toast.error(
-        stillUploading
-          ? 'Please wait for your Ghana Card photos to finish uploading.'
-          : 'Please capture or upload both the front and back of your Ghana Card to continue.',
-        'Ghana Card Required'
-      );
+  const handleEmailSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!supabase) return notConnected();
+    if (fullName.trim().split(/\s+/).length < 2) {
+      toast.error('Please enter your first and last name.', 'Full Name Needed');
       return;
     }
-
-    if (step < 5) {
-      setStep(step + 1);
-      safeScrollToTop();
+    if (password.length < 6) {
+      toast.error('Your password must be at least 6 characters.', 'Password Too Short');
       return;
     }
-
-    if (!formData.email || !formData.password) {
-      toast.error('Please enter an email and password to create your account.', 'Missing Account Details');
-      setStep(1);
-      return;
-    }
-    if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters.', 'Weak Password');
-      setStep(1);
-      return;
-    }
-
-    if (!supabase) {
-      toast.error('Backend not connected yet. Add your Supabase URL and key to enable real registration.', 'Registration Failed');
+    if (!agreed) {
+      toast.error('Please agree to the Terms of Service and Privacy Policy.', 'Agreement Needed');
       return;
     }
 
     setSubmitting(true);
-
-    // The profile photo is optional, so a failed upload shouldn't block the application
-    let avatarUrl = '';
-    if (profileFile) {
-      try {
-        avatarUrl = await uploadToCloudinary(profileFile, { folder: CLOUDINARY_FOLDERS.avatars, fileName: profileFile.name });
-      } catch {
-        toast.info('Your profile photo could not be uploaded. You can add it later from your dashboard.', 'Photo Skipped');
-      }
-    }
-
-    const { error: signUpError } = await supabase.auth.signUp({
-      email: formData.email,
-      password: formData.password,
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
       options: {
-        data: {
-          full_name: formData.fullName,
-          headline: formData.teachingLevel,
-          teaching_level: formData.teachingLevel,
-          location: formData.location,
-          qualification: formData.qualification,
-          salary_expectation: formData.salaryExpectation,
-          bio: formData.bio,
-          availability: formData.availability,
-          phone: formData.phone,
-          experience_years: formData.experienceYears,
-          avatar_url: avatarUrl,
-          ghana_card_front_url: ghanaCard.front?.url ?? '',
-          ghana_card_back_url: ghanaCard.back?.url ?? ''
-        }
+        data: { full_name: fullName.trim() },
+        // The confirmation link brings them straight into onboarding
+        emailRedirectTo: `${window.location.origin}/onboarding`
       }
     });
-
     setSubmitting(false);
 
-    if (signUpError) {
-      toast.error(signUpError.message, 'Registration Failed');
+    if (error) {
+      toast.error(error.message, 'Sign-Up Failed');
+      return;
+    }
+    if (data.session) {
+      // Email confirmation is switched off: continue immediately
+      onNavigate('onboarding');
       return;
     }
     try {
-      confetti({ particleCount: 100, spread: 80, origin: { y: 0.5 } });
+      localStorage.setItem(INTENDED_PORTAL_KEY, 'teacher');
     } catch {
       // ignore
     }
-    toast.success(
-      'Your teacher profile has been received. Miss Nancie and the CEC team will contact you shortly!',
-      'Application Submitted'
+    setScreen('check-inbox');
+  };
+
+  const resendEmail = async () => {
+    if (!supabase) return;
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email.trim(),
+      options: { emailRedirectTo: `${window.location.origin}/onboarding` }
+    });
+    if (error) toast.error(error.message, 'Could Not Resend');
+    else toast.success('We have sent the confirmation email again.', 'Email Sent');
+  };
+
+  if (screen === 'check-inbox') {
+    return (
+      <AppScreen
+        icon={MailCheck}
+        title="Check your inbox"
+        subtitle={<>We sent a confirmation link to <span className="font-bold text-slate-800">{email}</span>. Tap it to confirm your email and continue setting up your profile.</>}
+        onClose={() => onNavigate('home')}
+        footer={
+          <button onClick={() => onNavigate('login')} className={primaryCta}>
+            I've confirmed, log me in <ArrowRight className="w-4 h-4" />
+          </button>
+        }
+      >
+        <div className="space-y-3 text-sm text-slate-600">
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
+            <p className="font-bold text-slate-800">Can't find it?</p>
+            <ul className="list-disc pl-5 space-y-1 text-xs">
+              <li>Check your spam or promotions folder.</li>
+              <li>Make sure the email address above is correct.</li>
+            </ul>
+          </div>
+          <button onClick={resendEmail} className="text-sm font-bold text-[#126373] hover:underline cursor-pointer">Resend confirmation email</button>
+        </div>
+      </AppScreen>
     );
-    setStep(6);
-  };
+  }
 
-  const handlePrev = () => {
-    if (step > 1) {
-      setStep(step - 1);
-      safeScrollToTop();
-    }
-  };
-
-  const stepsList = [
-    { num: 1, title: 'Personal & Photo' },
-    { num: 2, title: 'Experience' },
-    { num: 3, title: 'Qualifications' },
-    { num: 4, title: 'Availability' },
-    { num: 5, title: 'Submit' }
-  ];
+  if (screen === 'email') {
+    return (
+      <AppScreen
+        title="Create your account"
+        subtitle="You'll add your teaching details and Ghana Card next."
+        onBack={() => setScreen('start')}
+        onClose={() => onNavigate('home')}
+        footer={
+          <button type="submit" form="register-form" disabled={submitting} className={primaryCta}>
+            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+            {submitting ? 'Creating your account...' : 'Create Account'}
+          </button>
+        }
+      >
+        <form id="register-form" onSubmit={handleEmailSignUp} className="space-y-4">
+          <div>
+            <FieldLabel>Full name</FieldLabel>
+            <div className="relative">
+              <User className="w-4 h-4 text-slate-400 absolute left-4 top-4" />
+              <input required autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Akosua Mensah" className={`${fieldClass} pl-11`} />
+            </div>
+          </div>
+          <div>
+            <FieldLabel>Email address</FieldLabel>
+            <div className="relative">
+              <Mail className="w-4 h-4 text-slate-400 absolute left-4 top-4" />
+              <input required type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className={`${fieldClass} pl-11`} />
+            </div>
+          </div>
+          <div>
+            <FieldLabel>Password</FieldLabel>
+            <div className="relative">
+              <Lock className="w-4 h-4 text-slate-400 absolute left-4 top-4" />
+              <input
+                required
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 6 characters"
+                className={`${fieldClass} pl-11 pr-12`}
+              />
+              <PasswordVisibilityToggle visible={showPassword} onToggle={() => setShowPassword(!showPassword)} />
+            </div>
+          </div>
+          <label className="flex items-start gap-3 text-xs text-slate-600 cursor-pointer pt-1">
+            <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-0.5 w-4 h-4 accent-[#126373]" />
+            <span>
+              I agree to the{' '}
+              <button type="button" onClick={() => onNavigate('terms')} className="font-bold text-[#126373] hover:underline">Terms of Service</button> and{' '}
+              <button type="button" onClick={() => onNavigate('privacy')} className="font-bold text-[#126373] hover:underline">Privacy Policy</button>.
+            </span>
+          </label>
+        </form>
+      </AppScreen>
+    );
+  }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-6 sm:space-y-8">
-      
-      {/* Header */}
-      <div className="text-center space-y-1.5 sm:space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-heading font-extrabold text-slate-900">
-          Join the CEC Teacher Network
-        </h1>
-        <p className="text-slate-500 text-xs sm:text-sm">
-          Complete your application to get vetted by Miss Nancie and placed in top preschools in Accra.
+    <AppScreen
+      title={<>Join the CEC<br />Teacher Network</>}
+      subtitle="Get verified, get discovered by top schools in Ghana, and grow your teaching career."
+      onClose={() => onNavigate('home')}
+      footer={
+        <div className="space-y-3">
+          <button onClick={handleGoogle} disabled={googleSubmitting} className="w-full py-4 rounded-2xl bg-white border-2 border-slate-200 hover:border-slate-300 text-slate-800 font-bold text-sm flex items-center justify-center gap-3 transition-colors cursor-pointer disabled:opacity-60">
+            {googleSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <GoogleLogo />}
+            {googleSubmitting ? 'Connecting to Google...' : 'Continue with Google'}
+          </button>
+          <button onClick={() => setScreen('email')} className={primaryCta}>
+            <Mail className="w-4 h-4" /> Sign up with email
+          </button>
+          <p className="text-center text-xs text-slate-500 pt-1">
+            Already have an account?{' '}
+            <button onClick={() => onNavigate('login')} className="font-bold text-[#126373] hover:underline cursor-pointer">Log in</button>
+          </p>
+        </div>
+      }
+    >
+      <div className="space-y-3">
+        {[
+          { icon: ShieldCheck, title: 'Get CEC Verified', text: 'Your Ghana Card and credentials are checked once, then trusted by schools.' },
+          { icon: Briefcase, title: 'Get matched to schools', text: 'Schools contact CEC about you. Your phone number is never public.' },
+          { icon: GraduationCap, title: 'Grow with CEC', text: 'Workshops, mentorship and updates from the CEC team.' }
+        ].map(({ icon: Icon, title, text }) => (
+          <div key={title} className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
+            <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 text-[#126373] flex items-center justify-center shrink-0">
+              <Icon className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900">{title}</p>
+              <p className="text-xs text-slate-500 leading-relaxed">{text}</p>
+            </div>
+          </div>
+        ))}
+        <p className="flex items-center gap-1.5 text-[11px] text-slate-400 pt-1">
+          <Sparkles className="w-3.5 h-3.5 text-[#fa7b2d]" /> Setting up your profile takes about 3 minutes.
         </p>
       </div>
-
-      {step <= 5 && (
-        <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-2xs flex items-center justify-between text-xs font-bold">
-          {stepsList.map((s) => (
-            <div key={s.num} className="flex items-center gap-1.5">
-              <span className={`w-7 h-7 rounded-full flex items-center justify-center font-extrabold text-xs ${
-                step === s.num
-                  ? 'bg-[#2ac0db] text-slate-950 shadow-xs'
-                  : step > s.num
-                  ? 'bg-[#2ac0db]/20 text-[#126373]'
-                  : 'bg-slate-100 text-slate-400'
-              }`}>
-                {step > s.num ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : s.num}
-              </span>
-              <span className={`hidden sm:inline ${step === s.num ? 'text-slate-900 font-bold' : 'text-slate-400'}`}>
-                {s.title}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Wizard Box */}
-      <div className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200/90 shadow-xl space-y-6">
-        
-        {step === 1 && (
-          <div className="space-y-5 text-xs">
-            <h2 className="text-lg font-heading font-bold text-slate-900 flex items-center gap-2">
-              <User className="w-5 h-5 text-[#2ac0db]" /> Step 1: Personal Details & Photo
-            </h2>
-
-            {/* Profile Photo Upload Field */}
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col sm:flex-row items-center gap-4">
-              <div className="relative">
-                {profileImage ? (
-                  <img
-                    src={profileImage}
-                    alt="Teacher Preview"
-                    className="w-20 h-20 rounded-2xl object-cover border-2 border-[#2ac0db] shadow-md"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-2xl bg-slate-200 border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400">
-                    <Camera className="w-8 h-8" />
-                  </div>
-                )}
-                {profileImage && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setProfileImage('');
-                      setProfileFile(null);
-                      toast.info('Profile photo removed.');
-                    }}
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-rose-600 text-white rounded-full flex items-center justify-center shadow hover:bg-rose-700 cursor-pointer"
-                  >
-                    ×
-                  </button>
-                )}
-              </div>
-
-              <div className="flex-1 space-y-1 text-center sm:text-left">
-                <p className="font-bold text-slate-800 text-xs">Upload Your Profile Picture</p>
-                <p className="text-[11px] text-slate-500">A clear, friendly photo helps schools connect with you faster.</p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="mt-1 px-3.5 py-1.5 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold rounded-xl text-[11px] flex items-center gap-1.5 mx-auto sm:mx-0 cursor-pointer"
-                >
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>{profileImage ? 'Change Photo' : 'Select Photo'}</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Ghana Card front & back (required) */}
-            <GhanaCardCapture value={ghanaCard} onChange={setGhanaCard} />
-
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">Full Legal Name *</label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. Akosua Mensah"
-                value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Email Address *</label>
-                <input
-                  type="email"
-                  required
-                  placeholder="e.g. akosua.mensah@example.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Phone / WhatsApp *</label>
-                <input
-                  type="tel"
-                  required
-                  placeholder="+233 54 039 0029"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">Create a Password *</label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  placeholder="At least 6 characters"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full pl-9 pr-11 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
-                />
-                <PasswordVisibilityToggle visible={showPassword} onToggle={() => setShowPassword(!showPassword)} />
-              </div>
-              <p className="text-[11px] text-slate-400 mt-1">This is what you'll use to log in to your Teacher Dashboard.</p>
-            </div>
-
-            {/* Custom Location Field with Pre-filled Example & Suggestions */}
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block font-bold text-slate-700">
-                  Current Location & Preferred Teaching Zones *
-                </label>
-                <span className="text-[11px] text-slate-400">Type any location</span>
-              </div>
-              <div className="relative">
-                <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Osu, Accra or Odumase, Krobo"
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
-                />
-              </div>
-              
-              {/* Quick suggestion badges */}
-              <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                <span className="text-[10px] text-slate-500 font-semibold">Quick Suggestions:</span>
-                {['Osu, Accra', 'Odumase, Krobo', 'East Legon, Accra', 'Cantonments, Accra', 'Tema / Spintex', 'Kumasi'].map((loc) => (
-                  <button
-                    key={loc}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, location: loc })}
-                    className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-[#2ac0db]/20 text-slate-700 hover:text-slate-900 text-[10px] font-medium transition-colors border border-slate-200 cursor-pointer"
-                  >
-                    + {loc}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {step === 2 && (
-          <div className="space-y-4 text-xs">
-            <h2 className="text-lg font-heading font-bold text-slate-900 flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-[#2ac0db]" /> Step 2: Professional Experience & Teaching Level
-            </h2>
-
-            {/* Custom Teaching Level Field with Pre-filled Example & Suggestions */}
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block font-bold text-slate-700">
-                  Teaching Level & Specialization *
-                </label>
-                <span className="text-[11px] text-slate-400">Type or select your level</span>
-              </div>
-              <div className="relative">
-                <BookOpen className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Pre-school (Nursery & KG), Primary, JHS or Special Needs"
-                  value={formData.teachingLevel}
-                  onChange={(e) => setFormData({ ...formData, teachingLevel: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
-                />
-              </div>
-
-              {/* Quick suggestion badges */}
-              <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                <span className="text-[10px] text-slate-500 font-semibold">Quick Suggestions:</span>
-                {[
-                  'Pre-school (Nursery & KG)',
-                  'Primary',
-                  'JHS',
-                  'Special Needs'
-                ].map((lvl) => (
-                  <button
-                    key={lvl}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, teachingLevel: lvl })}
-                    className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-[#2ac0db]/20 text-slate-700 hover:text-slate-900 text-[10px] font-medium transition-colors border border-slate-200 cursor-pointer"
-                  >
-                    + {lvl}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">Years of Teaching Experience *</label>
-              <input
-                type="number"
-                value={formData.experienceYears}
-                onChange={(e) => setFormData({ ...formData, experienceYears: e.target.value })}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">Short Teaching Bio / Summary</label>
-              <textarea
-                rows={3}
-                placeholder="Briefly describe your classroom leadership style and passion for early childhood..."
-                value={formData.bio}
-                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
-              />
-            </div>
-          </div>
-        )}
-
-        {step === 3 && (
-          <div className="space-y-4 text-xs">
-            <h2 className="text-lg font-heading font-bold text-slate-900 flex items-center gap-2">
-              <GraduationCap className="w-5 h-5 text-[#2ac0db]" /> Step 3: Qualifications & Certifications
-            </h2>
-
-            {/* Custom Qualifications Field with Pre-filled Example & Suggestions */}
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block font-bold text-slate-700">
-                  Highest Early Childhood Qualification & Certifications *
-                </label>
-                <span className="text-[11px] text-slate-400">Type your exact credentials</span>
-              </div>
-              <div className="relative">
-                <GraduationCap className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Masters in Education, B.Ed, PGDE, Diploma or Certificate"
-                  value={formData.qualification}
-                  onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900 text-xs"
-                />
-              </div>
-
-              {/* Quick suggestion badges */}
-              <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                <span className="text-[10px] text-slate-500 font-semibold">Quick Suggestions:</span>
-                {[
-                  'Masters in Education',
-                  'Bachelors (B.Ed)',
-                  'PGDE',
-                  'Diploma in Education',
-                  'Teaching Certificate'
-                ].map((qual) => (
-                  <button
-                    key={qual}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, qualification: qual })}
-                    className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-[#2ac0db]/20 text-slate-700 hover:text-slate-900 text-[10px] font-medium transition-colors border border-slate-200 cursor-pointer"
-                  >
-                    + {qual}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="p-4 bg-slate-50 border border-dashed border-slate-300 rounded-2xl text-center space-y-2">
-              <Upload className="w-6 h-6 text-[#126373] mx-auto" />
-              <p className="font-bold text-slate-800">Upload Credentials / CV (PDF or Word)</p>
-              <p className="text-[10px] text-slate-500">You can also provide physical copies during your interview</p>
-            </div>
-          </div>
-        )}
-
-        {step === 4 && (
-          <div className="space-y-4 text-xs">
-            <h2 className="text-lg font-heading font-bold text-slate-900 flex items-center gap-2">
-              <Clock className="w-5 h-5 text-[#2ac0db]" /> Step 4: Availability & Expectations
-            </h2>
-
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">Earliest Availability *</label>
-              <select
-                value={formData.availability}
-                onChange={(e) => setFormData({ ...formData, availability: e.target.value })}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
-              >
-                <option value="Immediate">Immediate</option>
-                <option value="Next Academic Term">Next Academic Term</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">Expected Monthly Salary Range</label>
-              <input
-                type="text"
-                value={formData.salaryExpectation}
-                onChange={(e) => setFormData({ ...formData, salaryExpectation: e.target.value })}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db] font-medium text-slate-900"
-              />
-            </div>
-          </div>
-        )}
-
-        {step === 5 && (
-          <div className="space-y-4 text-xs">
-            <h2 className="text-lg font-heading font-bold text-slate-900 flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-[#126373]" /> Step 5: Review Your Profile
-            </h2>
-
-            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5 text-slate-800">
-              <div className="flex items-center gap-3 pb-2 border-b border-slate-200">
-                {profileImage ? (
-                  <img src={profileImage} alt="Profile" className="w-12 h-12 rounded-xl object-cover border border-[#2ac0db]" />
-                ) : (
-                  <div className="w-12 h-12 rounded-xl bg-slate-200 flex items-center justify-center font-bold text-slate-600">
-                    {formData.fullName ? formData.fullName.substring(0, 2).toUpperCase() : 'AM'}
-                  </div>
-                )}
-                <div>
-                  <p className="font-bold text-sm text-slate-900">{formData.fullName || 'Akosua Mensah'}</p>
-                  <p className="text-xs text-slate-500">{formData.location || 'Osu, Accra'}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <p><strong>Email:</strong> {formData.email || 'akosua@example.com'}</p>
-                <p><strong>Phone:</strong> {formData.phone || '+233 54 039 0029'}</p>
-                <p><strong>Level:</strong> {formData.teachingLevel || 'Preschool (EYFS)'}</p>
-                <p><strong>Experience:</strong> {formData.experienceYears} Years</p>
-                <p><strong>Qualification:</strong> {formData.qualification || 'B.Ed Early Childhood'}</p>
-                <p><strong>Availability:</strong> {formData.availability}</p>
-                <p className="col-span-2"><strong>Salary:</strong> {formData.salaryExpectation}</p>
-              </div>
-
-              <div className="pt-2.5 border-t border-slate-200">
-                <p className="font-bold text-xs mb-2">Ghana Card</p>
-                <div className="grid grid-cols-2 gap-2.5">
-                  {(['front', 'back'] as const).map((side) => {
-                    const cardSide = ghanaCard[side];
-                    return (
-                      <div key={side} className="space-y-1">
-                        <div className="relative rounded-xl overflow-hidden bg-slate-200 border border-slate-200" style={{ aspectRatio: 85.6 / 54 }}>
-                          {cardSide?.previewUrl ? (
-                            <img src={cardSide.previewUrl} alt={`Ghana Card ${side}`} className="absolute inset-0 w-full h-full object-cover" />
-                          ) : (
-                            <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-slate-500 px-2 text-center break-all">
-                              {cardSide?.fileName ?? 'Not uploaded'}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-[10px] font-semibold text-slate-500 capitalize flex items-center gap-1">
-                          {cardSide?.status === 'done' && <CheckCircle2 className="w-3 h-3 text-emerald-600" />}
-                          {side}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {step === 6 && (
-          <div className="text-center p-6 space-y-4">
-            <div className="w-16 h-16 rounded-full bg-[#2ac0db]/15 text-[#126373] flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-10 h-10 text-[#2ac0db]" />
-            </div>
-            <h2 className="text-2xl font-bold text-slate-900">Application Submitted!</h2>
-            <p className="text-xs text-slate-600 max-w-sm mx-auto">
-              Miss Nancie and the CEC verification team in Accra will review your application within 48 hours. You will receive an invitation for your classroom simulation audit.
-            </p>
-            <button
-              type="button"
-              onClick={() => onNavigate('teacher-dashboard')}
-              className="px-6 py-3 bg-[#2ac0db] hover:bg-[#22a8c0] text-slate-950 font-bold text-xs rounded-xl shadow cursor-pointer"
-            >
-              Proceed to Teacher Dashboard Demo
-            </button>
-          </div>
-        )}
-
-        {step <= 5 && (
-          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-            {step > 1 ? (
-              <button
-                type="button"
-                onClick={handlePrev}
-                className="px-4 py-2.5 text-slate-600 hover:text-slate-900 font-bold text-xs flex items-center gap-1 cursor-pointer"
-              >
-                <ArrowLeft className="w-4 h-4" /> Previous
-              </button>
-            ) : <div />}
-
-            <button
-              type="button"
-              onClick={handleNext}
-              disabled={submitting}
-              className="px-6 py-2.5 bg-[#2ac0db] hover:bg-[#22a8c0] disabled:opacity-60 disabled:cursor-not-allowed text-slate-950 font-bold text-xs rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer"
-            >
-              <span>{submitting ? 'Creating Account...' : step === 5 ? 'Submit Application' : 'Next Step'}</span>
-              {!submitting && <ArrowRight className="w-4 h-4" />}
-            </button>
-          </div>
-        )}
-
-      </div>
-    </div>
+    </AppScreen>
   );
 };
