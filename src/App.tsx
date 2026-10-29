@@ -30,6 +30,7 @@ import { ContactView } from './views/ContactView';
 import { PrivacyPolicyView } from './views/PrivacyPolicyView';
 import { TermsOfServiceView } from './views/TermsOfServiceView';
 import { OnboardingView } from './views/OnboardingView';
+import { NotFoundView } from './views/NotFoundView';
 import { useTeacherProfile } from './context/TeacherProfileContext';
 import { LoginView } from './views/LoginView';
 import { RegisterView } from './views/RegisterView';
@@ -263,6 +264,8 @@ export default function App() {
         {currentView === 'onboarding' && (
           <OnboardingView onNavigate={handleNavigate} />
         )}
+
+        {currentView === 'not-found' && <NotFoundView onNavigate={handleNavigate} />}
 
         {currentView === 'teacher-dashboard' && (
           authLoading || needsOnboarding ? null : session ? (

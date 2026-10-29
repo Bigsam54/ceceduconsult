@@ -18,7 +18,8 @@ export type ViewMode =
   | 'admin-dashboard'
   | 'privacy'
   | 'terms'
-  | 'onboarding';
+  | 'onboarding'
+  | 'not-found';
 
 export type AvailabilityStatus = 
   | 'Immediate' 

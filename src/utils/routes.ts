@@ -23,6 +23,7 @@ export const VIEW_PATHS: Record<ViewMode, string> = {
   'privacy': '/privacy',
   'terms': '/terms',
   'onboarding': '/onboarding',
+  'not-found': '/404',
 };
 
 const PATH_TO_VIEW: Record<string, ViewMode> = {};
@@ -38,5 +39,7 @@ export const getPathFromView = (view: ViewMode): string => VIEW_PATHS[view] ?? '
 
 export const getViewFromPath = (pathname: string): ViewMode => {
   const normalized = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
-  return PATH_TO_VIEW[normalized] ?? 'home';
+  if (normalized === '/index.html') return 'home';
+  // Unknown links get a real "page not found" screen instead of silently showing home
+  return PATH_TO_VIEW[normalized] ?? 'not-found';
 };

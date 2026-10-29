@@ -229,7 +229,7 @@ export const ContactView: React.FC = () => {
                 <Mail className="w-4 h-4 text-[#2ac0db] shrink-0 mt-0.5" />
                 <div>
                   <strong className="block text-slate-200">Email</strong>
-                  <span className="text-slate-400">contact@ceceduconsult.org</span>
+                  <span className="text-slate-400">contact@ceceducationalconsult.org</span>
                 </div>
               </div>
 

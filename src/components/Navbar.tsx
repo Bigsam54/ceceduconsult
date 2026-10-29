@@ -109,9 +109,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
               <WhatsAppIcon className="w-3 h-3 text-[#2ac0db]" />
               <span>+233 54 039 0029</span>
             </a>
-            <a href="mailto:contact@ceceduconsult.org" className="flex items-center gap-1.5 hover:text-white transition-colors">
+            <a href="mailto:contact@ceceducationalconsult.org" className="flex items-center gap-1.5 hover:text-white transition-colors">
               <Mail className="w-3 h-3 text-[#2ac0db]" />
-              <span>contact@ceceduconsult.org</span>
+              <span>contact@ceceducationalconsult.org</span>
             </a>
           </div>
           <div className="w-56 overflow-hidden">

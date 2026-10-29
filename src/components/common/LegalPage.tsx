@@ -16,7 +16,7 @@ interface LegalPageProps {
 
 // CEC's real, monitored contact details for legal and privacy questions
 export const LEGAL_CONTACT = {
-  email: 'childeducatorsconsult@gmail.com',
+  email: 'contact@ceceducationalconsult.org',
   phone: '+233 54 039 0029',
   location: 'Accra, Ghana'
 };

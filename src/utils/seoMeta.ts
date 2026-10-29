@@ -51,6 +51,10 @@ export const VIEW_SEO: Partial<Record<ViewMode, SeoMeta>> = {
     title: 'About CEC Educational Consult | Our Story & Founder',
     description: 'Meet Miss Nancie and the CEC Educational Consult team pioneering early childhood excellence in Ghana through educators, spaces and programmes.',
   },
+  'not-found': {
+    title: 'Page Not Found | CEC Educational Consult',
+    description: 'The page you were looking for could not be found on CEC Educational Consult.',
+  },
   'privacy': {
     title: 'Privacy Policy | CEC Educational Consult',
     description: 'How CEC Educational Consult collects, uses and protects personal information, including teacher profiles and Ghana Card verification.',
@@ -101,4 +105,17 @@ export const applyViewSeo = (view: ViewMode, path: string): void => {
     }
   }
   canonicalEl.setAttribute('href', `${SITE_URL}${path}`);
+
+  // Keep "page not found" screens out of Google's index
+  let robotsEl = document.querySelector('meta[name="robots"]');
+  if (view === 'not-found') {
+    if (!robotsEl) {
+      robotsEl = document.createElement('meta');
+      robotsEl.setAttribute('name', 'robots');
+      document.head.appendChild(robotsEl);
+    }
+    robotsEl.setAttribute('content', 'noindex');
+  } else if (robotsEl) {
+    robotsEl.remove();
+  }
 };

@@ -210,7 +210,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenConsultationMo
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-[#2ac0db] shrink-0" />
-                <a href="mailto:contact@ceceduconsult.org" className="hover:text-white transition-colors">contact@ceceduconsult.org</a>
+                <a href="mailto:contact@ceceducationalconsult.org" className="hover:text-white transition-colors">contact@ceceducationalconsult.org</a>
               </li>
               <li className="text-[11px] sm:text-xs text-slate-400 pt-1">
                 Accra, Ghana & Worldwide Virtual Consultations
