@@ -6,4 +6,4 @@ Disallow: /teacher-dashboard
 Disallow: /login
 Disallow: /register
 
-Sitemap: https://ceceduconsult.com/sitemap.xml
+Sitemap: https://ceceducationalconsult.org/sitemap.xml

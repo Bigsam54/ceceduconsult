@@ -1,6 +1,6 @@
 import { ViewMode } from '../types';
 
-export const SITE_URL = 'https://ceceduconsult.com';
+export const SITE_URL = 'https://ceceducationalconsult.org';
 
 interface SeoMeta {
   title: string;
