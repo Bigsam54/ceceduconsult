@@ -4,9 +4,10 @@ import { MOCK_TEACHERS } from '../data/mockData';
 import { Teacher } from '../types';
 import { rowToTeacher, DirectoryTeacherRow } from '../utils/teacherMapping';
 
-// Keep the sample profiles listed after the real ones until enough teachers are approved.
-// Set to false to show only real, CEC-approved teachers.
+// Sample profiles are listed after the real ones until enough teachers are approved,
+// then they disappear automatically. Set SHOW_SAMPLE_TEACHERS to false to hide them now.
 export const SHOW_SAMPLE_TEACHERS = true;
+export const HIDE_SAMPLES_AT_REAL_TEACHERS = 6;
 
 /** Public directory: CEC-approved registered teachers first, then the sample profiles */
 export const useDirectoryTeachers = () => {
@@ -35,6 +36,7 @@ export const useDirectoryTeachers = () => {
     };
   }, []);
 
-  const teachers = SHOW_SAMPLE_TEACHERS ? [...realTeachers, ...MOCK_TEACHERS] : realTeachers;
+  const showSamples = SHOW_SAMPLE_TEACHERS && realTeachers.length < HIDE_SAMPLES_AT_REAL_TEACHERS;
+  const teachers = showSamples ? [...realTeachers, ...MOCK_TEACHERS] : realTeachers;
   return { teachers, realTeacherCount: realTeachers.length, loading };
 };

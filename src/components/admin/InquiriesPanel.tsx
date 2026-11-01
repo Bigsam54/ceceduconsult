@@ -85,6 +85,8 @@ const InquiryCard: React.FC<{
   };
 
   const canSchedule = inquiry.kind === 'consultation' || inquiry.kind === 'teacher_request' || inquiry.kind === 'contact';
+  // Registered teachers have UUIDs; the built-in sample profiles use short ids like "t-001"
+  const isSampleTeacher = inquiry.kind === 'teacher_request' && Boolean(inquiry.reference_id) && !/^[0-9a-f-]{36}$/i.test(inquiry.reference_id);
 
   return (
     <div className={`bg-white rounded-2xl border overflow-hidden ${inquiry.status === 'new' ? 'border-[#126373]/30' : 'border-slate-200'}`}>
@@ -94,6 +96,14 @@ const InquiryCard: React.FC<{
             <div className="flex items-center gap-2 flex-wrap">
               <Chip tone="brand">{INQUIRY_KIND_LABELS[inquiry.kind]}</Chip>
               {inquiry.status === 'new' && <span className="text-[10px] font-extrabold text-[#126373] uppercase tracking-wider">New</span>}
+              {isSampleTeacher && (
+                <span
+                  className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200"
+                  title="This school asked about one of the website's sample profiles. Offer them a similar real teacher."
+                >
+                  Sample profile · offer a real teacher
+                </span>
+              )}
               <span className="text-[11px] text-slate-400">{timeAgo(inquiry.created_at)}</span>
             </div>
             <h4 className="font-bold text-slate-900 text-sm">
