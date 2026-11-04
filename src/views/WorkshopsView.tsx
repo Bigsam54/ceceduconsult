@@ -14,7 +14,6 @@ import {
   Award,
   BookOpenCheck,
   School,
-  UserRound,
   Plus,
   Phone,
   CalendarClock
@@ -247,19 +246,33 @@ export const WorkshopsView: React.FC<WorkshopsViewProps> = ({ onRegisterWorkshop
           <div className="absolute -top-20 -right-16 w-64 h-64 rounded-full bg-[#2ac0db]/25 blur-3xl pointer-events-none" />
           <div className="relative flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div className="space-y-3 max-w-2xl">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-[#2ac0db]">Request a workshop</p>
-              <h2 className="text-2xl sm:text-3xl font-heading font-extrabold">Bring a CEC workshop to your school, or join one yourself</h2>
-              <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
-                Choose the topics you need and we'll plan a workshop around your team or your own growth, in person or online.
+              <h2 className="text-2xl sm:text-3xl font-heading font-extrabold">Request a CEC Workshop!</h2>
+              <p className="text-sm sm:text-base text-slate-100 leading-relaxed">
+                Bring the expertise of CEC Educational Consult directly to your school or join one of our scheduled professional development workshops.
               </p>
-              <div className="flex flex-wrap gap-2 pt-1">
-                <span className="px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-semibold flex items-center gap-1.5">
-                  <School className="w-3.5 h-3.5 text-[#2ac0db]" /> For a whole school
-                </span>
-                <span className="px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-semibold flex items-center gap-1.5">
-                  <UserRound className="w-3.5 h-3.5 text-[#2ac0db]" /> For individuals
-                </span>
-              </div>
+              <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
+                Whether you are a school owner, school leader, teacher or education enthusiast, we have practical, engaging and impactful training opportunities designed to help you grow.
+              </p>
+              <p className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#fa7b2d]/20 border border-[#fa7b2d]/40 text-sm font-extrabold text-white">
+                <Sparkles className="w-4 h-4 text-[#fa7b2d]" /> Learn. Grow. Transform.
+              </p>
+              <ul className="space-y-2 pt-1">
+                {[
+                  { icon: School, text: 'Request an in-school workshop for your staff.' },
+                  { icon: CalendarClock, text: 'Register for an upcoming CEC training session.' },
+                  { icon: BookOpenCheck, text: 'Enjoy practical strategies you can implement immediately.' }
+                ].map(({ icon: Icon, text }) => (
+                  <li key={text} className="flex items-start gap-2.5 text-sm sm:text-base text-slate-100">
+                    <span className="w-7 h-7 rounded-lg bg-white/10 border border-white/15 flex items-center justify-center shrink-0">
+                      <Icon className="w-4 h-4 text-[#2ac0db]" />
+                    </span>
+                    <span className="pt-0.5">{text}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-sm sm:text-base font-bold text-white pt-1">
+                Let's build better schools and empower educators together!
+              </p>
             </div>
             <div className="space-y-2 shrink-0">
               <button
