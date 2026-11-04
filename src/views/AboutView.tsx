@@ -149,7 +149,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
           </div>
           <h3 className="font-heading font-bold text-lg text-slate-900">Our Mission</h3>
           <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-            To provide schools with verified, competent early childhood educators and literacy programs while elevating teacher training, compensation and professional standards internationally.
+            We believe in a world where every child has access to passionate, well-equipped educators who nurture curiosity, creativity and confidence.
           </p>
         </div>
 
@@ -159,7 +159,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
           </div>
           <h3 className="font-heading font-bold text-lg text-slate-900">Our Vision</h3>
           <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-            To be an international benchmark early childhood educational consultancy for teacher recruitment, classroom spatial design and transformative child literacy.
+            To become a global educational consult that empowers educators with skills, knowledge and confidence to create meaningful learning for children. To create an atmosphere where children are seen, heard and inspired to learn.
           </p>
         </div>
       </section>

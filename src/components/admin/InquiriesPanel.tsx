@@ -20,6 +20,7 @@ export const INQUIRY_KIND_LABELS: Record<InquiryKind, string> = {
   consultation: 'Consultation',
   teacher_request: 'Teacher Request',
   workshop: 'Workshop Sign-up',
+  workshop_request: 'Workshop Request',
   contact: 'Contact Message',
   product: 'Store Enquiry'
 };
@@ -35,7 +36,8 @@ const STATUS_LABELS: Record<InquiryStatus, string> = {
 // Teacher requests follow the placement pipeline
 const STATUS_LABELS_BY_KIND: Partial<Record<InquiryKind, Partial<Record<InquiryStatus, string>>>> = {
   teacher_request: { new: 'New request', in_progress: 'Shortlisting', scheduled: 'Interview set', completed: 'Placed' },
-  workshop: { scheduled: 'Confirmed', completed: 'Attended' }
+  workshop: { scheduled: 'Confirmed', completed: 'Attended' },
+  workshop_request: { in_progress: 'Planning', scheduled: 'Workshop booked', completed: 'Delivered' }
 };
 
 export const statusLabel = (kind: InquiryKind, status: InquiryStatus) => STATUS_LABELS_BY_KIND[kind]?.[status] ?? STATUS_LABELS[status];
@@ -84,7 +86,7 @@ const InquiryCard: React.FC<{
     else toast.success('Notes saved.', 'Saved');
   };
 
-  const canSchedule = inquiry.kind === 'consultation' || inquiry.kind === 'teacher_request' || inquiry.kind === 'contact';
+  const canSchedule = inquiry.kind === 'consultation' || inquiry.kind === 'teacher_request' || inquiry.kind === 'contact' || inquiry.kind === 'workshop_request';
   // Registered teachers have UUIDs; the built-in sample profiles use short ids like "t-001"
   const isSampleTeacher = inquiry.kind === 'teacher_request' && Boolean(inquiry.reference_id) && !/^[0-9a-f-]{36}$/i.test(inquiry.reference_id);
 
@@ -223,6 +225,7 @@ export const InquiriesPanel: React.FC<InquiriesPanelProps> = ({ inquiries, loadi
     { key: 'consultation', label: 'Consultations' },
     { key: 'teacher_request', label: 'Teacher Requests' },
     { key: 'workshop', label: 'Workshop Sign-ups' },
+    { key: 'workshop_request', label: 'Workshop Requests' },
     { key: 'contact', label: 'Messages' },
     { key: 'product', label: 'Store' }
   ];

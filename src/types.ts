@@ -126,7 +126,8 @@ export interface ConsultationService {
 export interface Workshop {
   id: string;
   title: string;
-  category: 'Early Childhood Leadership' | 'Early Literacy & Phonics' | 'Classroom Management' | 'Early STEM & Math';
+  // e.g. General, School Leaders, Parents (see data/workshopTopics.ts)
+  category: string;
   date: string;
   time: string;
   venue: string;

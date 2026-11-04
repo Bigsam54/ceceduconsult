@@ -30,7 +30,8 @@ const rowToWorkshop = (r: WorkshopRow): Workshop => ({
   image: r.image
 });
 
-export type WorkshopInput = Omit<Workshop, 'id'>;
+// meetingLink is private (admin only) and stored separately from the public workshop row
+export type WorkshopInput = Omit<Workshop, 'id'> & { meetingLink?: string };
 
 const toRow = (w: WorkshopInput) => ({
   title: w.title,
@@ -74,20 +75,30 @@ export const useWorkshops = () => {
     refresh();
   }, [refresh]);
 
+  const saveMeetingLink = async (workshopId: string, meetingLink: string | undefined) => {
+    if (!supabase || meetingLink === undefined) return null;
+    const { error: linkError } = await supabase
+      .from('workshop_meeting_links')
+      .upsert({ workshop_id: workshopId, meeting_link: meetingLink.trim(), updated_at: new Date().toISOString() });
+    return linkError ? linkError.message : null;
+  };
+
   const createWorkshop = useCallback(async (input: WorkshopInput) => {
     if (!supabase) return { error: 'Backend not connected yet.' };
-    const { error: insertError } = await supabase.from('workshops').insert(toRow(input));
+    const { data, error: insertError } = await supabase.from('workshops').insert(toRow(input)).select('id').single();
     if (insertError) return { error: insertError.message };
+    const linkError = await saveMeetingLink((data as { id: string }).id, input.meetingLink);
     await refresh();
-    return { error: null };
+    return { error: linkError };
   }, [refresh]);
 
   const updateWorkshop = useCallback(async (id: string, input: WorkshopInput) => {
     if (!supabase) return { error: 'Backend not connected yet.' };
     const { error: updateError } = await supabase.from('workshops').update(toRow(input)).eq('id', id);
     if (updateError) return { error: updateError.message };
+    const linkError = await saveMeetingLink(id, input.meetingLink);
     await refresh();
-    return { error: null };
+    return { error: linkError };
   }, [refresh]);
 
   const deleteWorkshop = useCallback(async (id: string) => {
@@ -98,5 +109,41 @@ export const useWorkshops = () => {
     return { error: null };
   }, [refresh]);
 
-  return { workshops, loading, error, createWorkshop, updateWorkshop, deleteWorkshop };
+  /** Admin only: the private meeting link for an online workshop */
+  const getMeetingLink = useCallback(async (id: string) => {
+    if (!supabase) return '';
+    const { data } = await supabase.from('workshop_meeting_links').select('meeting_link').eq('workshop_id', id).maybeSingle();
+    return (data?.meeting_link as string | undefined) ?? '';
+  }, []);
+
+  return { workshops, loading, error, createWorkshop, updateWorkshop, deleteWorkshop, getMeetingLink };
+};
+
+export interface WorkshopRegistration {
+  name: string;
+  email: string;
+  phone: string;
+  organization: string;
+  quantity: number;
+}
+
+/**
+ * Registers a visitor (saved to the admin inbox, seats reserved) and returns the
+ * workshop's meeting link if it has one, so online attendees get it straight away.
+ */
+export const registerForWorkshop = async (
+  workshopId: string,
+  registration: WorkshopRegistration
+): Promise<{ meetingLink: string; error: string | null }> => {
+  if (!supabase) return { meetingLink: '', error: 'Backend not connected yet.' };
+  const { data, error } = await supabase.rpc('register_for_workshop', {
+    p_workshop_id: workshopId,
+    p_name: registration.name,
+    p_email: registration.email,
+    p_phone: registration.phone,
+    p_organization: registration.organization,
+    p_quantity: registration.quantity
+  });
+  if (error) return { meetingLink: '', error: error.message };
+  return { meetingLink: (data as string) ?? '', error: null };
 };

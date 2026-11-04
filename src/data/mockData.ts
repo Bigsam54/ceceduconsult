@@ -568,61 +568,6 @@ export const MOCK_VIDEO_TESTIMONIALS: VideoTestimonial[] = [
   }
 ];
 
-export const MOCK_WORKSHOPS: Workshop[] = [
-  {
-    id: 'wk-101',
-    title: 'Mastering Positive Discipline in Early Childhood Classrooms',
-    category: 'Classroom Management',
-    date: 'Saturday, August 15, 2026',
-    time: '10:00 AM - 2:00 PM GMT',
-    venue: 'CEC Training Center & Global Zoom Live',
-    price: 'GH₵ 600',
-    availableSeats: 8,
-    totalSeats: 40,
-    description: 'Learn proven non-punitive strategies to manage toddler tantrums, promote self-regulation and create a calm, cooperative early learning environment.',
-    image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=800&auto=format&fit=crop'
-  },
-  {
-    id: 'wk-102',
-    title: 'Foundational Phonics & Early Literacy Masterclass',
-    category: 'Early Literacy & Phonics',
-    date: 'Saturday, August 22, 2026',
-    time: '09:00 AM - 1:00 PM GMT',
-    venue: 'CEC Learning Hub & Virtual Masterclass',
-    price: 'GH₵ 680',
-    availableSeats: 5,
-    totalSeats: 35,
-    description: 'Master letter-sound correspondence, blending strategies, tricky words and kinesthetic games that get 3-year-olds reading fluently within months.',
-    image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop'
-  },
-  {
-    id: 'wk-103',
-    title: 'Hands-on Concrete Math for Early Childhood Classrooms',
-    category: 'Early STEM & Math',
-    date: 'Saturday, September 5, 2026',
-    time: '10:00 AM - 3:00 PM GMT',
-    venue: 'Virtual Interactive Masterclass via Zoom (International)',
-    price: 'GH₵ 480',
-    availableSeats: 14,
-    totalSeats: 50,
-    description: 'Transform abstract numbers into tangible experiences using tactile number rods, bead counters and sensorial concrete aids.',
-    image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=800&auto=format&fit=crop'
-  },
-  {
-    id: 'wk-104',
-    title: 'Early Childhood Leadership & Enrollment Growth',
-    category: 'Early Childhood Leadership',
-    date: 'Saturday, September 19, 2026',
-    time: '11:00 AM - 3:00 PM GMT',
-    venue: 'CEC Executive Suite & International Hybrid Stream',
-    price: 'GH₵ 1,300',
-    availableSeats: 6,
-    totalSeats: 25,
-    description: 'Strategic roadmap for early childhood center directors: fee pricing, parent satisfaction, teacher retention and brand positioning.',
-    image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=800&auto=format&fit=crop'
-  }
-];
-
 export const MOCK_CEC_SPACES: CECSpaceProject[] = [
   {
     id: 'sp-1',

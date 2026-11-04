@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabaseClient';
 
-export type InquiryKind = 'consultation' | 'workshop' | 'contact' | 'teacher_request' | 'product';
+export type InquiryKind = 'consultation' | 'workshop' | 'workshop_request' | 'contact' | 'teacher_request' | 'product';
 export type InquiryStatus = 'new' | 'in_progress' | 'scheduled' | 'completed' | 'closed';
 
 export interface InquiryRow {

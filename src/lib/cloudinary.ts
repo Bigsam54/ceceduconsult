@@ -11,7 +11,8 @@ export const CLOUDINARY_FOLDERS = {
   ghanaCards: 'cec/teachers/ghana-cards',
   avatars: 'cec/teachers/avatars',
   storeBooks: 'cec/store/books',
-  storeResources: 'cec/store/school-resources'
+  storeResources: 'cec/store/school-resources',
+  workshops: 'cec/workshops'
 } as const;
 
 /**

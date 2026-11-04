@@ -70,7 +70,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
 
   // Real data, all from Supabase
   const teacherApplications = useTeacherApplications();
-  const { workshops, createWorkshop, updateWorkshop, deleteWorkshop } = useWorkshops();
+  const { workshops, createWorkshop, updateWorkshop, deleteWorkshop, getMeetingLink } = useWorkshops();
   const { products, createProduct, updateProduct, deleteProduct } = useStoreProducts();
   const inquiriesData = useInquiries();
   const activityData = useActivityLog();
@@ -380,6 +380,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
         isOpen={workshopModalOpen}
         onClose={() => setWorkshopModalOpen(false)}
         editing={editingWorkshop}
+        loadMeetingLink={getMeetingLink}
         onSave={async (input) => {
           const { error } = editingWorkshop
             ? await updateWorkshop(editingWorkshop.id, input)
