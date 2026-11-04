@@ -15,7 +15,8 @@ import {
   Video,
   Copy,
   Check,
-  ExternalLink
+  ExternalLink,
+  MailCheck
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { workshopPriceLabel, workshopWhen, hasSeatLimit } from '../utils/workshopDisplay';
@@ -42,6 +43,7 @@ export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ wo
   const [schoolCount, setSchoolCount] = useState('');
   const [meetingLink, setMeetingLink] = useState('');
   const [copied, setCopied] = useState(false);
+  const [emailRequested, setEmailRequested] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -57,6 +59,7 @@ export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ wo
       setSchoolCount('');
       setMeetingLink('');
       setCopied(false);
+      setEmailRequested(false);
     }
   }, [isOpen, workshop]);
 
@@ -100,7 +103,7 @@ export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ wo
     }
 
     setSubmitting(true);
-    const { meetingLink: link, error } = await registerForWorkshop(workshop.id, {
+    const { meetingLink: link, emailRequested: emailed, error } = await registerForWorkshop(workshop.id, {
       name: formData.name,
       email: formData.email,
       phone: formData.phone,
@@ -114,6 +117,7 @@ export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ wo
       return;
     }
     setMeetingLink(link);
+    setEmailRequested(emailed);
     setRegistered(true);
     try {
       confetti({ particleCount: 90, spread: 70, origin: { y: 0.5 } });
@@ -218,6 +222,15 @@ export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ wo
                 </p>
               ) : null}
 
+              {emailRequested && (
+                <p className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2 text-left">
+                  <MailCheck className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span>
+                    We're emailing your confirmation{meetingLink ? ' and the join link' : ''} to <strong>{formData.email}</strong>. Check your spam folder if it doesn't arrive in a few minutes.
+                  </span>
+                </p>
+              )}
+
               {/* Pass */}
               <div className="p-4 bg-slate-900 text-white rounded-2xl text-left text-xs space-y-1.5">
                 <p className="text-[#2ac0db] font-bold uppercase tracking-wider text-[10px] pb-1 border-b border-slate-800">CEC Workshop Pass</p>
@@ -314,6 +327,7 @@ export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ wo
 
                 <div>
                   <label className="block text-slate-700 font-bold mb-1">Email Address</label>
+                  <p className="text-[10px] text-slate-400 -mt-0.5 mb-1">We'll email your confirmation{online ? ' and join link' : ''}</p>
                   <input
                     type="email"
                     placeholder="you@example.com"

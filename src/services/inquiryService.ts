@@ -18,6 +18,8 @@ export interface InquiryRow {
   reference_id: string;
   quantity: number;
   admin_notes: string;
+  /** Workshop sign-ups: when the confirmation email went out (migration 0011) */
+  confirmation_sent_at?: string | null;
   created_at: string;
   updated_at: string;
 }

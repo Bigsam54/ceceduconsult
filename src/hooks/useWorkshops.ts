@@ -134,8 +134,8 @@ export interface WorkshopRegistration {
 export const registerForWorkshop = async (
   workshopId: string,
   registration: WorkshopRegistration
-): Promise<{ meetingLink: string; error: string | null }> => {
-  if (!supabase) return { meetingLink: '', error: 'Backend not connected yet.' };
+): Promise<{ meetingLink: string; emailRequested: boolean; error: string | null }> => {
+  if (!supabase) return { meetingLink: '', emailRequested: false, error: 'Backend not connected yet.' };
   const { data, error } = await supabase.rpc('register_for_workshop', {
     p_workshop_id: workshopId,
     p_name: registration.name,
@@ -144,6 +144,21 @@ export const registerForWorkshop = async (
     p_organization: registration.organization,
     p_quantity: registration.quantity
   });
-  if (error) return { meetingLink: '', error: error.message };
-  return { meetingLink: (data as string) ?? '', error: null };
+  if (error) return { meetingLink: '', emailRequested: false, error: error.message };
+
+  const result = (data ?? {}) as { registration_id?: string; meeting_link?: string };
+  const meetingLink = result.meeting_link ?? '';
+
+  // Ask the server to email the confirmation (and join link). It only ever emails the
+  // address saved on this fresh registration, once; failures don't affect the registration.
+  const emailRequested = Boolean(registration.email.trim() && result.registration_id);
+  if (emailRequested) {
+    fetch('/api/workshop-confirmation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ registrationId: result.registration_id })
+    }).catch((err) => console.error('Could not request confirmation email', err));
+  }
+
+  return { meetingLink, emailRequested, error: null };
 };

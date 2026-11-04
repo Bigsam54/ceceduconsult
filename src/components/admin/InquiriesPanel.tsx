@@ -98,6 +98,11 @@ const InquiryCard: React.FC<{
             <div className="flex items-center gap-2 flex-wrap">
               <Chip tone="brand">{INQUIRY_KIND_LABELS[inquiry.kind]}</Chip>
               {inquiry.status === 'new' && <span className="text-[10px] font-extrabold text-[#126373] uppercase tracking-wider">New</span>}
+              {inquiry.confirmation_sent_at && (
+                <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  Confirmation emailed
+                </span>
+              )}
               {isSampleTeacher && (
                 <span
                   className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200"
