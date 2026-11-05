@@ -16,7 +16,8 @@ import {
   Copy,
   Check,
   ExternalLink,
-  MailCheck
+  MailCheck,
+  MessageCircle
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { workshopPriceLabel, workshopWhen, hasSeatLimit } from '../utils/workshopDisplay';
@@ -42,6 +43,7 @@ export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ wo
   const [attending, setAttending] = useState<Attending>('me');
   const [schoolCount, setSchoolCount] = useState('');
   const [meetingLink, setMeetingLink] = useState('');
+  const [whatsappGroupLink, setWhatsappGroupLink] = useState('');
   const [copied, setCopied] = useState(false);
   const [emailRequested, setEmailRequested] = useState(false);
   const [formData, setFormData] = useState({
@@ -58,6 +60,7 @@ export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ wo
       setAttending('me');
       setSchoolCount('');
       setMeetingLink('');
+      setWhatsappGroupLink('');
       setCopied(false);
       setEmailRequested(false);
     }
@@ -103,7 +106,7 @@ export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ wo
     }
 
     setSubmitting(true);
-    const { meetingLink: link, emailRequested: emailed, error } = await registerForWorkshop(workshop.id, {
+    const { meetingLink: link, whatsappGroupLink: groupLink, emailRequested: emailed, error } = await registerForWorkshop(workshop.id, {
       name: formData.name,
       email: formData.email,
       phone: formData.phone,
@@ -117,6 +120,7 @@ export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ wo
       return;
     }
     setMeetingLink(link);
+    setWhatsappGroupLink(/^https:\/\/chat\.whatsapp\.com\//i.test(groupLink) ? groupLink : '');
     setEmailRequested(emailed);
     setRegistered(true);
     try {
@@ -197,6 +201,26 @@ export const WorkshopRegisterModal: React.FC<WorkshopRegisterModalProps> = ({ wo
                   {seats > 1 ? ` (${seats} seats)` : ''}.
                 </p>
               </div>
+
+              {/* Workshop WhatsApp group: updates and reminders */}
+              {whatsappGroupLink && (
+                <div className="p-4 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/30 text-left space-y-3">
+                  <div>
+                    <p className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                      <MessageCircle className="w-4 h-4 text-[#128C7E]" /> Join the workshop WhatsApp group
+                    </p>
+                    <p className="text-xs text-slate-600 mt-1">Get updates, reminders and materials for this workshop.</p>
+                  </div>
+                  <a
+                    href={whatsappGroupLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-3 bg-[#25D366] hover:bg-[#1ebe5b] text-white font-bold rounded-xl flex items-center justify-center gap-2"
+                  >
+                    <MessageCircle className="w-4 h-4" /> Join WhatsApp Group
+                  </a>
+                </div>
+              )}
 
               {/* Online workshops: the join link appears right away */}
               {meetingLink ? (

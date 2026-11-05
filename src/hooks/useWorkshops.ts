@@ -30,8 +30,14 @@ const rowToWorkshop = (r: WorkshopRow): Workshop => ({
   image: r.image
 });
 
-// meetingLink is private (admin only) and stored separately from the public workshop row
-export type WorkshopInput = Omit<Workshop, 'id'> & { meetingLink?: string };
+// The meeting link and WhatsApp group link are private (admin only) and stored
+// separately from the public workshop row
+export type WorkshopInput = Omit<Workshop, 'id'> & { meetingLink?: string; whatsappGroupLink?: string };
+
+export interface WorkshopPrivateLinks {
+  meetingLink: string;
+  whatsappGroupLink: string;
+}
 
 const toRow = (w: WorkshopInput) => ({
   title: w.title,
@@ -75,11 +81,14 @@ export const useWorkshops = () => {
     refresh();
   }, [refresh]);
 
-  const saveMeetingLink = async (workshopId: string, meetingLink: string | undefined) => {
-    if (!supabase || meetingLink === undefined) return null;
-    const { error: linkError } = await supabase
-      .from('workshop_meeting_links')
-      .upsert({ workshop_id: workshopId, meeting_link: meetingLink.trim(), updated_at: new Date().toISOString() });
+  const saveMeetingLink = async (workshopId: string, input: WorkshopInput) => {
+    if (!supabase || (input.meetingLink === undefined && input.whatsappGroupLink === undefined)) return null;
+    const { error: linkError } = await supabase.from('workshop_meeting_links').upsert({
+      workshop_id: workshopId,
+      ...(input.meetingLink !== undefined && { meeting_link: input.meetingLink.trim() }),
+      ...(input.whatsappGroupLink !== undefined && { whatsapp_group_link: input.whatsappGroupLink.trim() }),
+      updated_at: new Date().toISOString()
+    });
     return linkError ? linkError.message : null;
   };
 
@@ -87,7 +96,7 @@ export const useWorkshops = () => {
     if (!supabase) return { error: 'Backend not connected yet.' };
     const { data, error: insertError } = await supabase.from('workshops').insert(toRow(input)).select('id').single();
     if (insertError) return { error: insertError.message };
-    const linkError = await saveMeetingLink((data as { id: string }).id, input.meetingLink);
+    const linkError = await saveMeetingLink((data as { id: string }).id, input);
     await refresh();
     return { error: linkError };
   }, [refresh]);
@@ -96,7 +105,7 @@ export const useWorkshops = () => {
     if (!supabase) return { error: 'Backend not connected yet.' };
     const { error: updateError } = await supabase.from('workshops').update(toRow(input)).eq('id', id);
     if (updateError) return { error: updateError.message };
-    const linkError = await saveMeetingLink(id, input.meetingLink);
+    const linkError = await saveMeetingLink(id, input);
     await refresh();
     return { error: linkError };
   }, [refresh]);
@@ -109,14 +118,17 @@ export const useWorkshops = () => {
     return { error: null };
   }, [refresh]);
 
-  /** Admin only: the private meeting link for an online workshop */
-  const getMeetingLink = useCallback(async (id: string) => {
-    if (!supabase) return '';
-    const { data } = await supabase.from('workshop_meeting_links').select('meeting_link').eq('workshop_id', id).maybeSingle();
-    return (data?.meeting_link as string | undefined) ?? '';
+  /** Admin only: the private meeting link and WhatsApp group link of a workshop */
+  const getPrivateLinks = useCallback(async (id: string): Promise<WorkshopPrivateLinks> => {
+    if (!supabase) return { meetingLink: '', whatsappGroupLink: '' };
+    const { data } = await supabase.from('workshop_meeting_links').select('*').eq('workshop_id', id).maybeSingle();
+    return {
+      meetingLink: (data?.meeting_link as string | undefined) ?? '',
+      whatsappGroupLink: (data?.whatsapp_group_link as string | undefined) ?? ''
+    };
   }, []);
 
-  return { workshops, loading, error, createWorkshop, updateWorkshop, deleteWorkshop, getMeetingLink };
+  return { workshops, loading, error, createWorkshop, updateWorkshop, deleteWorkshop, getPrivateLinks };
 };
 
 export interface WorkshopRegistration {
@@ -134,8 +146,8 @@ export interface WorkshopRegistration {
 export const registerForWorkshop = async (
   workshopId: string,
   registration: WorkshopRegistration
-): Promise<{ meetingLink: string; emailRequested: boolean; error: string | null }> => {
-  if (!supabase) return { meetingLink: '', emailRequested: false, error: 'Backend not connected yet.' };
+): Promise<WorkshopPrivateLinks & { emailRequested: boolean; error: string | null }> => {
+  if (!supabase) return { meetingLink: '', whatsappGroupLink: '', emailRequested: false, error: 'Backend not connected yet.' };
   const { data, error } = await supabase.rpc('register_for_workshop', {
     p_workshop_id: workshopId,
     p_name: registration.name,
@@ -144,10 +156,11 @@ export const registerForWorkshop = async (
     p_organization: registration.organization,
     p_quantity: registration.quantity
   });
-  if (error) return { meetingLink: '', emailRequested: false, error: error.message };
+  if (error) return { meetingLink: '', whatsappGroupLink: '', emailRequested: false, error: error.message };
 
-  const result = (data ?? {}) as { registration_id?: string; meeting_link?: string };
+  const result = (data ?? {}) as { registration_id?: string; meeting_link?: string; whatsapp_group_link?: string };
   const meetingLink = result.meeting_link ?? '';
+  const whatsappGroupLink = result.whatsapp_group_link ?? '';
 
   // Ask the server to email the confirmation (and join link). It only ever emails the
   // address saved on this fresh registration, once; failures don't affect the registration.
@@ -160,5 +173,5 @@ export const registerForWorkshop = async (
     }).catch((err) => console.error('Could not request confirmation email', err));
   }
 
-  return { meetingLink, emailRequested, error: null };
+  return { meetingLink, whatsappGroupLink, emailRequested, error: null };
 };

@@ -25,13 +25,14 @@ const escapeHtml = (value) =>
     .replace(/'/g, '&#39;');
 
 const isSafeUrl = (value) => /^https:\/\/[^\s"'<>]+$/i.test(value || '');
+const isWhatsAppGroup = (value) => isSafeUrl(value) && /^https:\/\/chat\.whatsapp\.com\//i.test(value);
 
 const detailRow = (label, value) =>
   value
     ? `<tr><td style="padding:6px 0;color:#64748b;font-size:13px;width:90px;vertical-align:top;">${label}</td><td style="padding:6px 0;color:#0f172a;font-size:14px;font-weight:bold;">${escapeHtml(value)}</td></tr>`
     : '';
 
-const buildEmail = ({ registration, workshop, meetingLink }) => {
+const buildEmail = ({ registration, workshop, meetingLink, whatsappGroupLink }) => {
   const firstName = escapeHtml((registration.name || '').trim().split(/\s+/)[0] || 'there');
   const when = [workshop.date, workshop.time].filter((v) => v && v.trim()).join(' · ');
   const price = !workshop.price || /^free$/i.test(workshop.price.trim()) ? 'Free' : workshop.price;
@@ -43,6 +44,15 @@ const buildEmail = ({ registration, workshop, meetingLink }) => {
            <p style="margin:0 0 12px;font-size:14px;color:#0f172a;font-weight:bold;">This is an online workshop. Join with this link:</p>
            <a href="${meetingLink}" style="display:inline-block;background:#126373;color:#ffffff;text-decoration:none;font-weight:bold;font-size:15px;padding:14px 32px;border-radius:14px;">Join the workshop</a>
            <p style="margin:12px 0 0;font-size:12px;color:#64748b;word-break:break-all;"><a href="${meetingLink}" style="color:#126373;">${escapeHtml(meetingLink)}</a></p>
+         </div>
+       </td></tr>`
+    : '';
+
+  const groupBlock = isWhatsAppGroup(whatsappGroupLink)
+    ? `<tr><td style="padding:8px 32px 8px;">
+         <div style="background:#effaf3;border:1px solid #c6ecd4;border-radius:16px;padding:20px;text-align:center;">
+           <p style="margin:0 0 12px;font-size:14px;color:#0f172a;font-weight:bold;">Join the workshop WhatsApp group for updates and reminders:</p>
+           <a href="${whatsappGroupLink}" style="display:inline-block;background:#25D366;color:#ffffff;text-decoration:none;font-weight:bold;font-size:15px;padding:14px 32px;border-radius:14px;">Join WhatsApp Group</a>
          </div>
        </td></tr>`
     : '';
@@ -67,6 +77,7 @@ const buildEmail = ({ registration, workshop, meetingLink }) => {
         </table>
       </td></tr>
       ${joinBlock}
+      ${groupBlock}
       <tr><td style="padding:12px 32px 24px;">
         <p style="margin:0;font-size:13px;line-height:1.6;color:#64748b;">Keep this email so you have the details on the day. If you need to change anything, just reply to this email or WhatsApp us on +233 54 039 0029.</p>
       </td></tr>
@@ -89,6 +100,7 @@ const buildEmail = ({ registration, workshop, meetingLink }) => {
     `Fee: ${price}`,
     seats && `Seats: ${seats}`,
     isSafeUrl(meetingLink) && `Join link: ${meetingLink}`,
+    isWhatsAppGroup(whatsappGroupLink) && `WhatsApp group: ${whatsappGroupLink}`,
     '',
     'Questions? Reply to this email or WhatsApp +233 54 039 0029.'
   ]
@@ -142,7 +154,7 @@ export default async function handler(req, res) {
 
     const [wsRes, linkRes] = await Promise.all([
       db(`workshops?id=eq.${registration.reference_id}&select=*`),
-      db(`workshop_meeting_links?workshop_id=eq.${registration.reference_id}&select=meeting_link`)
+      db(`workshop_meeting_links?workshop_id=eq.${registration.reference_id}&select=*`)
     ]);
     const [workshop] = wsRes.ok ? await wsRes.json() : [];
     const [linkRow] = linkRes.ok ? await linkRes.json() : [];
@@ -157,7 +169,7 @@ export default async function handler(req, res) {
     const claimed = claimRes.ok ? await claimRes.json() : [];
     if (!claimed.length) return res.status(200).json({ sent: false, reason: 'already_sent' });
 
-    const email = buildEmail({ registration, workshop, meetingLink: linkRow?.meeting_link || '' });
+    const email = buildEmail({ registration, workshop, meetingLink: linkRow?.meeting_link || '', whatsappGroupLink: linkRow?.whatsapp_group_link || '' });
     const sendRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },

@@ -248,7 +248,7 @@ export const WorkshopsView: React.FC<WorkshopsViewProps> = ({ onRegisterWorkshop
             <div className="space-y-3 max-w-2xl">
               <h2 className="text-2xl sm:text-3xl font-heading font-extrabold">Request a CEC Workshop!</h2>
               <p className="text-sm sm:text-base text-slate-100 leading-relaxed">
-                Bring the expertise of CEC Educational Consult directly to your school or join one of our scheduled professional development workshops.
+                Bring the expertise of CEC Educational Consult directly to your school or join one of our scheduled professional development workshops as an individual.
               </p>
               <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
                 Whether you are a school owner, school leader, teacher or education enthusiast, we have practical, engaging and impactful training opportunities designed to help you grow.

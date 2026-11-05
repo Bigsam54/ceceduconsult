@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { X, Save, ImagePlus, Loader2, Trash2, Link2, RefreshCw, Video, Lock } from 'lucide-react';
+import { X, Save, ImagePlus, Loader2, Trash2, Link2, RefreshCw, Video, Lock, MessageCircle } from 'lucide-react';
 import { Workshop } from '../../types';
-import { WorkshopInput } from '../../hooks/useWorkshops';
+import { WorkshopInput, WorkshopPrivateLinks } from '../../hooks/useWorkshops';
 import { WORKSHOP_CATEGORIES } from '../../data/workshopTopics';
 import { uploadToCloudinary, CLOUDINARY_FOLDERS } from '../../lib/cloudinary';
 import { prepareImage } from '../../utils/prepareImage';
@@ -12,8 +12,8 @@ interface WorkshopFormModalProps {
   onClose: () => void;
   onSave: (input: WorkshopInput) => Promise<{ error: string | null }>;
   editing: Workshop | null;
-  /** Loads the private meeting link of the workshop being edited */
-  loadMeetingLink?: (workshopId: string) => Promise<string>;
+  /** Loads the private meeting and WhatsApp group links of the workshop being edited */
+  loadPrivateLinks?: (workshopId: string) => Promise<WorkshopPrivateLinks>;
 }
 
 // Only the title is required; everything else can be filled in when it's known
@@ -41,7 +41,7 @@ const amountFromPrice = (price: string) => price.replace(/^GH₵\s*/i, '');
 
 const inputClass = 'w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2ac0db]';
 
-export const WorkshopFormModal: React.FC<WorkshopFormModalProps> = ({ isOpen, onClose, onSave, editing, loadMeetingLink }) => {
+export const WorkshopFormModal: React.FC<WorkshopFormModalProps> = ({ isOpen, onClose, onSave, editing, loadPrivateLinks }) => {
   const toast = useToast();
   const [form, setForm] = useState<WorkshopInput>(blank);
   const [priceType, setPriceType] = useState<'free' | 'paid'>('free');
@@ -50,6 +50,7 @@ export const WorkshopFormModal: React.FC<WorkshopFormModalProps> = ({ isOpen, on
   const [uploading, setUploading] = useState(false);
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [meetingLink, setMeetingLink] = useState('');
+  const [whatsappGroupLink, setWhatsappGroupLink] = useState('');
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -62,10 +63,14 @@ export const WorkshopFormModal: React.FC<WorkshopFormModalProps> = ({ isOpen, on
     setLimitSeats(initial.totalSeats > 0);
     setShowUrlInput(false);
     setMeetingLink('');
-    if (editing && isOpen && loadMeetingLink) {
-      loadMeetingLink(editing.id).then(setMeetingLink);
+    setWhatsappGroupLink('');
+    if (editing && isOpen && loadPrivateLinks) {
+      loadPrivateLinks(editing.id).then((links) => {
+        setMeetingLink(links.meetingLink);
+        setWhatsappGroupLink(links.whatsappGroupLink);
+      });
     }
-  }, [editing, isOpen, loadMeetingLink]);
+  }, [editing, isOpen, loadPrivateLinks]);
 
   if (!isOpen) return null;
 
@@ -106,7 +111,8 @@ export const WorkshopFormModal: React.FC<WorkshopFormModalProps> = ({ isOpen, on
       totalSeats,
       // 0 seats means unlimited registration
       availableSeats: limitSeats ? Math.min(Math.max(0, form.availableSeats), totalSeats) : 0,
-      meetingLink
+      meetingLink,
+      whatsappGroupLink
     };
     setSaving(true);
     const { error } = await onSave(input);
@@ -250,6 +256,23 @@ export const WorkshopFormModal: React.FC<WorkshopFormModalProps> = ({ isOpen, on
             </div>
             <p className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
               <Lock className="w-3 h-3" /> Private: only shown to people right after they register. Leave empty for in-person workshops.
+            </p>
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">WhatsApp group link</label>
+            <div className="relative">
+              <MessageCircle className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <input
+                type="url"
+                placeholder="https://chat.whatsapp.com/..."
+                value={whatsappGroupLink}
+                onChange={(e) => setWhatsappGroupLink(e.target.value)}
+                className={`${inputClass} pl-9`}
+              />
+            </div>
+            <p className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+              <Lock className="w-3 h-3" /> Private: registrants get a Join WhatsApp Group button right after they register.
             </p>
           </div>
 
