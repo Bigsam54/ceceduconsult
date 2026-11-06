@@ -21,6 +21,24 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
       imageUrl: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1788700036/4.png'
     },
     {
+      id: 'team-projects',
+      name: 'Rakiatu Ibrahim',
+      position: 'Project Manager',
+      imageUrl: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1793924262/0d2d9483-633e-4b39-b288-60c8ff7fd4cb.png'
+    },
+    {
+      id: 'team-training',
+      name: 'Linda Afful-Baidoo',
+      position: 'Educator Training & Development Lead',
+      imageUrl: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1793916599/Confident_Portrait_in_Navy_Blue_1.png'
+    },
+    {
+      id: 'team-relations',
+      name: 'Barbara Dwumfuor',
+      position: 'Client Relations Coordinator',
+      imageUrl: 'https://res.cloudinary.com/qg0w6ewi/image/upload/v1793917335/Confident_Studio_Portrait_in_Blue.png'
+    },
+    {
       id: 'team-marketing',
       name: 'Christopher Sam',
       position: 'Digital and Marketing Lead',
@@ -56,7 +74,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
           {/* Executive Profile Portrait - Full Card Background */}
           <div className="lg:col-span-5 relative rounded-2xl overflow-hidden shadow-xl border border-[#2ac0db]/30 min-h-[380px] sm:min-h-[460px] bg-slate-950 flex flex-col justify-end group">
             <img
-              src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1787293997/IMG_4473.jpg"
+              src="https://res.cloudinary.com/qg0w6ewi/image/upload/v1793917603/Confident_Chevron_Blazer_Portrait.png"
               alt="Miss Nancie"
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover object-top absolute inset-0 group-hover:scale-103 transition-transform duration-700"
@@ -110,8 +128,8 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
           </h2>
         </div>
 
-        {/* 2 TEAM CARDS SIDE BY SIDE ON MOBILE */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-5 sm:max-w-md">
+        {/* 2 cards per row on mobile, 3 on tablet, 5 on desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-5">
           {teamMembers.map((member) => (
             <div
               key={member.id}
@@ -129,10 +147,10 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenConsulta
 
               {/* Just Name and Position */}
               <div className="space-y-0.5 sm:space-y-1 px-1">
-                <h3 className="text-sm sm:text-2xl font-heading font-bold text-slate-900 leading-tight">
+                <h3 className="text-sm sm:text-lg font-heading font-bold text-slate-900 leading-tight">
                   {member.name}
                 </h3>
-                <p className="text-xs sm:text-base font-semibold text-[#126373]">
+                <p className="text-xs sm:text-sm font-semibold text-[#126373] leading-snug">
                   {member.position}
                 </p>
               </div>
