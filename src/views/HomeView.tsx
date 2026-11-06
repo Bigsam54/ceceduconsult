@@ -4,6 +4,7 @@ import { MOCK_TEACHERS } from '../data/mockData';
 import { MOCK_ADVERTISED_SCHOOLS } from '../data/mockSchools';
 import { TeacherCard } from '../components/TeacherCard';
 import { VideoTestimonialsSection } from '../components/VideoTestimonialsSection';
+import { HomeWorkshopBanner } from '../components/HomeWorkshopBanner';
 import {
   Search,
   ShieldCheck,
@@ -253,6 +254,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
         </div>
       </section>
+
+      {/* NEXT WORKSHOP: shows automatically when an upcoming workshop is uploaded */}
+      <HomeWorkshopBanner onNavigate={onNavigate} />
 
       {/* FEATURED SCHOOLS TEASER SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5 sm:space-y-8">
